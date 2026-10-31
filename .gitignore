@@ -28,3 +28,7 @@ graphify-out/
 # superpowers execution scratch
 .superpowers/
 .hallmark/
+
+# deep-research working notes and reports (planning material, kept local)
+research_notes/
+reports/
