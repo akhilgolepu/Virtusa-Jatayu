@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from jatayu import config
 from jatayu.asr import Transcriber
 from jatayu.audit import AuditLog
+from jatayu.corpus import create_corpus_router
 from jatayu.extract.rules import RulesExtractor
 from jatayu.lexicon import Lexicon
 from jatayu.pipeline import Pipeline, PipelineResult
@@ -24,7 +25,7 @@ class IncidentIn(BaseModel):
 
 
 def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None = None,
-               audio_dir: Path = config.AUDIO_DIR) -> FastAPI:
+               audio_dir: Path = config.AUDIO_DIR, recordings_dir: Path = config.DATA_DIR / "recordings") -> FastAPI:
     lexicon = Lexicon.load()
     audit = AuditLog(db_path)
     transcriber = transcriber or Transcriber(lexicon=lexicon)  # model loads lazily on first audio request
@@ -32,6 +33,7 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
     incidents: dict[str, dict] = {}  # Phase 1: in memory; Plan 3 persists incidents
 
     app = FastAPI(title="Jatayu", description=config.DISCLAIMER)
+    app.include_router(create_corpus_router(recordings_dir, transcriber, lexicon))
 
     @app.get("/api/health")
     def health():
