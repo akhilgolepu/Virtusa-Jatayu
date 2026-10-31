@@ -1,0 +1,67 @@
+<!doctype html>
+<!-- Throwaway Phase 1 page. Replaced by the DOT-styled UI in Plan 3. No external URLs: works offline. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jatayu skeleton</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; margin: 0 auto; max-width: 860px; padding: 16px; background: #111; color: #eee; }
+  textarea { width: 100%; min-height: 4em; font: inherit; background: #222; color: #eee; border: 1px solid #555; }
+  button { font: inherit; padding: 8px 14px; margin: 6px 6px 6px 0; cursor: pointer; }
+  #rec.on { background: #d22; color: #fff; }
+  pre { background: #1b1b1b; border: 1px solid #333; padding: 12px; overflow: auto; max-height: 60vh; font-size: 13px; }
+  footer { margin-top: 24px; font-size: 13px; color: #aaa; }
+</style>
+</head>
+<body>
+<h1>Jatayu · Phase 1 skeleton</h1>
+<p>Incident: <code id="inc">…</code></p>
+<textarea id="text" placeholder="e.g. pushed 4 mg ondansetron IV two minutes ago"></textarea>
+<div>
+  <button id="send">Send text</button>
+  <button id="rec">● Record</button>
+  <button id="verify">Verify chain</button>
+  <span id="status"></span>
+</div>
+<pre id="out">Result appears here.</pre>
+<footer>Decision-support demo, not a clinical device.</footer>
+<script>
+const $ = id => document.getElementById(id);
+let incident, recorder, chunks = [];
+const show = (obj) => { $("out").textContent = typeof obj === "string" ? obj : JSON.stringify(obj, null, 2); };
+
+async function newIncident() {
+  const r = await fetch("/api/incidents", {method: "POST", headers: {"Content-Type": "application/json"}, body: "{}"});
+  incident = (await r.json()).id; $("inc").textContent = incident;
+}
+async function post(form) {
+  form.append("incident_id", incident);
+  $("status").textContent = "working…";
+  const t0 = performance.now();
+  const r = await fetch("/api/utterances", {method: "POST", body: form});
+  $("status").textContent = `${r.status} in ${Math.round(performance.now() - t0)} ms`;
+  show(await r.json());
+}
+$("send").onclick = () => { const f = new FormData(); f.append("text", $("text").value); post(f); };
+$("rec").onclick = async () => {
+  if (recorder && recorder.state === "recording") { recorder.stop(); return; }
+  const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+  recorder = new MediaRecorder(stream); chunks = [];
+  recorder.ondataavailable = e => chunks.push(e.data);
+  recorder.onstop = () => {
+    stream.getTracks().forEach(t => t.stop());
+    $("rec").classList.remove("on"); $("rec").textContent = "● Record";
+    const f = new FormData(); f.append("audio", new Blob(chunks, {type: recorder.mimeType}), "capture.webm"); post(f);
+  };
+  recorder.start(); $("rec").classList.add("on"); $("rec").textContent = "■ Stop";
+};
+$("verify").onclick = async () => {
+  const v = await (await fetch("/api/audit/verify")).json();
+  $("status").textContent = v.ok ? `chain OK (${v.checked} rows)` : `CHAIN BROKEN at seq ${v.first_bad_seq}: ${v.reason}`;
+  show(v);
+};
+newIncident();
+</script>
+</body>
+</html>
