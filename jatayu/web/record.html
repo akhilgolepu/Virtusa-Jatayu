@@ -1,0 +1,107 @@
+<!doctype html>
+<!-- Record-corpus page (functional; restyled to the DOT direction in Plan 3). No external URLs: works offline. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jatayu corpus</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; margin: 0 auto; max-width: 900px; padding: 16px; background: #0b0a09; color: #f2f0ea; }
+  #prompt { font-size: clamp(24px, 4vw, 40px); line-height: 1.3; margin: 24px 0; min-height: 3em; }
+  .meta { color: #a8a8a8; font-size: 14px; }
+  .bar { height: 6px; background: #333; margin: 8px 0 16px; }
+  .bar > div { height: 100%; background: #f2f0ea; width: 0; }
+  button { font: inherit; padding: 10px 16px; margin: 4px 6px 4px 0; cursor: pointer; background: #222; color: #f2f0ea; border: 1px solid #555; }
+  #rec.on { background: #da291c; border-color: #da291c; }
+  .status { padding: 2px 8px; border: 1px solid currentColor; font-size: 13px; text-transform: uppercase; }
+  .ok { color: #6fcf6f; } .review, .needs_annotation { color: #ffb347; } .rerecord { color: #ff6b6b; }
+  textarea { width: 100%; min-height: 3em; font: inherit; background: #1a1a1a; color: #f2f0ea; border: 1px solid #555; }
+  kbd { border: 1px solid #555; padding: 0 4px; font-size: 12px; }
+  footer { margin-top: 32px; font-size: 13px; color: #888; }
+</style>
+</head>
+<body>
+<div class="meta"><span id="count">…</span> · condition: <b id="cond">…</b> · <span id="pid"></span></div>
+<div class="bar"><div id="progress"></div></div>
+<div id="prompt">Loading prompts…</div>
+<div>
+  <button id="rec">● Record <kbd>Space</kbd></button>
+  <button id="next">Next <kbd>Enter</kbd></button>
+  <button id="redo">Re-record <kbd>R</kbd></button>
+  <button id="edit">Said it differently <kbd>E</kbd></button>
+</div>
+<p class="meta">Last take: <span id="last">—</span></p>
+<div id="editbox" hidden>
+  <p class="meta">Type exactly what you said. Gold labels are realigned to it (or the take is marked for annotation).</p>
+  <textarea id="gold"></textarea>
+  <button id="save">Save edited text</button>
+</div>
+<footer>Decision-support demo, not a clinical device.</footer>
+<script>
+const $ = id => document.getElementById(id);
+let prompts = [], idx = 0, recorder = null, chunks = [], lastTake = null;
+
+async function load() {
+  const all = await (await fetch("/api/corpus/prompts?status=all")).json();
+  prompts = all;
+  idx = Math.max(0, prompts.findIndex(p => p.status === "todo" || p.status === "rerecord"));
+  show();
+}
+function show() {
+  const done = prompts.filter(p => !["todo", "rerecord"].includes(p.status)).length;
+  $("count").textContent = `${done} / ${prompts.length} recorded`;
+  $("progress").style.width = prompts.length ? `${100 * done / prompts.length}%` : "0";
+  const p = prompts[idx];
+  if (!p) { $("prompt").textContent = "No prompts. Run: python -m datagen.prompts"; return; }
+  $("prompt").textContent = p.text;
+  $("cond").textContent = p.condition_hint;
+  $("pid").textContent = `${p.prompt_id} (${p.status})`;
+  $("editbox").hidden = true;
+}
+function render(row) {
+  lastTake = row;
+  const st = row.status || "error";
+  $("last").innerHTML = "";
+  const b = document.createElement("span"); b.className = `status ${st}`; b.textContent = st;
+  $("last").append(b, document.createTextNode(` WER ${row.wer ?? "?"} — “${row.asr_text ?? row.detail ?? ""}”`));
+  prompts[idx].status = st; show();
+}
+async function toggle() {
+  if (recorder && recorder.state === "recording") { recorder.stop(); return; }
+  const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+  recorder = new MediaRecorder(stream); chunks = [];
+  recorder.ondataavailable = e => chunks.push(e.data);
+  recorder.onstop = async () => {
+    stream.getTracks().forEach(t => t.stop());
+    $("rec").classList.remove("on"); $("rec").textContent = "● Record";
+    const f = new FormData();
+    f.append("prompt_id", prompts[idx].prompt_id);
+    f.append("condition", prompts[idx].condition_hint);
+    f.append("audio", new Blob(chunks, {type: recorder.mimeType}), "take.webm");
+    $("last").textContent = "checking…";
+    render(await (await fetch("/api/corpus/recordings", {method: "POST", body: f})).json());
+  };
+  recorder.start(); $("rec").classList.add("on"); $("rec").textContent = "■ Stop";
+}
+async function resolve(action, gold_text) {
+  if (!lastTake || !lastTake.take_id) return;
+  const r = await fetch(`/api/corpus/recordings/${lastTake.take_id}/resolve`, {
+    method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({action, gold_text})});
+  render(await r.json());
+}
+function next() { idx = Math.min(prompts.length - 1, idx + 1); lastTake = null; $("last").textContent = "—"; show(); }
+$("rec").onclick = toggle; $("next").onclick = next;
+$("redo").onclick = () => resolve("rerecord");
+$("edit").onclick = () => { $("editbox").hidden = false; $("gold").value = prompts[idx].text; $("gold").focus(); };
+$("save").onclick = () => resolve("keep_edited", $("gold").value);
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "TEXTAREA") return;
+  if (e.code === "Space") { e.preventDefault(); toggle(); }
+  else if (e.key === "Enter") next();
+  else if (e.key === "r" || e.key === "R") resolve("rerecord");
+  else if (e.key === "e" || e.key === "E") { e.preventDefault(); $("edit").click(); }
+});
+load();
+</script>
+</body>
+</html>

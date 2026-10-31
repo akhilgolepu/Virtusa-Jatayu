@@ -110,3 +110,11 @@ def test_stats(tmp_path):
     _upload(client)
     s = client.get("/api/corpus/stats").json()
     assert s["prompts"] == 1 and s["by_status"]["ok"] == 1 and s["by_condition"]["quiet"] == 1
+
+
+def test_record_page_offline(tmp_path):
+    client, _ = _client(tmp_path, "x")
+    html = client.get("/record").text
+    assert "Decision-support demo, not a clinical device." in html
+    assert "/api/corpus/recordings" in html
+    assert not re.search(r"(src|href)=\"https?://", html)

@@ -71,6 +71,10 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
     def page():
         return resources.files("jatayu.web").joinpath("skeleton.html").read_text("utf-8")
 
+    @app.get("/record", response_class=HTMLResponse)
+    def record_page():
+        return resources.files("jatayu.web").joinpath("record.html").read_text("utf-8")
+
     return app
 
 
