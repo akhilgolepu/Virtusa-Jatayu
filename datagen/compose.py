@@ -21,6 +21,10 @@ class Composer:
         text = re.sub(r" {2,}", " ", text)
         if not self._buf or self._buf.endswith(" "):
             text = text.lstrip(" ")
+        if text[:1] in ",.;:":
+            # Trailing buffer spaces are never inside a recorded span, so dropping them before
+            # punctuation ("IV ," -> "IV,") cannot move any span.
+            self._buf = self._buf.rstrip(" ")
         self._buf += text
 
     def _append_surface(self, surface: str) -> tuple[int, int]:

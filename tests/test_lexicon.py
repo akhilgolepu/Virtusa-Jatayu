@@ -37,3 +37,8 @@ def test_no_alias_maps_to_two_things(lexicon):
 def test_phrases_longest_first(lexicon):
     lens = [len(p[0]) for p in lexicon.phrases()]
     assert lens == sorted(lens, reverse=True)
+
+
+def test_synonym_accessors(lexicon):
+    assert "micrograms" in lexicon.unit_synonyms("mcg")
+    assert "by mouth" in lexicon.route_synonyms("PO")

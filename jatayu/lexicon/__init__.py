@@ -64,6 +64,12 @@ class Lexicon:
     def unit_codes(self) -> list[str]:
         return list(self._units)
 
+    def unit_synonyms(self, code: str) -> list[str]:
+        return list(self._units[code])
+
+    def route_synonyms(self, code: str) -> list[str]:
+        return list(self._routes[code])
+
     def drug(self, name: str) -> DrugInfo:
         return self._drugs[name]
 

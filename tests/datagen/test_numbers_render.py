@@ -3,7 +3,7 @@ import pytest
 from datagen.numbers import surfaces, to_words
 from jatayu.normalise.text import normalise
 
-VALUES = [0.05, 0.1, 0.3, 0.5, 1, 1.5, 2, 2.5, 4, 10, 25, 50, 100, 150, 300, 325, 500, 1000, 2000]
+VALUES = [0.05, 0.1, 0.3, 0.5, 1, 1.5, 2, 2.5, 4, 10, 25, 50, 100, 150, 300, 325, 500, 1000, 2000, 10000, 22.75]
 
 
 @pytest.mark.parametrize("value", VALUES)

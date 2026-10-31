@@ -14,15 +14,15 @@ def _below_100(n: int) -> str:
 
 
 def to_words(n: int, hundred_and: bool = False) -> str:
-    """0-9999 in English words; hundred_and=True gives the British/Indian "three hundred and twenty five"."""
-    if not 0 <= n <= 9999:
+    """0-99999 in English words; hundred_and=True gives the British/Indian "three hundred and twenty five"."""
+    if not 0 <= n <= 99999:
         raise ValueError(f"out of range: {n}")
     if n < 100:
         return _below_100(n)
     parts = []
     thousands, rest = divmod(n, 1000)
     if thousands:
-        parts.append(f"{ONES[thousands]} thousand")
+        parts.append(f"{_below_100(thousands)} thousand")
     hundreds, rest = divmod(rest, 100)
     if hundreds:
         parts.append(f"{ONES[hundreds]} hundred")

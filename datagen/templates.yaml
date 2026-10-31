@@ -1,0 +1,245 @@
+# Synthetic utterance templates: 60 families, ~140 paraphrase patterns (written by Claude, 2026-10-31).
+# Splits are by FAMILY, so test phrasings are unseen in training.
+#
+# Slots: {drug} {dose} {unit} {route} {route?} {time} {time?} {clock} {verb} {filler} {filler?} {hi_verb}
+#        {correction} {route_correction} {mvalue} {proc} {detail} {next}
+# {next} starts a new entry; a segment containing {proc} is a procedure entry, otherwise a medication.
+# '?' slots are emitted with probability 0.7 (fillers 0.5).
+# Literal text deliberately avoids lexicon words and context cues ("nasal", "blood", "no", "home", "daily")
+# except in the context_* families, where they are the point.
+families:
+  # ---------------------------------------------------------------- med_basic (12)
+  - id: mb01
+    category: med_basic
+    patterns: ["{verb} {dose} {unit} {drug} {route} {time?}", "{verb} {dose} {unit} of {drug} {route} {time?}", "{drug} {dose} {unit} {route} {verb} {time?}"]
+  - id: mb02
+    category: med_basic
+    patterns: ["{drug} {dose} {unit} {route} {time}", "{time}, {drug} {dose} {unit} {route}"]
+  - id: mb03
+    category: med_basic
+    patterns: ["{dose} {unit} {drug} {route}", "{dose} {unit} of {drug} {route} {time?}"]
+  - id: mb04
+    category: med_basic
+    patterns: ["administered {drug} {dose} {unit} {route} {time?}", "{drug} administered, {dose} {unit} {route}"]
+  - id: mb05
+    category: med_basic
+    patterns: ["pushed {dose} {unit} {drug} {route}", "{drug} {dose} {unit} pushed {route} {time?}"]
+  - id: mb06
+    category: med_basic
+    patterns: ["{verb} {drug} {dose} {unit} {route}", "gave the patient {dose} {unit} of {drug} {route} {time?}"]
+  - id: mb07
+    category: med_basic
+    patterns: ["{drug}, {dose} {unit}, {route}, {time}", "{drug} {dose} {unit} given {route} {time?}"]
+  - id: mb08
+    category: med_basic
+    drugs: [normal saline, ringer lactate]
+    patterns: ["started {dose} {unit} {drug} {route}", "{drug} {dose} {unit} running {route} {time?}", "put up {dose} {unit} of {drug} {route}"]
+  - id: mb09
+    category: med_basic
+    drugs: [oxygen]
+    patterns: ["{drug} at {dose} {unit} {time?}", "started {drug} {dose} {unit}", "{drug} {dose} {unit} {route}"]
+  - id: mb10
+    category: med_basic
+    drugs: [salbutamol, ipratropium]
+    patterns: ["{drug} {dose} {unit} {route} {time?}", "{route} {drug} {dose} {unit} started"]
+  - id: mb11
+    category: med_basic
+    drugs: [fentanyl, morphine, ketamine, paracetamol, ketorolac, pentazocine]
+    patterns: ["{verb} {dose} {unit} {drug} {route} for pain {time?}", "for pain {drug} {dose} {unit} {route}"]
+  - id: mb12
+    category: med_basic
+    drugs: [epinephrine, amiodarone, adenosine, atropine]
+    patterns: ["{drug} {dose} {unit} {route} {time?}", "{verb} {dose} {unit} {drug} {route} {time?}"]
+
+  # ---------------------------------------------------------------- med_messy (8)
+  - id: mm01
+    category: med_messy
+    patterns: ["{filler} {verb} {dose} {unit} {drug} {route} {time?}", "{filler} so {drug} {dose} {unit} {route} {verb}", "{filler} {drug} {route?} {dose} {unit}"]
+  - id: mm02
+    category: med_messy
+    patterns: ["okay {drug} um {dose} {unit} {route}", "{drug} uh {dose} {unit} uh {route} {time?}", "um {dose} {unit} uh {drug} {route}"]
+  - id: mm03
+    category: med_messy
+    patterns: ["{verb} {drug}, that was {dose} {unit}, {route}", "{drug}, {dose} {unit} {route}, {time}", "{drug} went in, {dose} {unit}, {route}"]
+  - id: mm04
+    category: med_messy
+    patterns: ["just {verb} {dose} {unit} {drug} {route}", "we have {verb} {dose} {unit} {drug} {route} {time?}", "just now {verb} {drug} {dose} {unit} {route}"]
+  - id: mm05
+    category: med_messy
+    patterns: ["{dose} {unit} {drug} {route} on board {time?}", "{drug} {dose} {unit} {route} is in", "{drug} is in, {dose} {unit} {route}"]
+  - id: mm06
+    category: med_messy
+    patterns: ["{drug} {route} {dose} {unit} {time?}", "{route} {drug} {dose} {unit}", "{drug} {route}, {dose} {unit}, {time}"]
+  - id: mm07
+    category: med_messy
+    patterns: ["right, {drug} {dose} {unit} {route} going in now", "{filler} {drug} going in, {dose} {unit} {route}", "{drug} going in {route} {dose} {unit} {time?}"]
+  - id: mm08
+    category: med_messy
+    patterns: ["patient got {dose} {unit} of {drug} {route} {time?}", "pt received {drug} {dose} {unit} {route}", "patient has had {dose} {unit} {drug} {route}"]
+
+  # ---------------------------------------------------------------- med_multi (8)
+  - id: mx01
+    category: med_multi
+    patterns: ["{verb} {dose} {unit} {drug} {route} and {next} {dose} {unit} {drug} {route}", "{drug} {dose} {unit} {route}, then {next} {drug} {dose} {unit} {route}", "{drug} {dose} {unit} {route} and {next} {drug} {dose} {unit} {route} {time?}"]
+  - id: mx02
+    category: med_multi
+    patterns: ["{drug} {dose} {unit} {route} {time} and {next} {drug} {dose} {unit} {route}", "{dose} {unit} {drug} {route}, {next} {dose} {unit} {drug} {route} {time?}", "first {drug} {dose} {unit} {route}, then {next} {drug} {dose} {unit} {route}"]
+  - id: mx03
+    category: med_multi
+    patterns: ["{drug} {dose} {unit} {route} and {next} {proc} {time?}", "{verb} {dose} {unit} {drug} {route}, {next} {proc} done"]
+  - id: mx04
+    category: med_multi
+    patterns: ["{proc} {time?}, {next} {drug} {dose} {unit} {route}", "started {proc} then {next} {verb} {drug} {dose} {unit} {route}"]
+  - id: mx05
+    category: med_multi
+    drugs: [epinephrine, amiodarone]
+    procs: [cpr, defibrillation]
+    patterns: ["{proc}, {next} {drug} {dose} {unit} {route} {time?}", "{drug} {dose} {unit} {route} and {next} {proc}"]
+  - id: mx06
+    category: med_multi
+    patterns: ["{drug} {dose} {unit} {route}, {next} {drug} {dose} {unit} {route} and {next} {drug} {dose} {unit} {route}", "{verb} {drug} {dose} {unit} {route}, {next} {drug} {dose} {unit} {route}, {next} {proc}"]
+  - id: mx07
+    category: med_multi
+    patterns: ["{drug} {dose} {unit} {route} {time} then {next} {drug} {dose} {unit} {route} {time}", "{time} {drug} {dose} {unit} {route}, {next} {time} {drug} {dose} {unit} {route}"]
+  - id: mx08
+    category: med_multi
+    patterns: ["{drug} {dose} {unit} {route} plus {next} {drug} {dose} {unit} {route}", "running {dose} {unit} {drug} {route} and {next} {verb} {dose} {unit} {drug} {route}", "{drug} {dose} {unit} {route} along with {next} {drug} {dose} {unit} {route}"]
+
+  # ---------------------------------------------------------------- med_correction (4)
+  - id: mc01
+    category: med_correction
+    patterns: ["{drug} {correction} {dose} {unit} {route}", "{verb} {drug} {correction} {dose} {unit} {route} {time?}", "{correction} {dose} {unit} {drug} {route}"]
+  - id: mc02
+    category: med_correction
+    patterns: ["{verb} {correction} {dose} {unit} of {drug} {route}", "{drug} {route} {correction} {dose} {unit}"]
+  - id: mc03
+    category: med_correction
+    patterns: ["{drug} {dose} {unit} {route_correction} {route}", "{verb} {dose} {unit} {drug} {route_correction} {route}"]
+  - id: mc04
+    category: med_correction
+    patterns: ["{filler} {drug} {correction} {dose} {unit} {route} {time?}", "{drug}, {correction} {dose} {unit}, {route}"]
+
+  # ---------------------------------------------------------------- med_incomplete (4)
+  - id: mi01
+    category: med_incomplete
+    patterns: ["{verb} {dose} of {drug} {route}", "{drug} {dose} {route} {time?}", "{drug} {dose} {route} given"]
+  - id: mi02
+    category: med_incomplete
+    patterns: ["{verb} {drug} {route}", "{drug} {route} given {time?}"]
+  - id: mi03
+    category: med_incomplete
+    patterns: ["{verb} {dose} {unit} {drug} {time?}", "{drug} {dose} {unit}", "{dose} {unit} of {drug} given"]
+  - id: mi04
+    category: med_incomplete
+    patterns: ["{verb} {drug}", "{drug} given {time}"]
+
+  # ---------------------------------------------------------------- procedure (8)
+  - id: pr01
+    category: procedure
+    procs: [cpr]
+    patterns: ["started {proc} {time?}", "{proc} started {time?}", "{proc} in progress"]
+  - id: pr02
+    category: procedure
+    procs: [defibrillation]
+    patterns: ["{proc} {time?}", "{proc} once {time?}"]
+  - id: pr03
+    category: procedure
+    procs: [endotracheal intubation]
+    details: [size 7.5, size 7, size 8, size 6.5]
+    patterns: ["{proc} with a {detail} tube {time?}", "{proc}, {detail} tube"]
+  - id: pr04
+    category: procedure
+    procs: [iv cannulation, intraosseous access]
+    patterns: ["{proc} {time?}", "got {proc} {time?}"]
+  - id: pr05
+    category: procedure
+    procs: [bag-valve-mask ventilation, supraglottic airway]
+    patterns: ["{proc} {time?}", "airway managed with {proc}"]
+  - id: pr06
+    category: procedure
+    procs: [12-lead ecg]
+    patterns: ["{proc} done {time?}", "did a {proc}"]
+  - id: pr07
+    category: procedure
+    procs: [tourniquet, splinting, spinal motion restriction]
+    patterns: ["{proc} {time?}", "{proc} put on {time?}"]
+  - id: pr08
+    category: procedure
+    procs: [needle decompression, synchronized cardioversion, transcutaneous pacing]
+    patterns: ["{proc} {time?}", "performed {proc}"]
+
+  # ---------------------------------------------------------------- hinglish (8)
+  - id: hi01
+    category: hinglish
+    lang: hinglish
+    patterns: ["{drug} {dose} {unit} {route} {hi_verb}", "{drug} {dose} {unit} {hi_verb} {time?}", "{dose} {unit} {drug} {route} {hi_verb}"]
+  - id: hi02
+    category: hinglish
+    lang: hinglish
+    patterns: ["patient ko {drug} {dose} {unit} {route} {hi_verb}", "patient ko {dose} {unit} {drug} {hi_verb}", "mareez ko {drug} {dose} {unit} {route} {hi_verb}"]
+  - id: hi03
+    category: hinglish
+    lang: hinglish
+    patterns: ["maine {drug} {dose} {unit} {route} {hi_verb}", "abhi {drug} {dose} {unit} {route} {hi_verb}"]
+  - id: hi04
+    category: hinglish
+    lang: hinglish
+    patterns: ["{time} {drug} {dose} {unit} {route} {hi_verb}", "{drug} {dose} {unit} {route} {time} {hi_verb}", "{time} patient ko {drug} {dose} {unit} {hi_verb}"]
+  - id: hi05
+    category: hinglish
+    lang: hinglish
+    patterns: ["{drug} ka {dose} {unit} {route} {hi_verb}", "{dose} {unit} {drug} {route} mein {hi_verb}", "{drug} ki dose {dose} {unit} {route} {hi_verb}"]
+  - id: hi06
+    category: hinglish
+    lang: hinglish
+    patterns: ["{drug} {dose} {unit} {route} {hi_verb} aur {next} {drug} {dose} {unit} {route} bhi {hi_verb}", "{drug} {dose} {unit} {route}, phir {next} {drug} {dose} {unit} {route}"]
+  - id: hi07
+    category: hinglish
+    lang: hinglish
+    patterns: ["{proc} shuru kiya {time?}", "{proc} kar diya"]
+  - id: hi08
+    category: hinglish
+    lang: hinglish
+    patterns: ["{drug} {correction} {dose} {unit} {route} {hi_verb}", "{drug} {dose} {unit} {route} {hi_verb}, haan"]
+
+  # ---------------------------------------------------------------- context_negation (4)  -> context: not_given
+  - id: cn01
+    category: context_negation
+    context: not_given
+    patterns: ["patient allergic to {drug}", "known allergy to {drug}, not given"]
+  - id: cn02
+    category: context_negation
+    context: not_given
+    patterns: ["did not give {drug} {dose} {unit}", "{drug} not given"]
+  - id: cn03
+    category: context_negation
+    context: not_given
+    patterns: ["patient refused {drug}", "{drug} declined by patient"]
+  - id: cn04
+    category: context_negation
+    context: not_given
+    patterns: ["patient takes {drug} {dose} {unit} daily", "on home {drug} {dose} {unit}"]
+
+  # ---------------------------------------------------------------- context_measurement (2)  -> context: measurement
+  - id: cm01
+    category: context_measurement
+    context: measurement
+    drugs: [dextrose]
+    drug_surfaces: [glucose, Glucose]
+    mvalues: ["2.1", "3.2", "2.8", "4.5", "18"]
+    patterns: ["blood {drug} {mvalue} mmol", "{drug} level {mvalue}"]
+  - id: cm02
+    category: context_measurement
+    context: measurement
+    drugs: [oxygen]
+    drug_surfaces: [O2, o2]
+    mvalues: ["88", "91", "94", "85"]
+    patterns: ["{drug} sats {mvalue} percent", "{drug} saturation {mvalue}"]
+
+  # ---------------------------------------------------------------- time_clock (2)
+  - id: tc01
+    category: time_clock
+    patterns: ["{clock} {verb} {dose} {unit} {drug} {route}", "{drug} {dose} {unit} {route} {clock}"]
+  - id: tc02
+    category: time_clock
+    patterns: ["{clock} started {proc}", "{proc} {clock}"]
