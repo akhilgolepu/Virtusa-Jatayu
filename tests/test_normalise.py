@@ -42,3 +42,10 @@ import pytest  # noqa: E402
 ])
 def test_number_forms_medics_say(raw, values):
     assert [t.value for t in normalise(raw).tokens if t.kind == "number"] == values
+
+
+def test_asr_glued_decimal_splits_from_word():
+    # Whisper writes "glucagon .5 mg" as "glucagon.5 mg"; the drug and the 0.5 must both survive.
+    nt = normalise("glucagon.5 MD, intramuscular")
+    assert [t.text for t in nt.tokens][:2] == ["glucagon", "0.5"]
+    assert [t.text for t in normalise("given i.m.").tokens][:2] == ["given", "i.m"]

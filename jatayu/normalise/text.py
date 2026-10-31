@@ -7,9 +7,11 @@ from typing import Literal
 
 from jatayu.normalise.numbers import FRACTIONS, STARTERS, parse_spoken_number
 
-# Devanagari range keeps vowel signs (combining marks \w misses) inside words; inner '.' keeps "i.m" whole.
+# Devanagari range keeps vowel signs (combining marks \w misses) inside words. An inner '.' joins letters only
+# ("i.m" stays whole) so ASR's "glucagon.5" splits into the drug and ".5".
 # Numbers: "1,000" (thousands separators), ".5" (no leading zero — a 10x error if lost), "0.3", "4".
-TOKEN_RE = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d*\.\d+|\d+|[\wऀ-ॿ]+(?:[-'.][\wऀ-ॿ]+)*|[^\w\s]")
+TOKEN_RE = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d*\.\d+|\d+"
+                      r"|[\w\u0900-\u097F]+(?:[-'][\w\u0900-\u097F]+|\.[^\W\d_]+)*|[^\w\s]")
 
 Span = tuple[int, int]
 
