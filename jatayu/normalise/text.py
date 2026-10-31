@@ -8,7 +8,8 @@ from typing import Literal
 from jatayu.normalise.numbers import FRACTIONS, STARTERS, parse_spoken_number
 
 # Devanagari range keeps vowel signs (combining marks \w misses) inside words; inner '.' keeps "i.m" whole.
-TOKEN_RE = re.compile(r"\d+(?:\.\d+)?|[\wऀ-ॿ]+(?:[-'.][\wऀ-ॿ]+)*|[^\w\s]")
+# Numbers: "1,000" (thousands separators), ".5" (no leading zero — a 10x error if lost), "0.3", "4".
+TOKEN_RE = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d*\.\d+|\d+|[\wऀ-ॿ]+(?:[-'.][\wऀ-ॿ]+)*|[^\w\s]")
 
 Span = tuple[int, int]
 
@@ -43,8 +44,8 @@ def _lex(raw: str) -> list[Token]:
     out = []
     for m in TOKEN_RE.finditer(raw):
         s = m.group()
-        if s[0].isdigit():
-            out.append(Token(s, m.start(), m.end(), "number", float(s)))
+        if s[0].isdigit() or (s[0] == "." and len(s) > 1):  # "1,000", ".5", "0.3"
+            out.append(Token(s, m.start(), m.end(), "number", float(s.replace(",", ""))))
         elif s[0].isalnum() or "ऀ" <= s[0] <= "ॿ" or s[0] == "_":
             out.append(Token(s.lower(), m.start(), m.end(), "word"))
         else:
@@ -81,4 +82,26 @@ def normalise(raw: str) -> NormalisedText:
             t = Token(_fmt(t.value), t.raw_start, t.raw_end, "number", t.value)
         out.append(t)
         i += 1
-    return NormalisedText(raw, out)
+    return NormalisedText(raw, _merge_point_digits(raw, out))
+
+
+def _is_digits(raw: str, t: Token) -> bool:
+    return t.kind == "number" and raw[t.raw_start:t.raw_end].isdigit()
+
+
+def _merge_point_digits(raw: str, toks: list[Token]) -> list[Token]:
+    """'point 5' -> 0.5 and '1 point 5' / 'one point 5' -> 1.5 (ASR often writes the digits)."""
+    out: list[Token] = []
+    for t in toks:
+        if _is_digits(raw, t) and out and out[-1].kind == "word" and out[-1].text == "point":
+            point = out.pop()
+            digits = raw[t.raw_start:t.raw_end]
+            whole = out[-1] if out and out[-1].kind == "number" and float(out[-1].value).is_integer() else None
+            if whole is not None:
+                out.pop()
+            start = (whole or point).raw_start
+            value = float(f"{int(whole.value) if whole else 0}.{digits}")
+            out.append(Token(_fmt(value), start, t.raw_end, "number", value))
+        else:
+            out.append(t)
+    return out

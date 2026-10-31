@@ -22,7 +22,7 @@ procedures:
     aliases: [i-gel, igel, lma, laryngeal mask, supraglottic airway, king airway]
     snomed: null
   iv cannulation:
-    aliases: [iv cannulation, cannulated, cannulation, cannula, iv line, iv access, iv started]
+    aliases: [iv cannulation, cannulated, cannulation, iv cannula, iv line, iv access]   # bare "cannula" (nasal cannula) and "iv started" (steals the route) removed
     snomed: null
   intraosseous access:
     aliases: [io access, io needle, io line, intraosseous access, ez-io, ezio]

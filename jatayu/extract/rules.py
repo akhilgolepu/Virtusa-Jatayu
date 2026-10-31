@@ -12,6 +12,12 @@ from jatayu.normalise.timeparse import TimeMention, find_times
 
 SEPARATORS = {"and", ",", "then", ";", "."}
 CORRECTIONS = {"no", "sorry", "actually", "mean"}  # "mean" covers "I mean"
+CONTEXT_WINDOW = 4  # tokens before a drug name searched for negation / measurement cues
+NEGATION_CUES = {"not", "no", "didn't", "never", "without", "allergic", "allergy", "allergies",
+                 "held", "withheld", "refused", "declined", "contraindicated"}
+HOME_MED_CUES = {"takes", "taking", "daily", "regularly", "prescribed", "home"}
+MEASUREMENT_CUES = {"blood", "bgl", "bsl", "sugar", "level", "levels", "reading", "sats", "sat", "saturation",
+                    "saturations", "spo2"}
 LOW_CONFIDENCE = 0.95
 SHARED_TIME_CONFIDENCE = 0.7
 
@@ -132,14 +138,20 @@ class RulesExtractor:
         toks = nt.tokens
         unit_at = {m.i: m for m in seg_mentions if m.kind == "unit"}
         nums = [k for k in range(s, e) if toks[k].kind == "number" and k not in consumed]
-        corrected = any(toks[k].text in CORRECTIONS for k in range(s, e)) and len(nums) > 1
+        # A correction ("4, no sorry, 2 mg") needs the marker *between* two numbers; "pain 8, no nausea" is not one.
+        corrected = any(nums[0] < k < nums[-1] and toks[k].text in CORRECTIONS for k in range(s, e)) if nums else False
         with_unit = [k for k in nums if k + 1 in unit_at]
+        ambiguous = False
         if corrected:
             pick = nums[-1]
         elif with_unit:
             pick = with_unit[0]
+        elif nums:
+            # No unit anywhere: take the number nearest the drug, and flag the value itself if there was a choice.
+            pick = min(nums, key=lambda k: (min(abs(k - anchor.i), abs(k - (anchor.j - 1))), k < anchor.i))
+            ambiguous = len(nums) > 1
         else:
-            pick = nums[0] if nums else None
+            pick = None
 
         drug = self._f(nt, anchor.canon, anchor.i, anchor.j, anchor.confidence)
         if pick is None:
@@ -163,11 +175,33 @@ class RulesExtractor:
             route = Field.missing("rules")
             flags.append(Flag(code="field_missing", field="route", severity="medium",
                               message=f"No route stated for {anchor.canon}."))
+        if ambiguous:
+            flags.append(Flag(code="ambiguous_dose", field="dose_value", severity="high",
+                              message=f"Several numbers near {anchor.canon} and none has a unit; check the dose."))
         if anchor.confidence < LOW_CONFIDENCE:
             flags.append(Flag(code="low_confidence", field="drug", severity="medium",
                               message=f"Drug name matched approximately ({anchor.confidence:.2f})."))
+        flags.extend(self._context_flags(nt, anchor, s, e))
         return MedicationEntry(drug=drug, dose_value=dose_value, dose_unit=dose_unit, route=route,
                                time=time_field, flags=flags)
+
+    @staticmethod
+    def _context_flags(nt, anchor, s, e) -> list[Flag]:
+        """Words around a drug that suggest it was NOT administered now: negation, allergy, home medication,
+        or a measurement ("blood glucose 3.2", "O2 sats 88"). Flag high; never silently drop or keep."""
+        words = [t.text for t in nt.tokens]
+        before = set(words[max(s, anchor.i - CONTEXT_WINDOW):anchor.i])
+        after = set(words[anchor.j:min(e, anchor.j + 2)])
+        segment = set(words[s:e])
+        out = []
+        if before & NEGATION_CUES or segment & HOME_MED_CUES:
+            out.append(Flag(code="possible_not_given", field="drug", severity="high",
+                            message=f"Context suggests {anchor.canon} may not have been given now "
+                                    "(negation, allergy or regular medication)."))
+        if (before | after) & MEASUREMENT_CUES:
+            out.append(Flag(code="possible_measurement", field="drug", severity="high",
+                            message=f"'{anchor.canon}' looks like a measurement, not a dose given."))
+        return out
 
     def _procedure(self, nt, anchor, s, e, time_field, flags) -> ProcedureEntry:
         toks = nt.tokens

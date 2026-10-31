@@ -4,7 +4,7 @@
   "title": "Jatayu FHIR-lite Bundle (decision-support demo, not a clinical device)",
   "type": "object",
   "additionalProperties": false,
-  "required": ["resourceType", "type", "timestamp", "meta", "incident", "utterance", "entry"],
+  "required": ["resourceType", "type", "timestamp", "meta", "incident", "utterance", "transcript", "entry"],
   "properties": {
     "resourceType": {"const": "Bundle"},
     "type": {"const": "collection"},
@@ -16,6 +16,7 @@
     },
     "incident": {"type": "string", "minLength": 1},
     "utterance": {"type": "string", "minLength": 1},
+    "transcript": {"type": "string", "description": "Raw transcript; provenance spans are [start, end) Unicode code-point offsets into it (use Array.from() in JS, not UTF-16 indices)."},
     "entry": {
       "type": "array",
       "items": {

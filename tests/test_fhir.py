@@ -42,3 +42,9 @@ def test_procedure_resource(lexicon, sample_utterance):
 def test_schema_rejects_garbage():
     with pytest.raises(jsonschema.ValidationError):
         validate_bundle({"resourceType": "Bundle"})
+
+
+def test_bundle_keeps_raw_transcript(lexicon, sample_utterance, sample_entries):
+    b = to_bundle(sample_utterance, sample_entries, lexicon)
+    validate_bundle(b)
+    assert b["transcript"] == sample_utterance.raw_transcript

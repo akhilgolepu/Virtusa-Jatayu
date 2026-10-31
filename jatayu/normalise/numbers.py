@@ -13,9 +13,16 @@ STARTERS = set(ONES) | set(TENS) | {"point", "half", "a"}
 
 
 def _cardinal(words: list[str]) -> tuple[int | None, int]:
-    """Parse an integer like 'one hundred fifty' or 'twenty five'. Returns (value|None, consumed)."""
+    """Parse an integer like 'one hundred and fifty' or 'twenty five'. Returns (value|None, consumed)."""
     total, current, n, last = 0, 0, 0, None
-    for w in words:
+    k = 0
+    while k < len(words):
+        w = words[k]
+        # British/Indian "three hundred AND twenty five": 'and' joins only when a ones/tens word follows.
+        if w == "and" and last in ("hundred", "thousand") and k + 1 < len(words) \
+                and (words[k + 1] in ONES or words[k + 1] in TENS):
+            k += 1
+            continue
         if w in ONES and last in (None, "hundred", "thousand") or (w in ONES and ONES[w] < 10 and last == "tens"):
             current += ONES[w]; last = "ones"
         elif w in TENS and last in (None, "hundred", "thousand"):
@@ -26,7 +33,8 @@ def _cardinal(words: list[str]) -> tuple[int | None, int]:
             total += current * 1000; current = 0; last = "thousand"
         else:
             break
-        n += 1
+        k += 1
+        n = k
     return (total + current, n) if n else (None, 0)
 
 

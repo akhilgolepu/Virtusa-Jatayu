@@ -32,3 +32,11 @@ def test_no_time():
 def test_just_now_and_an_hour_ago():
     a, b = find_times(normalise("aspirin just now, morphine an hour ago"), CAP)
     assert a.value == CAP and b.value == CAP - timedelta(hours=1)
+
+
+def test_clock_without_meridiem_picks_most_recent():
+    cap = datetime(2026, 10, 31, 14, 45).astimezone()
+    [m] = find_times(normalise("at 2 30 gave adrenaline 1 mg IV"), cap)
+    assert (m.value.hour, m.value.minute, m.value.date()) == (14, 30, cap.date())
+    [m] = find_times(normalise("at 10 42 gave morphine"), CAP)
+    assert (m.value.hour, m.value.minute) == (10, 42)

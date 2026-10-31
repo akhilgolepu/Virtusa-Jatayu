@@ -83,3 +83,43 @@ def test_hinglish_filler_ignored(lexicon):
     raw = "adrenaline 0.3 mg IM de diya"
     [e] = ext(lexicon, raw)
     assert (e.drug.value, e.dose_value.value, e.dose_unit.value, e.route.value) == ("epinephrine", 0.3, "mg", "IM")
+
+
+def test_dangerous_number_forms(lexicon):
+    assert ext(lexicon, "adrenaline .5 mg IM")[0].dose_value.value == 0.5
+    assert ext(lexicon, "adrenaline point 5 mg IM")[0].dose_value.value == 0.5
+    [f] = ext(lexicon, "fentanyl one hundred and fifty micrograms IV")
+    assert (f.dose_value.value, f.dose_unit.value) == (150.0, "mcg")
+    [s] = ext(lexicon, "normal saline 1,000 ml IV")
+    assert (s.dose_value.value, s.dose_unit.value, s.route.value) == (1000.0, "ml", "IV")
+
+
+def test_correction_marker_must_sit_between_numbers(lexicon):
+    assert ext(lexicon, "morphine 5 mg IV, pain score 8, no nausea")[0].dose_value.value == 5.0
+    assert ext(lexicon, "morphine 5 mg IV, pain 3 out of 10, no further dose")[0].dose_value.value == 5.0
+
+
+def test_several_unitless_numbers_flag_the_dose(lexicon):
+    [e] = ext(lexicon, "10 42 morphine 2 IV")
+    assert e.dose_value.value == 2.0
+    assert any(f.field == "dose_value" and f.severity == "high" for f in e.flags)
+
+
+def test_not_given_contexts_are_flagged(lexicon):
+    for raw in ("did not give aspirin 300 mg", "patient allergic to morphine", "patient takes aspirin 75 mg daily"):
+        [e] = ext(lexicon, raw)
+        assert any(f.code == "possible_not_given" and f.severity == "high" for f in e.flags), raw
+
+
+def test_measurements_are_flagged_not_silent(lexicon):
+    for raw in ("blood glucose 3.2 mmol", "O2 sats 88"):
+        [e] = ext(lexicon, raw)
+        assert any(f.code == "possible_measurement" and f.severity == "high" for f in e.flags), raw
+    [d] = ext(lexicon, "gave dextrose 25 g IV")
+    assert not any(f.code == "possible_measurement" for f in d.flags)
+
+
+def test_ambiguous_procedure_aliases_removed(lexicon):
+    assert all(e.kind != "procedure" for e in ext(lexicon, "oxygen 4 litres per minute via nasal cannula"))
+    a, c = ext(lexicon, "adrenaline 1 mg IV started compressions")
+    assert (a.drug.value, a.route.value) == ("epinephrine", "IV") and c.procedure.value == "cpr"

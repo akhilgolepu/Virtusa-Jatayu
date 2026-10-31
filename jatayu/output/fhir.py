@@ -71,6 +71,7 @@ def to_bundle(utterance: Utterance, entries: list[Entry], lexicon: Lexicon) -> d
         "meta": {"tag": [{"code": "demo", "display": DISCLAIMER}]},
         "incident": utterance.incident_id,
         "utterance": utterance.id,
+        "transcript": utterance.raw_transcript,  # spans in each resource's provenance index into this text
         "entry": [{"resource": _medication(e, lexicon) if isinstance(e, MedicationEntry) else _procedure(e, lexicon)}
                   for e in entries],
     }

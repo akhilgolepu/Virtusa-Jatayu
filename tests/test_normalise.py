@@ -26,3 +26,19 @@ def test_non_ascii_offsets_stay_correct():
 def test_a_before_unit_not_number():
     nt = normalise("gave a gram of TXA")
     assert all(t.kind != "number" for t in nt.tokens)
+
+
+import pytest  # noqa: E402
+
+
+@pytest.mark.parametrize("raw,values", [
+    ("adrenaline .5 mg IM", [0.5]),
+    ("adrenaline point 5 mg IM", [0.5]),
+    ("one point 5 mg", [1.5]),
+    ("fentanyl one hundred and fifty micrograms", [150.0]),
+    ("aspirin three hundred and twenty five milligrams", [325.0]),
+    ("normal saline 1,000 ml IV", [1000.0]),
+    ("two thousand and fifty units", [2050.0]),
+])
+def test_number_forms_medics_say(raw, values):
+    assert [t.value for t in normalise(raw).tokens if t.kind == "number"] == values

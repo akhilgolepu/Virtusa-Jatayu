@@ -30,9 +30,17 @@ def _int(t: Token | None, lo: int, hi: int) -> int | None:
     return v if lo <= v <= hi else None
 
 
-def _clock(capture: datetime, hour: int, minute: int) -> datetime:
-    at = capture.replace(hour=hour, minute=minute, second=0, microsecond=0)
-    return at - timedelta(days=1) if at > capture + _FUTURE_SLACK else at
+def _clock(capture: datetime, hour: int, minute: int, meridiem_known: bool) -> datetime:
+    """Most recent past occurrence of hour:minute. Without am/pm, "2 30" may be 02:30 or 14:30."""
+    hours = [hour] if meridiem_known or hour > 12 else [hour % 12, hour % 12 + 12]
+    best = None
+    for h in hours:
+        at = capture.replace(hour=h, minute=minute, second=0, microsecond=0)
+        if at > capture + _FUTURE_SLACK:
+            at -= timedelta(days=1)
+        if best is None or at > best:
+            best = at
+    return best
 
 
 def _match(nt: NormalisedText, i: int, capture: datetime) -> tuple[datetime, int] | None:
@@ -59,14 +67,15 @@ def _match(nt: NormalisedText, i: int, capture: datetime) -> tuple[datetime, int
             raw_min = nt.raw[toks[j].raw_start:toks[j].raw_end]
             if len(raw_min) == 2 or not raw_min.isdigit():  # "at 10 42" or "at ten forty two"
                 minute, j = m, j + 1
-        if word(j) in _MERIDIEM:
+        meridiem_known = word(j) in _MERIDIEM
+        if meridiem_known:
             if hour > 12:
                 return None
             hour = hour % 12 + _MERIDIEM[word(j)]
             j += 1
         elif j == i + 2:  # bare "at 10" with neither minutes nor am/pm is not a clock time
             return None
-        return _clock(capture, hour, minute), j
+        return _clock(capture, hour, minute, meridiem_known), j
     return None
 
 
