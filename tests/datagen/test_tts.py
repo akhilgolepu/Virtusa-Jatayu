@@ -48,3 +48,14 @@ def test_render_split_resumable(tmp_path):
     mtimes = [(tmp_path / r["path"]).stat().st_mtime_ns for r in rows]
     again = render_split("dev", utts, tmp_path)
     assert [(tmp_path / r["path"]).stat().st_mtime_ns for r in again] == mtimes
+
+
+@pytest.mark.parametrize("text,spoken", [
+    (".15 milligram adrenalin", "point one five milligram adrenalin"),
+    ("adrenaline .5 mg IM", "adrenaline point five mg IM"),
+    ("gave 0.3 mg", "gave 0.3 mg"),
+    ("given i.m. at 10:42", "given i.m. at 10:42"),
+])
+def test_speakable_leading_dot_decimals(text, spoken):
+    from datagen.tts import speakable
+    assert speakable(text) == spoken

@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import re
 import wave
 from functools import lru_cache
 from pathlib import Path
@@ -11,6 +12,16 @@ from pathlib import Path
 from datagen.schema import GoldUtterance
 from datagen.voices import HINDI_VOICES, USE_HINDI_VOICES, VOICES, Voice
 from jatayu.audio import decode_to_16k
+
+
+_LEADING_DOT = re.compile(r"(?<![\w.])\.(\d+)")
+_DIGITS = "zero one two three four five six seven eight nine".split()
+
+
+def speakable(text: str) -> str:
+    """What Piper is asked to say. Written ".15" is read ambiguously by TTS; a responder says "point one five".
+    The gold text is unchanged — only the audio rendering differs (normalised WER treats them as equal)."""
+    return _LEADING_DOT.sub(lambda m: "point " + " ".join(_DIGITS[int(d)] for d in m.group(1)), text)
 
 
 @lru_cache(maxsize=8)
@@ -25,7 +36,7 @@ def synthesize(voice: Voice, text: str) -> bytes:
 
     buf = io.BytesIO()
     with wave.open(buf, "wb") as wf:
-        _load(voice.model_path).synthesize_wav(text, wf, syn_config=SynthesisConfig(speaker_id=voice.speaker_id))
+        _load(voice.model_path).synthesize_wav(speakable(text), wf, syn_config=SynthesisConfig(speaker_id=voice.speaker_id))
     _, wav16 = decode_to_16k(buf.getvalue())
     return wav16
 
