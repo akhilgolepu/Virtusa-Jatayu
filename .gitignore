@@ -1,0 +1,30 @@
+# personal planning docs (kept local only)
+docs/project.md
+docs/phases.md
+docs/superpowers/
+.planning/
+
+# all data stays local: regenerate with datagen/ scripts
+data/
+
+# large assets: fetched by scripts/download_assets.sh
+models/
+*.gguf
+*.onnx
+*.wav
+!tests/fixtures/*.wav
+
+# runtime
+*.sqlite
+*.db
+out/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.env
+graphify-out/
+
+# superpowers execution scratch
+.superpowers/
+.hallmark/

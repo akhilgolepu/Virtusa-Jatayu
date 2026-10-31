@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jatayu"
+version = "0.1.0"
+description = "Offline EMS voice scribe — decision-support demo, not a clinical device."
+requires-python = ">=3.12"
+
+[tool.setuptools.packages.find]
+include = ["jatayu*"]
+
+[tool.setuptools.package-data]
+jatayu = ["lexicon/*.yaml", "schemas/*.json", "web/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["models: needs downloaded models (skipped when absent)"]
+# The host shell puts ROS Jazzy on PYTHONPATH; its pytest plugins fail to import here.
+addopts = "-p no:launch_testing -p no:launch_ros -p no:ament_flake8 -p no:ament_lint -p no:ament_copyright -p no:ament_pep257 -p no:ament_xmllint"
