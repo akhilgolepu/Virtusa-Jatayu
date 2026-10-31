@@ -9,10 +9,11 @@ description = "Offline EMS voice scribe — decision-support demo, not a clinica
 requires-python = ">=3.12"
 
 [tool.setuptools.packages.find]
-include = ["jatayu*"]
+include = ["jatayu*", "datagen*"]
 
 [tool.setuptools.package-data]
 jatayu = ["lexicon/*.yaml", "schemas/*.json", "web/*"]
+datagen = ["*.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
