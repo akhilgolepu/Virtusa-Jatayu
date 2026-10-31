@@ -59,3 +59,10 @@ def test_render_split_resumable(tmp_path):
 def test_speakable_leading_dot_decimals(text, spoken):
     from datagen.tts import speakable
     assert speakable(text) == spoken
+
+
+def test_changed_text_gets_a_new_clip(tmp_path):
+    a = render_split("dev", [_utt(0)], tmp_path)
+    changed = _utt(0).model_copy(update={"text": "gave eight milligrams of ondansetron IV"})
+    b = render_split("dev", [changed], tmp_path)
+    assert a[0]["path"] != b[0]["path"] and (tmp_path / b[0]["path"]).exists()

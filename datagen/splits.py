@@ -11,11 +11,15 @@ from datagen.schema import GoldUtterance
 from jatayu import config
 
 SPLITS = ("train", "dev", "test")
+# Categories that carry the safety metric's hardest cases get two test families so a single phrasing
+# ("refused") cannot pass the whole category.
+HARD_CATEGORIES = {"med_correction", "med_incomplete", "context_negation", "context_measurement"}
 
 
 def split_families(families: list[tuple[str, str]], seed: int) -> dict[str, str]:
     """families: [(family_id, category)] -> {family_id: split}. Per category: >=1 test family when the
-    category has >=2, >=1 dev family when it has >=5; counts round down so the test share stays near 20%."""
+    category has >=2 (>=2 for HARD_CATEGORIES with >=6), >=1 dev family when it has >=5; counts round down so
+    the test share stays near 20%."""
     by_cat: dict[str, list[str]] = defaultdict(list)
     for fam, cat in families:
         by_cat[cat].append(fam)
@@ -25,6 +29,8 @@ def split_families(families: list[tuple[str, str]], seed: int) -> dict[str, str]
         random.Random(f"{seed}:{cat}").shuffle(fams)
         n = len(fams)
         n_test = max(1, int(0.2 * n)) if n >= 2 else 0
+        if cat in HARD_CATEGORIES and n >= 6:
+            n_test = max(2, n_test)
         n_dev = max(1, int(0.1 * n)) if n >= 5 else 0
         for i, fam in enumerate(fams):
             out[fam] = "test" if i < n_test else "dev" if i < n_test + n_dev else "train"

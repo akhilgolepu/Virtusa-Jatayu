@@ -54,7 +54,7 @@ def test_coverage(utts):
     patterns = {u.id.rsplit("-", 1)[0] for u in utts}
     families = {u.family for u in utts}
     assert len(drugs) >= 30 and len(procs) >= 12 and len(cats) == 10
-    assert len(families) == 60 and 140 <= len(patterns) <= 160
+    assert len(families) == 73 and 160 <= len(patterns) <= 175
     assert {u.lang for u in utts} == {"en", "hinglish"}
 
 
@@ -72,3 +72,26 @@ def test_dose_table_consistent_with_lexicon():
     for drug, specs in doses.items():
         for s in specs:
             assert s["route"] in lex.drug(drug).routes and s["unit"] in lex.drug(drug).units, (drug, s)
+
+
+def test_measurement_entries_record_the_measured_value(utts):
+    meas = [(u, e) for u in utts for e in u.entries if e.context == "measurement"]
+    assert meas
+    for u, e in meas:
+        assert e.measured_value is not None and e.dose_value is None
+        assert u.text[e.measured_value.span[0]:e.measured_value.span[1]] == e.measured_value.surface
+
+
+def test_unit_swap_only_when_a_unit_is_spoken():
+    for u in generate(seed=1234, per_pattern=20):
+        for e in u.entries:
+            if e.anomaly == "unit_swap":
+                assert e.dose_unit is not None, u.id
+
+
+def test_spoken_time_phrases_are_always_gold(utts):
+    import re
+    for u in utts:
+        spans = [e.time.span for e in u.entries if e.time.span]
+        for m in re.finditer(r"\b(just now|right now|abhi)\b", u.text):
+            assert any(s[0] <= m.start() and m.end() <= s[1] for s in spans), (u.id, u.text)

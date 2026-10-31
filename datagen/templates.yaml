@@ -1,4 +1,4 @@
-# Synthetic utterance templates: 60 families, ~140 paraphrase patterns (written by Claude, 2026-10-31).
+# Synthetic utterance templates: 73 families, 168 paraphrase patterns (written by Claude, 2026-10-31).
 # Splits are by FAMILY, so test phrasings are unseen in training.
 #
 # Slots: {drug} {dose} {unit} {route} {route?} {time} {time?} {clock} {verb} {filler} {filler?} {hi_verb}
@@ -63,7 +63,7 @@ families:
     patterns: ["{verb} {drug}, that was {dose} {unit}, {route}", "{drug}, {dose} {unit} {route}, {time}", "{drug} went in, {dose} {unit}, {route}"]
   - id: mm04
     category: med_messy
-    patterns: ["just {verb} {dose} {unit} {drug} {route}", "we have {verb} {dose} {unit} {drug} {route} {time?}", "just now {verb} {drug} {dose} {unit} {route}"]
+    patterns: ["just {verb} {dose} {unit} {drug} {route}", "we have {verb} {dose} {unit} {drug} {route} {time?}", "{time} {verb} {drug} {dose} {unit} {route}"]
   - id: mm05
     category: med_messy
     patterns: ["{dose} {unit} {drug} {route} on board {time?}", "{drug} {dose} {unit} {route} is in", "{drug} is in, {dose} {unit} {route}"]
@@ -105,7 +105,7 @@ families:
     category: med_multi
     patterns: ["{drug} {dose} {unit} {route} plus {next} {drug} {dose} {unit} {route}", "running {dose} {unit} {drug} {route} and {next} {verb} {dose} {unit} {drug} {route}", "{drug} {dose} {unit} {route} along with {next} {drug} {dose} {unit} {route}"]
 
-  # ---------------------------------------------------------------- med_correction (4)
+  # ---------------------------------------------------------------- med_correction (6)
   - id: mc01
     category: med_correction
     patterns: ["{drug} {correction} {dose} {unit} {route}", "{verb} {drug} {correction} {dose} {unit} {route} {time?}", "{correction} {dose} {unit} {drug} {route}"]
@@ -119,7 +119,14 @@ families:
     category: med_correction
     patterns: ["{filler} {drug} {correction} {dose} {unit} {route} {time?}", "{drug}, {correction} {dose} {unit}, {route}"]
 
-  # ---------------------------------------------------------------- med_incomplete (4)
+  - id: mc05
+    category: med_correction
+    patterns: ["{verb} {drug} {correction} {dose} {unit} {route_correction} {route}", "{drug} {route_correction} {route} {correction} {dose} {unit}"]
+  - id: mc06
+    category: med_correction
+    patterns: ["{drug} {correction} {dose} {unit} {route} {time}", "{correction} {dose} {unit} of {drug}, {route}"]
+
+  # ---------------------------------------------------------------- med_incomplete (6)
   - id: mi01
     category: med_incomplete
     patterns: ["{verb} {dose} of {drug} {route}", "{drug} {dose} {route} {time?}", "{drug} {dose} {route} given"]
@@ -132,6 +139,13 @@ families:
   - id: mi04
     category: med_incomplete
     patterns: ["{verb} {drug}", "{drug} given {time}"]
+
+  - id: mi05
+    category: med_incomplete
+    patterns: ["{drug} {dose} {route} {time}", "{time} {verb} {dose} of {drug}"]
+  - id: mi06
+    category: med_incomplete
+    patterns: ["{drug} {verb} {time}", "{verb} some {drug}"]
 
   # ---------------------------------------------------------------- procedure (8)
   - id: pr01
@@ -180,7 +194,7 @@ families:
   - id: hi03
     category: hinglish
     lang: hinglish
-    patterns: ["maine {drug} {dose} {unit} {route} {hi_verb}", "abhi {drug} {dose} {unit} {route} {hi_verb}"]
+    patterns: ["maine {drug} {dose} {unit} {route} {hi_verb}", "phir {drug} {dose} {unit} {route} {hi_verb}"]
   - id: hi04
     category: hinglish
     lang: hinglish
@@ -202,7 +216,7 @@ families:
     lang: hinglish
     patterns: ["{drug} {correction} {dose} {unit} {route} {hi_verb}", "{drug} {dose} {unit} {route} {hi_verb}, haan"]
 
-  # ---------------------------------------------------------------- context_negation (4)  -> context: not_given
+  # ---------------------------------------------------------------- context_negation (6)  -> context: not_given
   - id: cn01
     category: context_negation
     context: not_given
@@ -220,7 +234,16 @@ families:
     context: not_given
     patterns: ["patient takes {drug} {dose} {unit} daily", "on home {drug} {dose} {unit}"]
 
-  # ---------------------------------------------------------------- context_measurement (2)  -> context: measurement
+  - id: cn05
+    category: context_negation
+    context: not_given
+    patterns: ["held {drug} {dose} {unit}", "{drug} withheld, patient hypotensive"]
+  - id: cn06
+    category: context_negation
+    context: not_given
+    patterns: ["{drug} contraindicated, not given", "no {drug} given"]
+
+  # ---------------------------------------------------------------- context_measurement (6)  -> context: measurement
   - id: cm01
     category: context_measurement
     context: measurement
@@ -236,10 +259,48 @@ families:
     mvalues: ["88", "91", "94", "85"]
     patterns: ["{drug} sats {mvalue} percent", "{drug} saturation {mvalue}"]
 
-  # ---------------------------------------------------------------- time_clock (2)
+  - id: cm03
+    category: context_measurement
+    context: measurement
+    drugs: [dextrose]
+    drug_surfaces: [glucose, Glucose]
+    mvalues: ["2.4", "3.9", "6.1", "15"]
+    patterns: ["{drug} reading {mvalue}", "checked {drug}, {mvalue}"]
+  - id: cm04
+    category: context_measurement
+    context: measurement
+    drugs: [oxygen]
+    drug_surfaces: [O2, o2]
+    mvalues: ["89", "92", "95"]
+    patterns: ["{drug} {mvalue} on the monitor", "{drug} saturation is {mvalue} percent"]
+  - id: cm05
+    category: context_measurement
+    context: measurement
+    drugs: [magnesium sulfate]
+    drug_surfaces: [magnesium, Magnesium]
+    mvalues: ["0.6", "0.7", "1.1"]
+    patterns: ["{drug} level {mvalue}", "serum {drug} {mvalue}"]
+  - id: cm06
+    category: context_measurement
+    context: measurement
+    drugs: [calcium chloride]
+    drug_surfaces: [calcium, Calcium]
+    mvalues: ["1.9", "2.1", "2.6"]
+    patterns: ["{drug} level was {mvalue}", "ionised {drug} {mvalue}"]
+
+  # ---------------------------------------------------------------- time_clock (5)
   - id: tc01
     category: time_clock
     patterns: ["{clock} {verb} {dose} {unit} {drug} {route}", "{drug} {dose} {unit} {route} {clock}"]
   - id: tc02
     category: time_clock
     patterns: ["{clock} started {proc}", "{proc} {clock}"]
+  - id: tc03
+    category: time_clock
+    patterns: ["{drug} {dose} {unit} {route} given {clock}", "{clock}, {verb} {drug} {dose} {unit} {route}"]
+  - id: tc04
+    category: time_clock
+    patterns: ["{clock} {proc} done", "{proc} performed {clock}"]
+  - id: tc05
+    category: time_clock
+    patterns: ["{clock} {drug} {dose} {unit} {route}, {next} {clock} {drug} {dose} {unit} {route}", "{drug} {dose} {unit} {route} {clock} and {next} {proc} {clock}"]

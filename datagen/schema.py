@@ -33,6 +33,7 @@ class GoldEntry(BaseModel):
     dose_unit: GoldField | None = None
     route: GoldField | None = None
     detail: GoldField | None = None
+    measured_value: GoldField | None = None  # context "measurement": the reading itself ("blood glucose 2.1")
     time: GoldTime = GoldTime()
     anomaly: Literal["10x", "unit_swap"] | None = None
 

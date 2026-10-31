@@ -118,3 +118,37 @@ def test_record_page_offline(tmp_path):
     assert "Decision-support demo, not a clinical device." in html
     assert "/api/corpus/recordings" in html
     assert not re.search(r"(src|href)=\"https?://", html)
+
+
+def _entries_for(text, fields):
+    out = {"kind": "medication", "context": "given", "time": {"kind": "none"}}
+    for name, (value, surface) in fields.items():
+        s = text.index(surface)
+        out[name] = {"value": value, "surface": surface, "span": [s, s + len(surface)]}
+    return [out]
+
+
+def test_realign_never_matches_inside_a_longer_token():
+    from jatayu.corpus import realign
+    e = _entries_for("gave 1 mg of atropine", {"dose_value": (1.0, "1"), "dose_unit": ("mg", "mg"),
+                                                "drug": ("atropine", "atropine")})
+    assert realign(e, "gave 10 mg of atropine") is None
+    g = _entries_for("1 g of TXA", {"dose_value": (1.0, "1"), "dose_unit": ("g", "g"), "drug": ("tranexamic acid", "TXA")})
+    assert realign(g, "1 mg of TXA") is None
+    ok = realign(e, "uh gave 1 mg of atropine")
+    assert ok is not None and ok[0]["dose_value"]["span"] == [8, 9]
+
+
+def test_changed_dose_forces_review_despite_low_wer(tmp_path):
+    rec = tmp_path / "recordings"
+    rec.mkdir()
+    text = "gave 0.5 mg of glucagon IM two minutes ago please"
+    prompt = {"prompt_id": "p000", "split": "test", "text": text, "gold_utt_id": "x-0-000", "condition_hint": "quiet",
+              "entries": _entries_for(text, {"dose_value": (0.5, "0.5"), "dose_unit": ("mg", "mg"),
+                                             "drug": ("glucagon", "glucagon"), "route": ("IM", "IM")})}
+    (rec / "prompts.jsonl").write_text(json.dumps(prompt) + "\n")
+    app = create_app(db_path=tmp_path / "a.sqlite", audio_dir=tmp_path / "audio", recordings_dir=rec,
+                     transcriber=StubTranscriber("gave 5 mg of glucagon IM two minutes ago please"))
+    row = TestClient(app).post("/api/corpus/recordings", data={"prompt_id": "p000", "condition": "quiet"},
+                               files={"audio": ("t.wav", WAV, "audio/wav")}).json()
+    assert row["wer"] <= 0.4 and row["status"] == "review" and row["gold_field_mismatch"] == ["dose_value"]

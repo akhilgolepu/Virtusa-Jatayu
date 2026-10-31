@@ -69,7 +69,9 @@ def render_split(split: str, utts: list[GoldUtterance], out_root: Path) -> list[
     rows = []
     for utt in utts:
         for voice in assign_voices(utt):
-            rel = Path(split) / f"{utt.id}__{voice.id}.wav"
+            # Text hash in the name: if a template edit changes the sentence, the stale clip is never reused.
+            text_key = hashlib.sha256(utt.text.encode()).hexdigest()[:8]
+            rel = Path(split) / f"{utt.id}__{voice.id}__{text_key}.wav"
             path = out_root / rel
             if not path.exists():
                 tmp = path.with_suffix(".tmp")
@@ -78,6 +80,7 @@ def render_split(split: str, utts: list[GoldUtterance], out_root: Path) -> list[
             with wave.open(str(path)) as w:
                 duration = w.getnframes() / w.getframerate()
             rows.append({"utt_id": utt.id, "voice": voice.id, "accent": voice.accent, "path": str(rel),
+                         "text_sha8": text_key,
                          "duration_s": round(duration, 3), "lang": utt.lang})
     (out_root / f"{split}.jsonl").write_text("\n".join(json.dumps(r) for r in rows) + "\n", encoding="utf-8")
     return rows

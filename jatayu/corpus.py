@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import threading
 import uuid
 from collections import Counter
@@ -16,10 +17,11 @@ from pydantic import BaseModel
 
 from jatayu.audio import decode_to_16k
 from jatayu.lexicon import Lexicon
-from jatayu.textcompare import normalised_wer
+from jatayu.textcompare import compare_tokens, normalised_wer
 
 WER_OK = 0.40
-GOLD_FIELDS = ("drug", "procedure", "dose_value", "dose_unit", "route", "detail")
+GOLD_FIELDS = ("drug", "procedure", "dose_value", "dose_unit", "route", "detail", "measured_value")
+CHECKED_FIELDS = ("drug", "procedure", "dose_value", "dose_unit", "route")  # must be heard as written
 
 
 class Resolve(BaseModel):
@@ -38,12 +40,29 @@ def realign(entries: list[dict], text: str) -> list[dict] | None:
             fields.append(e["time"])
     cursor = 0
     for f in sorted(fields, key=lambda f: f["span"][0]):
-        at = text.find(f["surface"], cursor)
-        if at < 0:
+        # Whole tokens only: "1" must not realign into "10", nor unit "g" into "mg", nor "5" into "0.5".
+        m = re.compile(r"(?<![\w.])" + re.escape(f["surface"]) + r"(?!\w)").search(text, cursor)
+        if m is None:
             return None
-        f["span"] = [at, at + len(f["surface"])]
-        cursor = at + len(f["surface"])
+        f["span"] = [m.start(), m.end()]
+        cursor = m.end()
     return entries
+
+
+def gold_field_mismatches(entries: list[dict], asr_text: str, lexicon: Lexicon) -> list[str]:
+    """Gold fields whose (normalised) words are not heard in the take. A changed dose is one token of many,
+    so it can pass the WER bar; this catches it so the take goes to review instead of keeping stale gold."""
+    hyp = compare_tokens(asr_text, lexicon)
+    missing = []
+    for e in entries:
+        for name in CHECKED_FIELDS:
+            f = e.get(name)
+            if not f:
+                continue
+            ref = compare_tokens(f["surface"], lexicon)
+            if ref and not any(hyp[i:i + len(ref)] == ref for i in range(len(hyp) - len(ref) + 1)):
+                missing.append(name)
+    return missing
 
 
 class CorpusStore:
@@ -115,11 +134,13 @@ def create_corpus_router(recordings_dir: Path, transcriber, lexicon: Lexicon) ->
             path.write_bytes(wav)
         asr_text = transcriber.transcribe(samples).text
         wer = normalised_wer(prompt["text"], asr_text, lexicon)
+        mismatch = gold_field_mismatches(prompt["entries"], asr_text, lexicon)
         return store.append({
             "take_id": uuid.uuid4().hex, "prompt_id": prompt_id, "take": take,
             "path": str(path.relative_to(store.root)), "condition": condition,
             "recorded_at": datetime.now().astimezone().isoformat(), "asr_text": asr_text,
-            "wer": round(wer, 4), "status": "ok" if wer <= WER_OK else "review",
+            "wer": round(wer, 4), "gold_field_mismatch": mismatch,
+            "status": "ok" if wer <= WER_OK and not mismatch else "review",
             "gold_text": prompt["text"], "entries": prompt["entries"],
         })
 

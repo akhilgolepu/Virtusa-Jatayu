@@ -59,13 +59,14 @@ class _Renderer:
         self.plan: dict = {}
 
     # ---- per-entry planning -------------------------------------------------------------
-    def _plan_medication(self) -> dict:
+    def _plan_medication(self, segment: str) -> dict:
         rng, doses = self.rng, load_doses()
         drug = rng.choice(self.fam.get("drugs") or sorted(doses))
         spec = rng.choice(doses[drug])
         value, unit, anomaly = float(rng.choice(spec["values"])), spec["unit"], None
-        if self.fam.get("context", "given") == "given" and rng.random() < ANOMALY_P:
-            if unit in SWAP and rng.random() < 0.5:
+        # An anomaly only makes sense when the dose is spoken; a unit swap only when the unit is spoken too.
+        if self.fam.get("context", "given") == "given" and "{dose}" in segment and rng.random() < ANOMALY_P:
+            if unit in SWAP and "{unit}" in segment and rng.random() < 0.5:
                 anomaly, unit = "unit_swap", SWAP[unit]
             else:
                 anomaly, value = "10x", round(value * 10, 4)
@@ -151,7 +152,8 @@ class _Renderer:
             c.add(f" {rng.choice(lex.route_synonyms(wrong))}, no sorry, ")
             c.tags.append("correction")
         elif name == "mvalue":
-            c.add(" " + rng.choice(self.fam["mvalues"]) + " ")
+            v = rng.choice(self.fam["mvalues"])
+            c.field("measured_value", v, float(v))
         elif name == "proc":
             proc = p["proc"]
             aliases = lex.procedure(proc).aliases
@@ -166,7 +168,7 @@ class _Renderer:
     def render(self, pattern: str, utt_id: str) -> GoldUtterance:
         context = self.fam.get("context", "given")
         for seg in pattern.split("{next}"):
-            self.plan = self._plan_procedure() if "{proc}" in seg else self._plan_medication()
+            self.plan = self._plan_procedure() if "{proc}" in seg else self._plan_medication(seg)
             self.c.new_entry(self.plan["kind"], context=context)
             for part in SLOT_RE.split(seg):
                 if part.startswith("{"):
