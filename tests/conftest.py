@@ -34,3 +34,10 @@ def no_network(monkeypatch):
 @pytest.fixture
 def tmp_db(tmp_path):
     return tmp_path / "audit.sqlite"
+
+
+@pytest.fixture(scope="session")
+def lexicon():
+    from jatayu.lexicon import Lexicon
+
+    return Lexicon.load()

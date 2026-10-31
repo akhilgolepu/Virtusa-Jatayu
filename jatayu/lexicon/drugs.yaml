@@ -1,0 +1,184 @@
+# EMS drug lexicon. dose_ranges / min_repeat_s / source are filled in Plan 3 from the
+# NASEMSO National Model EMS Clinical Guidelines (cited per row). Until then the validator has no ranges.
+# Lines marked "# verify" are Indian brand names for Akhil to spot-check.
+drugs:
+  epinephrine:
+    aliases: [adrenaline, adrenalin, epi, epipen]
+    atc: C01CA24
+    routes: [IV, IM, IO, ET, NEB]
+    units: [mg, mcg, ml]
+  norepinephrine:
+    aliases: [noradrenaline, norad, norepi, levophed]
+    atc: C01CA03
+    routes: [IV, IO]
+    units: [mcg, mg]
+  amiodarone:
+    aliases: [amio, cordarone]                      # cordarone: verify
+    atc: C01BD01
+    routes: [IV, IO]
+    units: [mg]
+  adenosine:
+    aliases: [adenocard, adenoject]                 # adenoject: verify
+    atc: C01EB10
+    routes: [IV, IO]
+    units: [mg]
+  atropine:
+    aliases: [atropine sulphate, atropine sulfate]
+    atc: A03BA01
+    routes: [IV, IO, IM, ET]
+    units: [mg, mcg]
+  aspirin:
+    aliases: [asa, acetylsalicylic acid, ecosprin, disprin]   # ecosprin, disprin: verify
+    atc: B01AC06
+    routes: [PO]
+    units: [mg]
+  nitroglycerin:
+    aliases: [nitroglycerine, ntg, nitro, gtn, glyceryl trinitrate, angised]   # angised: verify
+    atc: C01DA02
+    routes: [SL, IV]
+    units: [mg, mcg, puffs]
+  naloxone:
+    aliases: [narcan]
+    atc: V03AB15
+    routes: [IV, IM, IN, IO, SC]
+    units: [mg, mcg]
+  ondansetron:
+    aliases: [zofran, emeset, vomikind, ondem]      # emeset, vomikind, ondem: verify
+    atc: A04AA01
+    routes: [IV, IM, PO, IO]
+    units: [mg]
+  metoclopramide:
+    aliases: [perinorm, reglan, maxolon]            # perinorm: verify
+    atc: A03FA01
+    routes: [IV, IM, PO]
+    units: [mg]
+  midazolam:
+    aliases: [versed, mezolam, fulsed]              # mezolam, fulsed: verify
+    atc: N05CD08
+    routes: [IV, IM, IN, IO]
+    units: [mg]
+  diazepam:
+    aliases: [valium, calmpose]                     # calmpose: verify
+    atc: N05BA01
+    routes: [IV, PR, IM, IO]
+    units: [mg]
+  lorazepam:
+    aliases: [ativan]
+    atc: N05BA06
+    routes: [IV, IM, IO]
+    units: [mg]
+  fentanyl:
+    aliases: [fentanil, sublimaze]
+    atc: N02AB03
+    routes: [IV, IN, IM, IO]
+    units: [mcg]
+  morphine:
+    aliases: [morphine sulphate, morphine sulfate]
+    atc: N02AA01
+    routes: [IV, IM, IO, SC]
+    units: [mg]
+  ketamine:
+    aliases: [ketalar]
+    atc: N01AX03
+    routes: [IV, IM, IN, IO]
+    units: [mg]
+  pentazocine:
+    aliases: [fortwin, talwin]                      # fortwin: verify
+    atc: N02AD01
+    routes: [IV, IM]
+    units: [mg]
+  dextrose:
+    aliases: [glucose, d50, d25, d10]
+    atc: V06DC01
+    routes: [IV, IO, PO]
+    units: [g, ml]
+  glucagon:
+    aliases: [glucagen]
+    atc: H04AA01
+    routes: [IM, IV, IN, SC]
+    units: [mg]
+  salbutamol:
+    aliases: [albuterol, asthalin, ventolin]        # asthalin: verify
+    atc: R03AC02
+    routes: [NEB, INH]
+    units: [mg, puffs, mcg]
+  ipratropium:
+    aliases: [ipratropium bromide, atrovent, ipravent]   # ipravent: verify
+    atc: R03BB01
+    routes: [NEB, INH]
+    units: [mcg, mg, puffs]
+  methylprednisolone:
+    aliases: [methylpred, solu-medrol, solumedrol, medrol]
+    atc: H02AB04
+    routes: [IV, IM]
+    units: [mg]
+  hydrocortisone:
+    aliases: [hydrocort, efcorlin, solu-cortef, solucortef]   # efcorlin: verify
+    atc: H02AB09
+    routes: [IV, IM]
+    units: [mg]
+  dexamethasone:
+    aliases: [dexa, dexona, decadron]               # dexona: verify
+    atc: H02AB02
+    routes: [IV, IM, PO]
+    units: [mg]
+  diphenhydramine:
+    aliases: [benadryl]
+    atc: R06AA02
+    routes: [IV, IM, PO]
+    units: [mg]
+  pheniramine:
+    aliases: [avil, pheniramine maleate]            # avil: verify
+    atc: R06AB05
+    routes: [IV, IM, PO]
+    units: [mg]
+  calcium chloride:
+    aliases: [cacl, cacl2, calcium]
+    atc: A12AA07
+    routes: [IV, IO]
+    units: [g, mg, ml]
+  sodium bicarbonate:
+    aliases: [bicarb, sodium bicarb, bicarbonate, nahco3]
+    atc: B05XA02
+    routes: [IV, IO]
+    units: [mEq, mmol, ml]
+  magnesium sulfate:
+    aliases: [magnesium sulphate, mag sulph, mag sulfate, mgso4, magnesium, mag]
+    atc: B05XA05
+    routes: [IV, IO, IM]
+    units: [g, mg]
+  tranexamic acid:
+    aliases: [txa, cyklokapron]                     # "pause" (Indian brand) excluded: common English word
+    atc: B02AA02
+    routes: [IV, IO]
+    units: [g, mg]
+  oxygen:
+    aliases: [o2]
+    atc: V03AN01
+    routes: [INH]
+    units: [L/min]
+  normal saline:
+    aliases: [saline, ns, sodium chloride, nacl, 0.9% saline]
+    atc: B05XA03
+    routes: [IV, IO]
+    units: [ml]
+  ringer lactate:
+    aliases: [ringer's lactate, ringers lactate, lactated ringer's, lactated ringers, rl, hartmann's, hartmanns, ringers]
+    atc: B05BB01
+    routes: [IV, IO]
+    units: [ml]
+  paracetamol:
+    aliases: [acetaminophen, tylenol, calpol, dolo, crocin, pcm]   # calpol, dolo, crocin: verify
+    atc: N02BE01
+    routes: [PO, IV, PR]
+    units: [mg, g]
+  ketorolac:
+    aliases: [toradol, ketorol]                     # ketorol: verify
+    atc: M01AB15
+    routes: [IV, IM]
+    units: [mg]
+  furosemide:
+    aliases: [frusemide, lasix]
+    atc: C03CA01
+    routes: [IV, IM, PO]
+    units: [mg]

@@ -1,0 +1,44 @@
+# snomed codes marked "verify" need a check against SNOMED CT browser before the demo; null = not asserted.
+procedures:
+  cpr:
+    aliases: [cpr, chest compressions, compressions, cardiopulmonary resuscitation]
+    snomed: "89666000"            # verify
+  defibrillation:
+    aliases: [defibrillation, defibrillated, defib, defibbed, shocked, shock delivered, delivered a shock]
+    snomed: null
+  synchronized cardioversion:
+    aliases: [cardioversion, cardioverted, synchronised cardioversion, synchronized cardioversion]
+    snomed: null
+  transcutaneous pacing:
+    aliases: [pacing, paced, transcutaneous pacing, external pacing, tcp]
+    snomed: null
+  bag-valve-mask ventilation:
+    aliases: [bvm, bagging, bagged, bag valve mask, bag-valve-mask, bag mask ventilation]
+    snomed: null
+  endotracheal intubation:
+    aliases: [intubated, intubation, tubed, ett, et tube, endotracheal intubation, endotracheal tube]
+    snomed: "112798008"           # verify
+  supraglottic airway:
+    aliases: [i-gel, igel, lma, laryngeal mask, supraglottic airway, king airway]
+    snomed: null
+  iv cannulation:
+    aliases: [iv cannulation, cannulated, cannulation, cannula, iv line, iv access, iv started]
+    snomed: null
+  intraosseous access:
+    aliases: [io access, io needle, io line, intraosseous access, ez-io, ezio]
+    snomed: null
+  needle decompression:
+    aliases: [needle decompression, needle decompressed, needle thoracostomy, decompressed]
+    snomed: null
+  tourniquet:
+    aliases: [tourniquet, tourniquet applied, cat tourniquet]
+    snomed: null
+  splinting:
+    aliases: [splint, splinted, splinting, traction splint]
+    snomed: null
+  spinal motion restriction:
+    aliases: [c-collar, c collar, cervical collar, collared, spinal motion restriction, spinal immobilisation, spinal immobilization, backboard]
+    snomed: null
+  12-lead ecg:
+    aliases: [12 lead, 12-lead, twelve lead, 12 lead ecg, ecg, ekg]
+    snomed: "268400002"           # verify

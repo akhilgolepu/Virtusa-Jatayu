@@ -1,0 +1,12 @@
+# canonical unit -> spoken/written synonyms (lowercase; matched on normalised tokens)
+units:
+  mg:     [mg, mgs, milligram, milligrams, milligramme, milligrammes]
+  mcg:    [mcg, mcgs, mic, mics, microgram, micrograms, ug, µg]
+  g:      [g, gm, gram, grams, gramme, grammes]
+  ml:     [ml, mls, millilitre, millilitres, milliliter, milliliters, cc, ccs]
+  L/min:  [l/min, lpm, litres per minute, liters per minute, litres a minute, liters a minute, litre per minute, liter per minute]
+  units:  [unit, units, iu]
+  puffs:  [puff, puffs]
+  drops:  [drop, drops]
+  mmol:   [mmol, millimole, millimoles]
+  mEq:    [meq, milliequivalent, milliequivalents]
