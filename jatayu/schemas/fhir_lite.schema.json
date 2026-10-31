@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:jatayu:fhir-lite",
+  "title": "Jatayu FHIR-lite Bundle (decision-support demo, not a clinical device)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["resourceType", "type", "timestamp", "meta", "incident", "utterance", "entry"],
+  "properties": {
+    "resourceType": {"const": "Bundle"},
+    "type": {"const": "collection"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "meta": {
+      "type": "object",
+      "required": ["tag"],
+      "properties": {"tag": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/coding"}}}
+    },
+    "incident": {"type": "string", "minLength": 1},
+    "utterance": {"type": "string", "minLength": 1},
+    "entry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["resource"],
+        "properties": {"resource": {"oneOf": [{"$ref": "#/$defs/medicationAdministration"}, {"$ref": "#/$defs/procedure"}]}}
+      }
+    }
+  },
+  "$defs": {
+    "coding": {
+      "type": "object",
+      "required": ["code"],
+      "properties": {"system": {"type": "string"}, "code": {"type": "string"}, "display": {"type": "string"}}
+    },
+    "codeableConcept": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {"text": {"type": "string"}, "coding": {"type": "array", "items": {"$ref": "#/$defs/coding"}}}
+    },
+    "provenance": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["url", "valueString"],
+        "properties": {"url": {"const": "urn:jatayu:provenance"}, "valueString": {"type": "string"}}
+      }
+    },
+    "medicationAdministration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resourceType", "status", "medicationCodeableConcept", "effectiveDateTime", "extension"],
+      "properties": {
+        "resourceType": {"const": "MedicationAdministration"},
+        "status": {"enum": ["in-progress", "completed", "entered-in-error"]},
+        "medicationCodeableConcept": {"$ref": "#/$defs/codeableConcept"},
+        "effectiveDateTime": {"type": "string", "format": "date-time"},
+        "dosage": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "route": {"type": "object", "required": ["text"], "properties": {"text": {"type": "string"}}},
+            "dose": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["value"],
+              "properties": {"value": {"type": "number"}, "unit": {"type": "string"}}
+            }
+          }
+        },
+        "extension": {"$ref": "#/$defs/provenance"}
+      }
+    },
+    "procedure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resourceType", "status", "code", "performedDateTime", "extension"],
+      "properties": {
+        "resourceType": {"const": "Procedure"},
+        "status": {"enum": ["in-progress", "completed", "entered-in-error"]},
+        "code": {"$ref": "#/$defs/codeableConcept"},
+        "performedDateTime": {"type": "string", "format": "date-time"},
+        "note": {"type": "array", "items": {"type": "object", "required": ["text"], "properties": {"text": {"type": "string"}}}},
+        "extension": {"$ref": "#/$defs/provenance"}
+      }
+    }
+  }
+}

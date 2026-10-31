@@ -41,3 +41,29 @@ def lexicon():
     from jatayu.lexicon import Lexicon
 
     return Lexicon.load()
+
+
+CAPTURE = __import__("datetime").datetime(2026, 10, 31, 10, 45).astimezone()
+
+
+@pytest.fixture
+def sample_utterance():
+    from jatayu.models import Utterance
+
+    return Utterance(incident_id="inc-test", capture_time=CAPTURE,
+                     raw_transcript="gave 0.3 mg adrenaline IM two mins ago")
+
+
+@pytest.fixture
+def sample_entries(lexicon, sample_utterance):
+    from jatayu.extract.rules import RulesExtractor
+
+    return RulesExtractor(lexicon).extract(sample_utterance.raw_transcript, CAPTURE)
+
+
+@pytest.fixture
+def entry_missing_dose(lexicon):
+    from jatayu.extract.rules import RulesExtractor
+
+    [entry] = RulesExtractor(lexicon).extract("gave aspirin", CAPTURE)
+    return entry
