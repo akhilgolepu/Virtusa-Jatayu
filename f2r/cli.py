@@ -81,13 +81,14 @@ def main(argv: list[str] | None = None) -> int:
     a.add_argument("--extractor", choices=["rules", "llm", "hybrid"], default=config.DEFAULT_EXTRACTOR)
     a.set_defaults(fn=cmd_add)
     sub.add_parser("verify", help="verify the hash chain").set_defaults(fn=cmd_verify)
-    e = sub.add_parser("eval", help="run the evaluation harness (see python -m eval.run --help)", add_help=False)
-    e.add_argument("rest", nargs=argparse.REMAINDER)
-    e.set_defaults(fn=cmd_eval)
-    s = sub.add_parser("setup-check", help="Gate G0 checks", add_help=False)
-    s.add_argument("rest", nargs=argparse.REMAINDER)
-    s.set_defaults(fn=cmd_setup_check)
-    args = ap.parse_args(argv)
+    sub.add_parser("eval", help="run the evaluation harness (see python -m eval.run --help)",
+                   add_help=False).set_defaults(fn=cmd_eval)
+    sub.add_parser("setup-check", help="Gate G0 checks", add_help=False).set_defaults(fn=cmd_setup_check)
+    # eval / setup-check options belong to their own parsers: pass everything unrecognised straight through.
+    args, rest = ap.parse_known_args(argv)
+    if rest and args.cmd not in ("eval", "setup-check"):
+        ap.error(f"unrecognized arguments: {' '.join(rest)}")
+    args.rest = rest
     return args.fn(args)
 
 

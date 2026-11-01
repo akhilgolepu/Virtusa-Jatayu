@@ -32,3 +32,11 @@ def test_add_reuses_one_cli_incident(tmp_path, capsys):
     a = json.loads(capsys.readouterr().out)["utterance"]["incident_id"]
     main(["--db", str(db), "add", "4 mg ondansetron IV", "--extractor", "rules"])
     assert json.loads(capsys.readouterr().out)["utterance"]["incident_id"] == a
+
+
+def test_eval_forwards_its_options(tmp_path, monkeypatch):
+    seen = {}
+    import eval.run
+    monkeypatch.setattr(eval.run, "main", lambda argv: seen.setdefault("argv", argv) and 0)
+    main(["eval", "--split", "dev", "--tag", "x", "--extractor", "rules"])
+    assert seen["argv"] == ["--split", "dev", "--tag", "x", "--extractor", "rules"]
