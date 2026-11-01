@@ -16,6 +16,6 @@ def test_pdf_note_contents(tmp_path):
     assert r.status_code == 200 and r.headers["content-type"] == "application/pdf"
     text = "\n".join(p.extract_text() for p in PdfReader(io.BytesIO(r.content)).pages)
     head = c.get("/api/audit").json()[-1]["entry_hash"]
-    for needle in ("RTA NH44", "aspirin", "300", "CONFIRMED", "morphine", "field_missing", head[:12],
+    for needle in ("Device", "RTA NH44", "aspirin", "300", "CONFIRMED", "morphine", "field_missing", head[:12],
                    "Decision-support demo, not a clinical device.", "Chain verified"):
         assert needle in text, needle

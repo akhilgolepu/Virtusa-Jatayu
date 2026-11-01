@@ -78,6 +78,7 @@ def render_note(incident: dict, state: IncidentState, rows: list[AuditRow], veri
     story: list = [_label("Incident note"), Paragraph(incident.get("label") or "Unlabelled incident", TITLE),
                    Paragraph(f"Started {datetime.fromisoformat(incident['started_at']).strftime('%d %b %Y, %H:%M')}"
                              f" · {len(state.entries)} entries · {len(state.utterances)} utterances", BODY),
+                   Paragraph(f"Incident {incident['id']} · Device {incident.get('device', 'unknown')}", MONO),
                    Spacer(1, 6 * mm), _label("Entries")]
     head = [_label(h) for h in ("#", "Time", "Drug / procedure", "Dose", "Route", "Status", "Flags")]
     entries = [_entry_row(i + 1, s.entry, s.status) for i, s in enumerate(state.entries.values())]

@@ -11,7 +11,7 @@ export type Procedure = {
 };
 export type Entry = Medication | Procedure;
 export type Utterance = { id: string; transcript: string; capture_time: string; seq: number };
-export type EntryState = { entry: Entry; status: "draft" | "edited" | "confirmed"; history: number[]; utterance_id: string };
+export type EntryState = { entry: Entry; status: "draft" | "edited" | "confirmed" | "rejected"; history: number[]; utterance_id: string };
 export type Incident = { id: string; label: string | null; started_at: string };
 export type IncidentState = Incident & { utterances: Utterance[]; entries: EntryState[] };
 export type PipelineResult = {
@@ -60,6 +60,8 @@ export const api = {
     call<{ seq: number; entry: Entry }>(`/api/incidents/${incident}/entries/${entry.id}/edit`, json("POST", { entry })),
   confirm: (incident: string, entry_ids: string[], acknowledged: string[], expected: Record<string, number>) =>
     call<{ seq: number }>(`/api/incidents/${incident}/confirm`, json("POST", { entry_ids, acknowledged, expected })),
+  reject: (incident: string, entry: string, reason: string | null) =>
+    call<{ seq: number }>(`/api/incidents/${incident}/entries/${entry}/reject`, json("POST", { reason })),
   audit: () => call<AuditRow[]>("/api/audit"),
   verify: () => call<Verify>("/api/audit/verify"),
   readbackWav: (incident: string, entry: string) => `/api/incidents/${incident}/entries/${entry}/readback.wav`,

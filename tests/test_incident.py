@@ -84,7 +84,7 @@ def test_readback_text_endpoint(client):
     inc = client.post("/api/incidents", json={}).json()["id"]
     e = _say(client, inc, "aspirin 300 mg PO at 10:42")["entries"][0]
     r = client.get(f"/api/incidents/{inc}/entries/{e['id']}/readback.txt")
-    assert r.status_code == 200 and r.text.startswith("Aspirin, three hundred milligrams, by mouth, at ten forty-two.")
+    assert r.status_code == 200 and r.text.startswith("Aspirin, three hundred milligrams, by mouth, at 10:42.")
     assert client.get(f"/api/incidents/{inc}/entries/nope/readback.txt").status_code == 404
 
 
@@ -118,3 +118,32 @@ def test_confirm_is_bound_to_the_version_seen(client):
     assert r.status_code == 409 and "stale" in str(r.json()["detail"])
     now = client.get(f"/api/incidents/{inc}").json()["entries"][0]["history"][-1]
     assert client.post(f"/api/incidents/{inc}/confirm", json={"entry_ids": [e["id"]], "acknowledged": [], "expected": {e["id"]: now}}).status_code == 200
+
+
+def test_reject_appends_and_marks_entered_in_error(client, tmp_path):
+    inc = client.post("/api/incidents", json={}).json()["id"]
+    e = _say(client, inc, "aspirin 300 mg PO two mins ago")["entries"][0]
+    before = _rows(tmp_path)
+    r = client.post(f"/api/incidents/{inc}/entries/{e['id']}/reject", json={"reason": "said in error"})
+    assert r.status_code == 200 and _rows(tmp_path) == before + 1
+    s = client.get(f"/api/incidents/{inc}").json()["entries"][0]
+    assert s["status"] == "rejected"
+    assert client.post(f"/api/incidents/{inc}/confirm", json={"entry_ids": [e["id"]], "acknowledged": []}).status_code == 409
+    assert client.get(f"/api/incidents/{inc}/bundle").json()["entry"][0]["resource"]["status"] == "entered-in-error"
+    assert client.get("/api/audit/verify").json()["ok"]
+
+
+def test_rejected_entries_do_not_trigger_repeat_flags(client):
+    inc = client.post("/api/incidents", json={}).json()["id"]
+    first = _say(client, inc, "adrenaline 0.3 mg IM at 10 40")["entries"][0]
+    client.post(f"/api/incidents/{inc}/entries/{first['id']}/reject", json={})
+    second = _say(client, inc, "adrenaline 0.3 mg IM at 10 42")["entries"][0]
+    assert "repeat_too_soon" not in [f["code"] for f in second["flags"]]
+
+
+def test_device_id_is_stable_and_in_the_bundle(client):
+    inc = client.post("/api/incidents", json={}).json()["id"]
+    _say(client, inc, "aspirin 300 mg PO")
+    a = client.get(f"/api/incidents/{inc}/bundle").json()["meta"]["device"]
+    b = client.get(f"/api/incidents/{inc}/bundle").json()["meta"]["device"]
+    assert a == b and len(a) >= 8

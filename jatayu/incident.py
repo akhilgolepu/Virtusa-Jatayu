@@ -47,7 +47,7 @@ class IncidentStore:
 class EntryState:
     entry: Entry
     utterance_id: str
-    status: str = "draft"  # draft | edited | confirmed
+    status: str = "draft"  # draft | edited | confirmed | rejected
     history: list[int] = field(default_factory=list)
     acknowledged: list[str] = field(default_factory=list)
 
@@ -59,7 +59,8 @@ class IncidentState:
     utterances: list[dict] = field(default_factory=list)
 
     def current_entries(self) -> list[Entry]:
-        return [s.entry for s in self.entries.values()]
+        """Entries that still stand (rejected ones are kept in the chain but take no part in checks)."""
+        return [s.entry for s in self.entries.values() if s.status != "rejected"]
 
 
 def incident_state(audit: AuditLog, incident_id: str) -> IncidentState:
@@ -76,6 +77,10 @@ def incident_state(audit: AuditLog, incident_id: str) -> IncidentState:
             for raw in payload["entries"]:
                 e = ENTRY.validate_python(raw)
                 state.entries[e.id] = EntryState(entry=e, utterance_id=utt["id"], history=[row.seq])
+        elif row.event_type == "edit" and payload.get("type") == "reject" and payload.get("entry_id") in state.entries:
+            s = state.entries[payload["entry_id"]]  # stored as an edit row: the chain schema allows draft/edit/confirm
+            s.status = "rejected"
+            s.history.append(row.seq)
         elif row.event_type == "edit" and payload.get("entry_id") in state.entries:
             s = state.entries[payload["entry_id"]]
             s.entry = ENTRY.validate_python(payload["entry"])

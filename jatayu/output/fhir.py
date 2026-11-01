@@ -91,12 +91,12 @@ def to_incident_bundle(incident: dict, items: list[tuple[Entry, str, str]], utte
                        lexicon: Lexicon) -> dict:
     """items: (entry, status, utterance_id). Spans in each resource's provenance index into the transcript of
     the utterance it names; the top-level transcript is empty for an incident bundle."""
-    fhir_status = {"confirmed": "completed"}
+    fhir_status = {"confirmed": "completed", "rejected": "entered-in-error"}
     return {
         "resourceType": "Bundle",
         "type": "collection",
         "timestamp": incident["started_at"],
-        "meta": {"tag": [{"code": "demo", "display": DISCLAIMER}]},
+        "meta": {"tag": [{"code": "demo", "display": DISCLAIMER}], "device": incident.get("device", "unknown")},
         "incident": incident["id"],
         "utterance": incident["id"],
         "transcript": "",

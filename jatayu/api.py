@@ -20,6 +20,7 @@ from jatayu.extract.llm import LlmExtractor
 from jatayu.extract.rules import RulesExtractor
 from jatayu.llm import LlmError, LlmRunner
 from jatayu.models_manager import ModelManager
+from jatayu.device import device_id
 from jatayu.incident import ENTRY, IncidentStore, apply_user_edit, incident_state
 from jatayu.output.fhir import to_incident_bundle, validate_bundle
 from jatayu.output.pdf import render_note
@@ -35,6 +36,10 @@ class IncidentIn(BaseModel):
 
 class EditIn(BaseModel):
     entry: dict
+
+
+class RejectIn(BaseModel):
+    reason: str | None = None
 
 
 class ConfirmIn(BaseModel):
@@ -80,6 +85,7 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
                         validator=lambda entries, history: validate_all(entries, lexicon, history))
     incidents = IncidentStore(db_path)
     write_lock = threading.Lock()  # check-then-append for edit/confirm must not interleave
+    device = device_id(Path(db_path).parent)
 
     def _incident(incident_id: str) -> dict:
         inc = incidents.get(incident_id)
@@ -92,7 +98,7 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
 
     @app.get("/api/health")
     def health():
-        return {"ok": True, "asr_device": transcriber.device, "offline": True}
+        return {"ok": True, "asr_device": transcriber.device, "offline": True, "device_id": device}
 
     @app.post("/api/incidents")
     def create_incident(body: IncidentIn):
@@ -157,6 +163,9 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
         missing = [eid for eid in body.entry_ids if eid not in state.entries]
         if missing or not body.entry_ids:
             raise HTTPException(404, f"unknown entries: {missing}")
+        rejected = [eid for eid in body.entry_ids if state.entries[eid].status == "rejected"]
+        if rejected:
+            raise HTTPException(409, {"rejected": rejected, "message": "a rejected entry cannot be confirmed"})
         stale = [eid for eid, seq in body.expected.items() if eid in state.entries and state.entries[eid].history[-1] != seq]
         if stale:  # the entry changed since the medic looked at it: confirm what they saw, or nothing
             raise HTTPException(409, {"stale": stale, "message": "entry changed since it was displayed; reload"})
@@ -185,10 +194,22 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
     def readback_wav(incident_id: str, entry_id: str):
         return Response(synthesize_readback(readback_text(_entry(incident_id, entry_id))), media_type="audio/wav")
 
+    @app.post("/api/incidents/{incident_id}/entries/{entry_id}/reject")
+    def reject_entry(incident_id: str, entry_id: str, body: RejectIn):
+        _incident(incident_id)
+        with write_lock:
+            current = incident_state(audit, incident_id).entries.get(entry_id)
+            if current is None:
+                raise HTTPException(404, "unknown entry")
+            row = audit.append("edit", incident_id, {"type": "reject", "entry_id": entry_id, "reason": body.reason},
+                               supersedes_seq=current.history[-1])
+        return {"seq": row.seq}
+
     @app.get("/api/incidents/{incident_id}/note.pdf")
     def incident_pdf(incident_id: str):
         inc = _incident(incident_id)
-        pdf = render_note(inc, incident_state(audit, incident_id), audit.rows(incident_id), audit.verify())
+        pdf = render_note({**inc, "device": device}, incident_state(audit, incident_id), audit.rows(incident_id),
+                          audit.verify())
         return Response(pdf, media_type="application/pdf",
                         headers={"Content-Disposition": f'inline; filename="jatayu-{incident_id[:8]}.pdf"'})
 
@@ -197,7 +218,7 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
         inc = _incident(incident_id)
         state = incident_state(audit, incident_id)
         items = [(s.entry, s.status, s.utterance_id) for s in state.entries.values()]
-        bundle = to_incident_bundle(inc, items, state.utterances, lexicon)
+        bundle = to_incident_bundle({**inc, "device": device}, items, state.utterances, lexicon)
         validate_bundle(bundle)
         return bundle
 

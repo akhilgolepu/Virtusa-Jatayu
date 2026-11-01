@@ -20,7 +20,7 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
   const e = state.entry;
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<Entry>(e);
-  const [busy, setBusy] = useState<"" | "save" | "confirm" | "play">("");
+  const [busy, setBusy] = useState<"" | "save" | "confirm" | "play" | "reject">("");
   const [error, setError] = useState("");
   const [ack, setAck] = useState<string[]>([]);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -29,6 +29,8 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
   // One tick per distinct check: two flags can share a code (e.g. llm_unsupported on two fields).
   const highCodes = [...new Set(high.map((f) => f.code))];
   const confirmed = state.status === "confirmed";
+  const rejected = state.status === "rejected";
+  const settled = confirmed || rejected;
 
   const title = e.kind === "medication" ? e.drug.value ?? "Unknown drug" : e.procedure.value ?? "Procedure";
   const drugInfo = e.kind === "medication" ? lexicon?.drugs.find((d) => d.name === e.drug.value) : undefined;
@@ -51,6 +53,13 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
     finally { setBusy(""); }
   }
 
+  async function reject() {
+    setBusy("reject"); setError("");
+    try { await api.reject(incident, e.id, null); onChange(); }
+    catch { setError("Could not reject."); }
+    finally { setBusy(""); }
+  }
+
   function startConfirm() {
     if (high.length) { setAck([]); dialog.current?.showModal(); } else confirm([]);
   }
@@ -63,7 +72,7 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
   }
 
   return (
-    <article class="card entry" aria-label={`Entry ${n}: ${title}`}>
+    <article class="card entry" data-status={state.status} aria-label={`Entry ${n}: ${title}`}>
       <div class="entry-head">
         <span class="entry-num">{String(n).padStart(2, "0")}</span>
         <h3>{title}</h3>
@@ -114,10 +123,13 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
 
       <div class="row">
         <button class="btn" onClick={play} data-state={busy === "play" ? "loading" : undefined} disabled={busy !== ""}>▶ Read back</button>
-        {e.kind === "medication" && !confirmed && !editing && (
+        {e.kind === "medication" && !settled && !editing && (
           <button class="btn" onClick={() => { setDraft(e); setEditing(true); }}>Edit</button>
         )}
-        {!confirmed && (
+        {!settled && !editing && (
+          <button class="btn btn-ghost" onClick={reject} data-state={busy === "reject" ? "loading" : undefined} disabled={busy !== ""}>Reject</button>
+        )}
+        {!settled && (
           <button class="btn btn-primary" onClick={startConfirm} data-state={busy === "confirm" ? "loading" : undefined} disabled={busy !== "" || editing}>
             Confirm
           </button>

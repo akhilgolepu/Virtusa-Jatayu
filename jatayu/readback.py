@@ -8,7 +8,7 @@ from functools import lru_cache
 from jatayu import config
 from jatayu.audio import decode_to_16k
 from jatayu.models import Entry, MedicationEntry
-from jatayu.spoken import below_100, decimal_words, to_words
+from jatayu.spoken import decimal_words
 
 UNIT_WORDS = {"mg": "milligram", "mcg": "microgram", "g": "gram", "ml": "millilitre", "L/min": "litre per minute",
               "units": "unit", "puffs": "puff", "drops": "drop", "mmol": "millimole", "mEq": "milliequivalent"}
@@ -25,12 +25,8 @@ def _unit(unit: str, value: float) -> str:
 
 
 def _clock(entry: Entry) -> str:
-    t = entry.time.value
-    hour = to_words(t.hour % 12 or 12)
-    if t.minute == 0:
-        return f"at {hour} o'clock"
-    minute = f"oh {below_100(t.minute)}" if t.minute < 10 else below_100(t.minute, hyphen=True)
-    return f"at {hour} {minute}"
+    """24-hour digits ("at 14:32"); the voice reads them as "fourteen thirty-two"."""
+    return f"at {entry.time.value:%H:%M}"
 
 
 def readback_text(entry: Entry) -> str:
@@ -51,7 +47,7 @@ def readback_text(entry: Entry) -> str:
     warnings = [f.message for f in entry.flags if f.severity == "high"]
     if warnings:
         text += " " + " ".join(f"Warning: {m}" for m in warnings)
-    return text
+    return text + " Confirm?"
 
 
 @lru_cache(maxsize=1)
