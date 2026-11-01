@@ -23,3 +23,49 @@ def test_corruptions_change_the_record():
     assert corrupt(base, "dose_x10", lex)["dose_value"] == 3.0
     assert corrupt(base, "mg_mcg_swap", lex)["dose_unit"] == "mcg"
     assert corrupt(base, "wrong_route", lex)["route"] not in lex.drug("epinephrine").routes
+
+
+def test_not_range_checked_is_not_a_seeded_catch():
+    from eval.seeded_errors import CATCH
+    assert "no_reference_range" not in CATCH
+
+
+def _root(tmp_path):
+    root = tmp_path / "data"
+    subprocess.run([sys.executable, "-m", "datagen.build", "--seed", "1234", "--per-pattern", "3", "--root", str(root)],
+                   check=True, capture_output=True)
+    return root
+
+
+def test_harder_variant_and_range_class_split(tmp_path):
+    from eval.seeded_errors import main
+    root = _root(tmp_path)
+    assert main(["--n", "40", "--variant", "harder", "--root", str(root), "--out", str(tmp_path / "res"), "--tag", "h"]) == 0
+    m = json.loads((tmp_path / "res" / "h" / "metrics.json").read_text())
+    assert set(m["by_corruption"]) == {"dose_x2", "dose_x5", "digit_slip", "mg_to_g"}
+    assert set(m["by_range_class"]) <= {"cited", "illustrative", "none"}
+    assert sum(v["denominator"] for v in m["by_range_class"].values()) == 40
+    assert m["split"] == "dev" and m["variant"] == "harder"
+
+
+def test_false_flags_are_tabulated_and_runs_logged(tmp_path):
+    from eval.seeded_errors import main
+    root = _root(tmp_path)
+    main(["--n", "40", "--root", str(root), "--out", str(tmp_path / "res"), "--tag", "f"])
+    out = tmp_path / "res" / "f"
+    m = json.loads((out / "metrics.json").read_text())
+    rows = [json.loads(l) for l in (out / "false_flags.jsonl").read_text().splitlines() if l]
+    assert len(rows) == m["false_flag_rate"]["count"] and all(r["rules"] for r in rows)
+    report = (out / "report.md").read_text()
+    assert "False-flag rate" in report and "Catch rate" in report
+    log = [json.loads(l) for l in (tmp_path / "res" / "run_log.jsonl").read_text().splitlines()]
+    assert log[-1]["runner"] == "eval.seeded_errors" and log[-1]["split"] == "dev"
+
+
+def test_digit_slip_changes_one_digit():
+    from eval.seeded_errors import corrupt
+    from jatayu.lexicon import Lexicon
+    import random
+    out = corrupt({"drug": "epinephrine", "dose_value": 0.3, "dose_unit": "mg", "route": "IM"}, "digit_slip",
+                  Lexicon.load(), random.Random(1))
+    assert out["dose_value"] != 0.3 and len(f"{out['dose_value']:g}") == len("0.3")

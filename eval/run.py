@@ -9,7 +9,6 @@ import argparse
 import json
 import re
 import statistics
-import subprocess
 import sys
 import time
 from collections import defaultdict
@@ -18,9 +17,12 @@ from pathlib import Path
 
 from datagen.splits import _path, frozen_hashes, load_split
 from eval.metrics import Scorer
+from eval.runlog import log_run
 from jatayu import config
 
 SNRS = (20, 10, 5)
+TEXT_LABEL = "template-generated; extractor and generator share a lexicon; not a headline number"
+SPEECH_LABEL = "synthetic speech (Piper)"  # real recordings are not wired into the harness yet
 
 
 def _extractor(name: str):
@@ -61,24 +63,14 @@ def _leakage(root: Path) -> dict:
             "test_patterns_in_final_test": len({pattern(u) for u in test} & {pattern(u) for u in final})}
 
 
-def _commit() -> str:
-    try:
-        return subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True,
-                              cwd=config.ROOT).stdout.strip()
-    except OSError:
-        return "unknown"
-
-
 def _audio_rows(root: Path, split: str, mode: str) -> list[dict]:
     sub = "tts" if mode == "audio" else "noisy"
     path = root / "audio" / sub / f"{split}.jsonl"
     return [json.loads(l) for l in path.read_text().splitlines() if l.strip()]
 
 
-def run(args) -> dict:
+def run(args, start: dict) -> dict:
     root = Path(args.root)
-    if args.split == "final_test" and not args.sealed_ok:
-        raise PermissionError("final_test is sealed until Stage 3 S7; pass --sealed-ok only then")
     utts = load_split(args.split, final=args.split in ("test", "final_test"), sealed_ok=args.sealed_ok, root=root)
     by_id = {u.id: u for u in utts}
     lex, x = _extractor(args.extractor)
@@ -141,7 +133,9 @@ def run(args) -> dict:
         "config": {"split": args.split, "mode": args.mode, "extractor": args.extractor, "tag": args.tag,
                    "n_utterances": len(evaluated), "n_clips": len(latencies),
                    "split_sha256": frozen_hashes(root).get(_path(args.split, root).name) if args.split in ("test", "final_test") else None,
-                   "commit": _commit(), "created": datetime.now().astimezone().isoformat(),
+                   "commit_at_start": start["commit"], "started": start["timestamp"],
+                   "created": datetime.now().astimezone().isoformat(),
+                   "source_label": TEXT_LABEL if args.mode == "text" else SPEECH_LABEL,
                    "asr_model": config.ASR_MODEL_DIR.name if args.mode != "text" else None,
                    "llm_model": config.LLM_MODEL_PATH.name if args.extractor != "rules" else None},
         "metrics": m,
@@ -173,7 +167,8 @@ def _report(o: dict, errors: list[dict]) -> str:
     m, c = o["metrics"], o["config"]
     lines = [f"# Evaluation `{c['tag']}`", "",
              f"Split **{c['split']}** · mode **{c['mode']}** · extractor **{c['extractor']}** · "
-             f"n = {c['n_utterances']} utterances · commit `{c['commit']}`",
+             f"n = {c['n_utterances']} utterances · commit at start `{c['commit_at_start']}`",
+             f"**Source: {c['source_label']}**",
              f"Split hash: `{c['split_sha256']}`" if c["split_sha256"] else "", "",
              "Decision-support demo, not a clinical device. Synthetic data (see README).", "",
              "| Metric | Value |", "|---|---|",
@@ -221,7 +216,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", type=Path, default=config.ROOT / "results")
     ap.add_argument("--sealed-ok", action="store_true", help="allow final_test (Stage 3 S7 only)")
     args = ap.parse_args(argv)
-    o, errors = run(args)
+    if args.split == "final_test" and not args.sealed_ok:
+        raise PermissionError("final_test is sealed until Stage 3 S7; pass --sealed-ok only then")
+    start = log_run(args.out, runner="eval.run", split=args.split, tag=args.tag, mode=args.mode,
+                    extractor=args.extractor, limit=args.limit)
+    o, errors = run(args, start)
     out = args.out / args.tag
     out.mkdir(parents=True, exist_ok=True)
     (out / "metrics.json").write_text(json.dumps(o, indent=2, default=str) + "\n", encoding="utf-8")

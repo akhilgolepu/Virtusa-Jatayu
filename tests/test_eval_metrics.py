@@ -78,3 +78,10 @@ def test_measurement_reading_in_dose_field_is_not_an_entity_error():
           [pred(drug="magnesium sulfate", dose=0.6, unit=None, route=None, flags=[meas])])
     m = s.metrics()
     assert m["record_exact_match"]["rate"] == 1.0 and m["entity"]["per_field"]["dose_value"]["pred"] == 0
+
+
+def test_not_range_checked_flag_does_not_catch_a_dangerous_error():
+    s = Scorer()
+    unchecked = Flag(code="no_reference_range", field="dose_value", severity="medium", message="")
+    s.add(utt([gold()]), [pred(dose=5.0, flags=[unchecked])])
+    assert s.metrics()["dangerous_error"]["count"] == 1

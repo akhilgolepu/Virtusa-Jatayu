@@ -4,7 +4,7 @@
   normalised value equals gold (dose within 1e-6, time within 60 s of the anchored gold time).
 - Record exact match: every gold field of the record equals the matched prediction's.
 - Dangerous error: a matched given-medication record whose drug, dose, unit or route is wrong AND carries no
-  catching flag (any flag except time_not_stated), over all given gold records, reported as count/denominator.
+  catching flag (any flag except time_not_stated / no_reference_range), over all given gold records, reported as count/denominator.
   A gold record with no prediction is a miss (recall), not a dangerous error.
 - Context error (spec §9): a not_given/measurement gold record emitted without possible_not_given/possible_measurement.
 """
@@ -18,7 +18,9 @@ from jatayu.models import Entry, MedicationEntry
 
 FIELDS = ("drug", "dose_value", "dose_unit", "route", "time", "procedure")
 DANGER_FIELDS = ("drug", "dose_value", "dose_unit", "route")
-NON_CATCHING = {"time_not_stated"}
+# Flags that do NOT catch an error: "time not stated" is about time, and "no_reference_range" says the dose was
+# NOT range-checked at all.
+NON_CATCHING = {"time_not_stated", "no_reference_range"}
 CONTEXT_FLAGS = {"not_given": "possible_not_given", "measurement": "possible_measurement"}
 TIME_TOLERANCE_S = 60
 

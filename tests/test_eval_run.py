@@ -53,3 +53,22 @@ def test_audio_mode_on_real_data(tmp_path):
                  "--out", str(tmp_path)]) == 0
     m = json.loads((tmp_path / "a1" / "metrics.json").read_text())
     assert 0 <= m["asr"]["wer"] <= 2 and 0 <= m["asr"]["drug_term_recall"] <= 1
+
+
+def test_every_run_is_logged_with_split_tag_and_start_commit(tiny_root, tmp_path):
+    from eval.run import main
+    main(["--split", "dev", "--tag", "log1", "--extractor", "rules", "--root", str(tiny_root), "--out", str(tmp_path)])
+    main(["--split", "test", "--tag", "log2", "--extractor", "rules", "--root", str(tiny_root), "--out", str(tmp_path)])
+    rows = [json.loads(l) for l in (tmp_path / "run_log.jsonl").read_text().splitlines()]
+    assert [(r["split"], r["tag"]) for r in rows] == [("dev", "log1"), ("test", "log2")]
+    assert all(r["commit"] and r["timestamp"] and r["runner"] == "eval.run" for r in rows)
+    m = json.loads((tmp_path / "log2" / "metrics.json").read_text())
+    assert m["config"]["commit_at_start"] == rows[1]["commit"]
+
+
+def test_text_results_carry_the_template_label(tiny_root, tmp_path):
+    from eval.run import main
+    main(["--split", "dev", "--tag", "lab", "--extractor", "rules", "--root", str(tiny_root), "--out", str(tmp_path)])
+    m = json.loads((tmp_path / "lab" / "metrics.json").read_text())
+    label = "template-generated; extractor and generator share a lexicon; not a headline number"
+    assert m["config"]["source_label"] == label and label in (tmp_path / "lab" / "report.md").read_text()
