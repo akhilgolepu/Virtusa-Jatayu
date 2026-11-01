@@ -110,7 +110,11 @@ class Scorer:
                                  "output": _show(pvals[i][1]), "expected": None, **(meta or {})})
 
     def _score_record(self, utt, g: GoldEntry, gv: dict, match, meta) -> None:
-        pv = match[1] if match else {f: None for f in FIELDS}
+        pv = dict(match[1]) if match else {f: None for f in FIELDS}
+        if g.context == "measurement":
+            # spec §13: a reading put in the dose field is judged only by its flag, not as a dose/unit/route error
+            for f in ("dose_value", "dose_unit", "route"):
+                pv[f] = None
         p = match[0] if match else None
         flags = {fl.code for fl in p.flags} if p else set()
         wrong = []

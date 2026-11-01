@@ -69,3 +69,12 @@ def test_extra_prediction_is_a_false_positive():
     s = Scorer()
     s.add(utt([gold()]), [pred(), pred(drug="aspirin", dose=300, unit="mg", route="PO")])
     assert s.metrics()["entity"]["per_field"]["drug"]["precision"] == 0.5
+
+
+def test_measurement_reading_in_dose_field_is_not_an_entity_error():
+    s = Scorer()
+    meas = Flag(code="possible_measurement", field="drug", severity="high", message="")
+    s.add(utt([gold(drug="magnesium sulfate", dose=None, unit=None, route=None, ctx="measurement")]),
+          [pred(drug="magnesium sulfate", dose=0.6, unit=None, route=None, flags=[meas])])
+    m = s.metrics()
+    assert m["record_exact_match"]["rate"] == 1.0 and m["entity"]["per_field"]["dose_value"]["pred"] == 0
