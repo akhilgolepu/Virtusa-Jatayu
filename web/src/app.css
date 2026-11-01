@@ -119,10 +119,9 @@ kbd { font: 400 var(--text-xs) var(--font-mono); padding: 1px 6px; border-radius
   @keyframes pulse { 50% { opacity: 0.25; } }
 }
 
-.cells { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
-@media (min-width: 560px) { .cells { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.cells { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr)); gap: var(--space-2); }
 .cell { border: var(--rule); border-radius: var(--radius-cell); padding: var(--space-3); min-width: 0; }
-.cell .value { font: 500 var(--text-lg) / 1.2 var(--font-body); overflow-wrap: anywhere; }
+.cell .value { font: 500 var(--text-lg) / 1.2 var(--font-body); overflow-wrap: break-word; hyphens: auto; }
 .cell .value.empty { color: var(--color-ink-3); }
 
 /* ---------- transcript spans ---------- */
