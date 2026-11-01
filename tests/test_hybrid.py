@@ -122,3 +122,18 @@ def test_one_time_phrase_can_cover_two_drugs(lexicon):
                                      {"drug": 8, "dose": 6, "unit": 7, "route": 9, "time": 1}]})
     a, b = hybrid(lexicon, runner).extract(raw, CAP)
     assert a.time.value == b.time.value and not any(f.code == "llm_unsupported" for f in a.flags + b.flags)
+
+
+def test_exact_drug_match_is_not_low_confidence(lexicon):
+    [e] = hybrid(lexicon, StubRunner({"entries": [{"drug": 1, "dose": 2, "unit": 3, "route": 4}]})).extract("morphine 5 mg IV", CAP)
+    assert not any(f.code == "low_confidence" for f in e.flags)
+    [f] = hybrid(lexicon, StubRunner({"entries": [{"drug": 1, "dose": 2, "unit": 3, "route": 4}]})).extract("ondansatron 4 mg IV", CAP)
+    assert any(x.code == "low_confidence" for x in f.flags)
+
+
+def test_fields_outside_the_entry_kind_are_ignored_not_consumed(lexicon):
+    raw = "gave point three milligrams of adrenaline IM two minutes ago and started CPR"
+    out = {"entries": [{"drug": 3, "dose": 1, "unit": 2, "route": 4, "time": 5, "procedure": 6}, {"procedure": 6}]}
+    med, proc = hybrid(lexicon, StubRunner(out)).extract(raw, CAP)
+    assert med.drug.value == "epinephrine" and proc.kind == "procedure" and proc.procedure.value == "cpr"
+    assert not any(f.code == "llm_unsupported" for f in med.flags + proc.flags)

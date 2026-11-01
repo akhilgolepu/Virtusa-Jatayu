@@ -14,6 +14,7 @@ from jatayu.normalise.timeparse import find_times
 
 LLM_CONFIDENCE = 0.9
 FIELDS = ("drug", "dose", "unit", "route", "time", "procedure", "detail")
+KIND_FIELDS = {"medication": ("drug", "dose", "unit", "route", "time"), "procedure": ("procedure", "time", "detail")}
 ENTRY_FIELD = {"drug": "drug", "dose": "dose_value", "unit": "dose_unit", "route": "route", "time": "time",
                "procedure": "procedure", "detail": "detail"}
 
@@ -134,7 +135,7 @@ class LlmExtractor:
             near = anchor_span[0] if anchor_span else None
             fields: dict[str, Field | None] = {}
             unsupported: list[str] = []
-            for name in FIELDS:
+            for name in KIND_FIELDS[kind]:
                 quote = item.get(name)
                 if not quote:
                     continue

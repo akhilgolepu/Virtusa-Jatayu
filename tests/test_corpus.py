@@ -113,10 +113,10 @@ def test_stats(tmp_path):
 
 
 def test_record_page_offline(tmp_path):
+    # /record is a route of the DOT single-page app since Phase 3 (the Phase 2 page lives on as the fallback).
     client, _ = _client(tmp_path, "x")
     html = client.get("/record").text
     assert "Decision-support demo, not a clinical device." in html
-    assert "/api/corpus/recordings" in html
     assert not re.search(r"(src|href)=\"https?://", html)
 
 

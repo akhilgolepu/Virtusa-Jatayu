@@ -32,3 +32,6 @@ graphify-out/
 # deep-research working notes and reports (planning material, kept local)
 research_notes/
 reports/
+
+# frontend dependencies (build output in jatayu/web/dist IS committed)
+web/node_modules/

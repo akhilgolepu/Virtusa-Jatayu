@@ -1,0 +1,76 @@
+/* Hallmark · studied-DNA (source: plastic.audio/dot) · Jatayu Phase 3
+ * paper oklch(14.1% 0.003 69) · ink oklch(95.5% 0.008 91) · red oklch(57.5% 0.213 30) = recording + high flags only
+ * display: Archivo (uppercase, 500) · body: Uncut Sans · mono: JetBrains Mono (timer, doses, hashes)
+ * borrowed: Mecha ledger tables (audit) · flags carry icon + text, never colour alone
+ */
+:root {
+  --color-paper: oklch(14.1% 0.003 69);
+  --color-paper-2: oklch(18.4% 0.004 69);
+  --color-paper-3: oklch(23% 0.005 69);
+  --color-ink: oklch(95.5% 0.008 91);
+  --color-ink-2: oklch(95.5% 0.008 91 / 0.74);
+  --color-ink-3: oklch(95.5% 0.008 91 / 0.54);
+  --color-rule: oklch(95.5% 0.008 91 / 0.14);
+  --color-rule-strong: oklch(95.5% 0.008 91 / 0.32);
+  --color-mark: oklch(95.5% 0.008 91 / 0.13);
+  --color-red: oklch(57.5% 0.213 30);
+  --color-red-soft: oklch(57.5% 0.213 30 / 0.16);
+  --color-on-red: oklch(98.5% 0.006 30);
+  --color-amber: oklch(80% 0.14 78);
+  --color-ok: oklch(78% 0.13 152);
+  --color-focus: oklch(86% 0.13 88);
+  --color-scrim: oklch(8% 0.003 69 / 0.72);
+
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Uncut Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+  --text-timer: clamp(3.25rem, 2rem + 6vw, 5.75rem);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  --radius-card: 14px;
+  --radius-cell: 10px;
+  --radius-pill: 999px;
+  --rule: 1px solid var(--color-rule);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 120ms;
+  --dur-med: 220ms;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --color-paper: oklch(97.2% 0.006 91);
+  --color-paper-2: oklch(94.4% 0.008 91);
+  --color-paper-3: oklch(90.5% 0.01 91);
+  --color-ink: oklch(17% 0.004 69);
+  --color-ink-2: oklch(17% 0.004 69 / 0.76);
+  --color-ink-3: oklch(17% 0.004 69 / 0.58);
+  --color-rule: oklch(17% 0.004 69 / 0.14);
+  --color-rule-strong: oklch(17% 0.004 69 / 0.34);
+  --color-mark: oklch(17% 0.004 69 / 0.09);
+  --color-red: oklch(52% 0.205 29);
+  --color-red-soft: oklch(52% 0.205 29 / 0.12);
+  --color-amber: oklch(55% 0.13 70);
+  --color-ok: oklch(48% 0.12 152);
+  --color-focus: oklch(55% 0.16 255);
+  --color-scrim: oklch(20% 0.004 69 / 0.45);
+  color-scheme: light;
+}

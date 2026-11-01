@@ -7,7 +7,7 @@ import logging
 from collections.abc import Callable
 from datetime import datetime
 
-from jatayu.extract.llm import FIELDS, LLM_CONFIDENCE, _kind, assemble
+from jatayu.extract.llm import FIELDS, KIND_FIELDS, LLM_CONFIDENCE, _kind, assemble
 from jatayu.extract.rules import Candidate, RulesExtractor
 from jatayu.lexicon import Lexicon
 from jatayu.llm import LlmRunner
@@ -78,7 +78,7 @@ class HybridExtractor:
             context = item.get("context") or "given"
             fields: dict[str, Field | None] = {}
             unsupported: list[str] = []
-            for name in FIELDS:
+            for name in KIND_FIELDS[kind]:  # a medication's stray "procedure" id is ignored, not consumed
                 cid = item.get(name)
                 if cid is None:
                     continue
@@ -93,9 +93,10 @@ class HybridExtractor:
             if anchor is None:
                 continue  # an entry without its drug/procedure (or one reusing it) is not an entry
             extra = self._rules_flags(anchor, rules_entries)
-            if kind == "medication" and anchor.confidence < 0.95:
+            match = by_id[item["drug"]].confidence if kind == "medication" else 1.0  # lexicon match, not LLM certainty
+            if match < 0.95:
                 extra.append(Flag(code="low_confidence", field="drug", severity="medium",
-                                  message=f"Drug name matched approximately ({anchor.confidence:.2f})."))
+                                  message=f"Drug name matched approximately ({match:.2f})."))
             entry = assemble(kind, context, fields, unsupported, capture_time, extra)
             if entry is not None:
                 entries.append(entry)

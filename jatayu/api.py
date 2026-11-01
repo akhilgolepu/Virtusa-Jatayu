@@ -6,7 +6,8 @@ from importlib import resources
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import HTMLResponse, PlainTextResponse, Response
+from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from jatayu import config
@@ -197,13 +198,30 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
     def audit_verify():
         return asdict(audit.verify())
 
-    @app.get("/", response_class=HTMLResponse)
-    def page():
+    @app.get("/api/lexicon")
+    def lexicon_json():
+        return {"drugs": [{"name": n, "aliases": lexicon.drug(n).aliases, "routes": lexicon.drug(n).routes,
+                           "units": lexicon.drug(n).units} for n in lexicon.drug_names()],
+                "procedures": lexicon.procedure_names(), "routes": lexicon.route_codes(),
+                "units": lexicon.unit_codes()}
+
+    @app.get("/skeleton", response_class=HTMLResponse)
+    def skeleton_page():
         return resources.files("jatayu.web").joinpath("skeleton.html").read_text("utf-8")
 
-    @app.get("/record", response_class=HTMLResponse)
-    def record_page():
-        return resources.files("jatayu.web").joinpath("record.html").read_text("utf-8")
+    # The DOT-styled single-page app (built by `npm run build` in web/, committed so no Node is needed to run).
+    dist = Path(__file__).resolve().parent / "web" / "dist"
+    if (dist / "assets").is_dir():
+        app.mount("/assets", StaticFiles(directory=dist / "assets"), name="assets")
+
+    @app.get("/{path:path}", response_class=HTMLResponse, include_in_schema=False)
+    def spa(path: str):
+        if path.startswith("api/"):
+            raise HTTPException(404, "not found")
+        index = dist / "index.html"
+        if index.exists():
+            return FileResponse(index, media_type="text/html")
+        return resources.files("jatayu.web").joinpath("skeleton.html").read_text("utf-8")
 
     return app
 

@@ -77,3 +77,8 @@ def test_real_llm_on_two_drugs(lexicon):
     got = LlmExtractor(lexicon, lambda: runner).extract("aspirin 300 mg PO and 4 mg ondansetron IV", CAP)
     assert [(e.drug.value, e.dose_value.value, e.dose_unit.value, e.route.value) for e in got] == \
         [("aspirin", 300.0, "mg", "PO"), ("ondansetron", 4.0, "mg", "IV")]
+
+
+def test_stray_fields_outside_the_kind_do_not_flag(lexicon):
+    [e] = ext(lexicon, "gave aspirin 300 mg PO", [_e(drug="aspirin", dose="300", unit="mg", route="PO", procedure="gave")])
+    assert not any(f.code == "llm_unsupported" for f in e.flags)
