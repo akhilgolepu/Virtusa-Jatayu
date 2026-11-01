@@ -26,7 +26,9 @@ def _prov(entry: Entry, names: tuple[str, ...], utterance_id: str | None = None)
     for name in names:
         f: Field | None = getattr(entry, name)
         if f is not None:
-            record[name] = {"span": list(f.span) if f.span else None, "confidence": f.confidence, "source": f.source}
+            record[name] = {"span": list(f.span) if f.span else None, "confidence": f.confidence, "source": f.source,
+                            "raw": f.raw}
+    record["time_source"] = entry.time_source
     record["flags"] = [fl.model_dump() for fl in entry.flags]
     return [{"url": "urn:jatayu:provenance", "valueString": _canonical(record)}]
 

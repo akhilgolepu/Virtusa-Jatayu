@@ -104,7 +104,7 @@ class HybridExtractor:
                     continue
                 used[name].add(cid)
                 fields[name] = Field(value=c.value, span=c.span, confidence=min(c.confidence, LLM_CONFIDENCE),
-                                     source="llm")
+                                     source="llm", raw=c.text)
             anchor = fields.get("drug" if kind == "medication" else "procedure")
             if anchor is None:
                 continue  # an entry without its drug/procedure (or one reusing it) is not an entry

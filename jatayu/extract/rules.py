@@ -157,16 +157,19 @@ class RulesExtractor:
         return entries
 
     def _f(self, nt: NormalisedText, value, i: int, j: int, confidence: float = 1.0) -> Field:
-        return Field(value=value, span=nt.raw_span(i, j), confidence=confidence, source="rules")
+        span = nt.raw_span(i, j)
+        return Field(value=value, span=span, confidence=confidence, source="rules", raw=nt.raw[span[0]:span[1]])
 
     def _time(self, nt, times, s, e, capture_time):
         inside = [t for t in times if s <= t.tok_start < e]
         if inside:
             t = inside[0]
-            return Field[datetime](value=t.value, span=t.span, confidence=1.0, source="rules"), []
+            return Field[datetime](value=t.value, span=t.span, confidence=1.0, source="rules",
+                                   raw=nt.raw[t.span[0]:t.span[1]]), []
         if len(times) == 1:
             t = times[0]
-            return Field[datetime](value=t.value, span=t.span, confidence=SHARED_TIME_CONFIDENCE, source="rules"), []
+            return Field[datetime](value=t.value, span=t.span, confidence=SHARED_TIME_CONFIDENCE, source="rules",
+                                   raw=nt.raw[t.span[0]:t.span[1]]), []
         return (Field[datetime](value=capture_time, span=None, confidence=1.0, source="rules"),
                 [Flag(code="time_not_stated", field="time", severity="low",
                       message="No time stated; using capture time.")])

@@ -123,3 +123,11 @@ def test_ambiguous_procedure_aliases_removed(lexicon):
     assert all(e.kind != "procedure" for e in ext(lexicon, "oxygen 4 litres per minute via nasal cannula"))
     a, c = ext(lexicon, "adrenaline 1 mg IV started compressions")
     assert (a.drug.value, a.route.value) == ("epinephrine", "IV") and c.procedure.value == "cpr"
+
+
+def test_raw_name_and_time_source(lexicon):
+    [e] = ext(lexicon, "gave 0.3 mg Adrenaline IM two mins ago")
+    assert (e.drug.raw, e.drug.value) == ("Adrenaline", "epinephrine")
+    assert e.time_source == "spoken" and e.model_dump()["time_source"] == "spoken"
+    [f] = ext(lexicon, "aspirin 300 mg PO")
+    assert f.time_source == "device_clock"

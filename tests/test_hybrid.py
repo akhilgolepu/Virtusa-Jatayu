@@ -144,3 +144,8 @@ def test_drugs_the_llm_leaves_out_are_kept_from_rules(lexicon):
         "gave 1 mg adrenaline IV and 10 mg morphine IV", CAP)
     assert sorted(e.drug.value for e in entries) == ["epinephrine", "morphine"]
     assert all(any(f.code == "llm_omitted" for f in e.flags) for e in entries) and warnings
+
+
+def test_hybrid_carries_raw_words(lexicon):
+    [e] = hybrid(lexicon, StubRunner({"entries": [{"drug": 1, "dose": 2, "unit": 3, "route": 4}]})).extract("Emeset 4 mg IV", CAP)
+    assert (e.drug.raw, e.drug.value, e.dose_unit.raw) == ("Emeset", "ondansetron", "mg")

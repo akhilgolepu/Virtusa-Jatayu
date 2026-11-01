@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Generic, Literal, TypeVar, Union
 
-from pydantic import BaseModel, Discriminator, field_validator, model_validator
+from pydantic import BaseModel, Discriminator, computed_field, field_validator, model_validator
 from pydantic import Field as PydField
 
 T = TypeVar("T")
@@ -18,6 +18,7 @@ class Field(BaseModel, Generic[T]):
     span: Span | None
     confidence: float = PydField(ge=0.0, le=1.0)
     source: Source
+    raw: str | None = None  # the transcript words the value was read from (e.g. "Emeset" for ondansetron)
 
     @field_validator("span")
     @classmethod
@@ -58,6 +59,14 @@ class MedicationEntry(BaseModel):
     time: Field[datetime]
     flags: list[Flag] = []
 
+    @computed_field
+    @property
+    def time_source(self) -> Literal["spoken", "device_clock", "user"]:
+        """spoken: a time phrase in the transcript; device_clock: none stated, capture time used; user: edited."""
+        if self.time.source == "user":
+            return "user"
+        return "spoken" if self.time.span is not None else "device_clock"
+
 
 class ProcedureEntry(BaseModel):
     kind: Literal["procedure"] = "procedure"
@@ -66,6 +75,14 @@ class ProcedureEntry(BaseModel):
     time: Field[datetime]
     detail: Field[str] | None = None
     flags: list[Flag] = []
+
+    @computed_field
+    @property
+    def time_source(self) -> Literal["spoken", "device_clock", "user"]:
+        """spoken: a time phrase in the transcript; device_clock: none stated, capture time used; user: edited."""
+        if self.time.source == "user":
+            return "user"
+        return "spoken" if self.time.span is not None else "device_clock"
 
 
 Entry = Annotated[Union[MedicationEntry, ProcedureEntry], Discriminator("kind")]

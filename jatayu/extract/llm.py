@@ -144,7 +144,8 @@ class LlmExtractor:
                 if span is None or value is None:
                     unsupported.append(name)
                     continue
-                fields[name] = Field(value=value, span=span, confidence=LLM_CONFIDENCE, source="llm")
+                fields[name] = Field(value=value, span=span, confidence=LLM_CONFIDENCE, source="llm",
+                                     raw=raw[span[0]:span[1]])
             entry = assemble(kind, context, fields, unsupported, capture_time)
             if entry is not None:
                 entries.append(entry)
