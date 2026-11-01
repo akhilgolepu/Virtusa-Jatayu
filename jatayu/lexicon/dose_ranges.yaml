@@ -1,0 +1,1398 @@
+# Adult dose ranges for the validator (decision-support demo, not a clinical device).
+# Source: NASEMSO National Model EMS Clinical Guidelines v3.0 (March 2022), https://nasemso.org/docs.ashx?id=1444322,
+# cited per row by guideline section and printed page. Rows marked secondary: true are NOT NASEMSO values
+# (AHA 2025 via a secondary reproduction, or unverified); INDIA rows come from the National Formulary of
+# India 2011 and manufacturer labels. Generated from the deep-research report on 2026-11-01.
+# min null = no lower bound stated; max null = no cap; per_kg = per-kilogram dose (max is the adult cap).
+dose_ranges:
+  adenosine:
+  - route: IV
+    unit: mg
+    min: 6.0
+    max: 12.0
+    per_kg: null
+    min_repeat_s: null
+    indication: stable SVT (6, 12, 12; 30 mg total)
+    source: Tachycardia with a Pulse p.42
+  - route: IV
+    unit: mg
+    min: 6.0
+    max: 12.0
+    per_kg: null
+    min_repeat_s: null
+    indication: stable regular monomorphic wide-complex (18 mg total)
+    source: Tachycardia with a Pulse p.43
+  amiodarone:
+  - route: IV
+    unit: mg
+    min: null
+    max: 300.0
+    per_kg: 5.0
+    min_repeat_s: null
+    indication: cardiac arrest, refractory VF/pVT
+    source: Cardiac Arrest p.119
+  - route: IO
+    unit: mg
+    min: null
+    max: 300.0
+    per_kg: 5.0
+    min_repeat_s: null
+    indication: cardiac arrest, refractory VF/pVT
+    source: Cardiac Arrest p.119
+  - route: IV
+    unit: mg
+    min: 150.0
+    max: 300.0
+    per_kg: null
+    min_repeat_s: null
+    indication: cardiac arrest, refractory VF/pVT
+    source: 'SECONDARY: AHA 2025 ACLS via acls-algorithms.com'
+    secondary: true
+  - route: IO
+    unit: mg
+    min: 150.0
+    max: 300.0
+    per_kg: null
+    min_repeat_s: null
+    indication: cardiac arrest, refractory VF/pVT
+    source: 'SECONDARY: AHA 2025 ACLS via acls-algorithms.com'
+    secondary: true
+  - route: IV
+    unit: mg
+    min: 150.0
+    max: 150.0
+    per_kg: null
+    min_repeat_s: null
+    indication: stable wide-complex tachycardia (repeat once; 300 mg total)
+    source: Tachycardia with a Pulse pp.43-44
+  aspirin:
+  - route: PO
+    unit: mg
+    min: 162.0
+    max: 325.0
+    per_kg: null
+    min_repeat_s: null
+    indication: chest pain / ACS (single dose)
+    source: Chest Pain/ACS/STEMI p.32
+  atropine:
+  - route: IV
+    unit: mg
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: 180
+    indication: symptomatic bradycardia (3 mg total)
+    source: Bradycardia p.36
+  - route: IV
+    unit: mg
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: 300
+    indication: bradycardia in beta-blocker or CCB overdose (3 mg total)
+    source: Beta Blocker OD p.288; CCB OD p.296
+  - route: IM
+    unit: mg
+    min: 2.0
+    max: 2.0
+    per_kg: null
+    min_repeat_s: null
+    indication: organophosphate, mild
+    source: Acetylcholinesterase Inhibitors p.265 Table 1
+  - route: IV
+    unit: mg
+    min: 2.0
+    max: 2.0
+    per_kg: null
+    min_repeat_s: null
+    indication: organophosphate, mild
+    source: Acetylcholinesterase Inhibitors p.265 Table 1
+  - route: IM
+    unit: mg
+    min: 2.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: null
+    indication: organophosphate, mild-moderate
+    source: Acetylcholinesterase Inhibitors p.265 Table 2
+  - route: IV
+    unit: mg
+    min: 2.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: null
+    indication: organophosphate, mild-moderate
+    source: Acetylcholinesterase Inhibitors p.265 Table 2
+  - route: IM
+    unit: mg
+    min: 6.0
+    max: 6.0
+    per_kg: null
+    min_repeat_s: null
+    indication: organophosphate, severe (repeat rapidly; no cumulative cap)
+    source: Acetylcholinesterase Inhibitors pp.264, 266
+  - route: IV
+    unit: mg
+    min: 6.0
+    max: 6.0
+    per_kg: null
+    min_repeat_s: null
+    indication: organophosphate, severe (repeat rapidly; no cumulative cap)
+    source: Acetylcholinesterase Inhibitors pp.264, 266
+  calcium chloride:
+  - route: IV
+    unit: g
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: null
+    indication: cardiac arrest with hyperkalaemia/dialysis
+    source: Cardiac Arrest p.119
+  - route: IV
+    unit: g
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hyperkalaemia (DKA); crush syndrome
+    source: Hyperglycemia p.82; Crush Injury p.223
+  - route: IO
+    unit: g
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hyperkalaemia (DKA); crush syndrome
+    source: Hyperglycemia p.82; Crush Injury p.223
+  - route: IV
+    unit: g
+    min: 0.5
+    max: 1.0
+    per_kg: null
+    min_repeat_s: null
+    indication: CCB overdose (50 mg/min)
+    source: CCB OD p.296
+  - route: IV
+    unit: g
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: null
+    indication: magnesium toxicity
+    source: Eclampsia/Pre-Eclampsia p.173
+  dexamethasone:
+  - route: PO
+    unit: mg
+    min: null
+    max: 16.0
+    per_kg: 0.6
+    min_repeat_s: null
+    indication: asthma/COPD (single dose)
+    source: Respiratory Distress p.192
+  - route: IV
+    unit: mg
+    min: null
+    max: 16.0
+    per_kg: 0.6
+    min_repeat_s: null
+    indication: asthma/COPD (single dose)
+    source: Respiratory Distress p.192
+  - route: IM
+    unit: mg
+    min: null
+    max: 16.0
+    per_kg: 0.6
+    min_repeat_s: null
+    indication: asthma/COPD (single dose)
+    source: Respiratory Distress p.192
+  - route: IV
+    unit: mg
+    min: null
+    max: 16.0
+    per_kg: 0.6
+    min_repeat_s: null
+    indication: shock / adrenal insufficiency (alternative)
+    source: Shock p.109
+  - route: IM
+    unit: mg
+    min: null
+    max: 16.0
+    per_kg: 0.6
+    min_repeat_s: null
+    indication: shock / adrenal insufficiency (alternative)
+    source: Shock p.109
+  - route: IM
+    unit: mg
+    min: 4.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: 21600
+    indication: acute mountain sickness
+    source: Altitude Illness p.342
+  - route: IV
+    unit: mg
+    min: 4.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: 21600
+    indication: acute mountain sickness
+    source: Altitude Illness p.342
+  - route: PO
+    unit: mg
+    min: 4.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: 21600
+    indication: acute mountain sickness
+    source: Altitude Illness p.342
+  - route: IM
+    unit: mg
+    min: 4.0
+    max: 8.0
+    per_kg: null
+    min_repeat_s: 21600
+    indication: HACE (8 mg load, then 4 mg q6h)
+    source: Altitude Illness pp.342-343
+  - route: IV
+    unit: mg
+    min: 4.0
+    max: 8.0
+    per_kg: null
+    min_repeat_s: 21600
+    indication: HACE (8 mg load, then 4 mg q6h)
+    source: Altitude Illness pp.342-343
+  - route: PO
+    unit: mg
+    min: 4.0
+    max: 8.0
+    per_kg: null
+    min_repeat_s: 21600
+    indication: HACE (8 mg load, then 4 mg q6h)
+    source: Altitude Illness pp.342-343
+  dextrose:
+  - route: PO
+    unit: g
+    min: 25.0
+    max: 25.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hypoglycaemia, airway intact
+    source: Hypoglycemia p.85
+  - route: IV
+    unit: g
+    min: null
+    max: 25.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hypoglycaemia
+    source: Hypoglycemia p.85
+  - route: IV
+    unit: g
+    min: null
+    max: 25.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hypoglycaemia
+    source: Hypoglycemia p.85
+  - route: IV
+    unit: g
+    min: null
+    max: 25.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hypoglycaemia
+    source: Hypoglycemia pp.85-86
+  - route: IV
+    unit: ml
+    min: null
+    max: 250.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hypoglycaemia (25 g max = 250 mL D10; 100 mL D25; 50 mL D50)
+    source: Hypoglycemia p.85 (volume equivalents of the 25 g maximum)
+  diazepam:
+  - route: IV
+    unit: mg
+    min: null
+    max: 10.0
+    per_kg: 0.2
+    min_repeat_s: null
+    indication: seizure
+    source: Seizures p.102
+  - route: IO
+    unit: mg
+    min: null
+    max: 10.0
+    per_kg: 0.2
+    min_repeat_s: null
+    indication: seizure
+    source: Seizures p.102
+  - route: PR
+    unit: mg
+    min: null
+    max: 20.0
+    per_kg: 0.2
+    min_repeat_s: null
+    indication: seizure, no other route
+    source: Seizures p.102
+  - route: IV
+    unit: mg
+    min: 5.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: null
+    indication: agitation
+    source: Agitated or Violent Patient p.60
+  - route: IM
+    unit: mg
+    min: 10.0
+    max: 10.0
+    per_kg: null
+    min_repeat_s: null
+    indication: agitation
+    source: Agitated or Violent Patient p.60
+  - route: IV
+    unit: mg
+    min: 2.0
+    max: 2.0
+    per_kg: null
+    min_repeat_s: 300
+    indication: shivering during cooling (repeat once)
+    source: Hyperthermia p.322
+  diphenhydramine:
+  - route: IV
+    unit: mg
+    min: null
+    max: 50.0
+    per_kg: 1.0
+    min_repeat_s: null
+    indication: urticaria/pruritus
+    source: Anaphylaxis p.67
+  - route: IM
+    unit: mg
+    min: null
+    max: 50.0
+    per_kg: 1.0
+    min_repeat_s: null
+    indication: urticaria/pruritus
+    source: Anaphylaxis p.67
+  - route: PO
+    unit: mg
+    min: null
+    max: 50.0
+    per_kg: 1.0
+    min_repeat_s: null
+    indication: urticaria/pruritus
+    source: Anaphylaxis p.67
+  - route: IV
+    unit: mg
+    min: 25.0
+    max: 50.0
+    per_kg: null
+    min_repeat_s: null
+    indication: agitation; dystonia/EPS; mild allergy
+    source: Agitated Patient p.61; Nausea-Vomiting p.90; Poisoning p.256
+  - route: IM
+    unit: mg
+    min: 25.0
+    max: 50.0
+    per_kg: null
+    min_repeat_s: null
+    indication: agitation; dystonia/EPS; mild allergy
+    source: Agitated Patient p.61; Nausea-Vomiting p.90; Poisoning p.256
+  - route: PO
+    unit: mg
+    min: 25.0
+    max: 50.0
+    per_kg: null
+    min_repeat_s: null
+    indication: agitation; dystonia/EPS; mild allergy
+    source: Agitated Patient p.61; Nausea-Vomiting p.90; Poisoning p.256
+  - route: IV
+    unit: mg
+    min: 12.5
+    max: 25.0
+    per_kg: null
+    min_repeat_s: null
+    indication: nausea/vomiting
+    source: Nausea-Vomiting p.90
+  - route: IM
+    unit: mg
+    min: 12.5
+    max: 25.0
+    per_kg: null
+    min_repeat_s: null
+    indication: nausea/vomiting
+    source: Nausea-Vomiting p.90
+  - route: PO
+    unit: mg
+    min: 12.5
+    max: 25.0
+    per_kg: null
+    min_repeat_s: null
+    indication: nausea/vomiting
+    source: Nausea-Vomiting p.90
+  epinephrine:
+  - route: IM
+    unit: mg
+    min: 0.3
+    max: 0.3
+    per_kg: null
+    min_repeat_s: 300
+    indication: anaphylaxis (adult ≥25 kg)
+    source: Anaphylaxis and Allergic Reaction p.67
+  - route: IM
+    unit: mg
+    min: null
+    max: 0.3
+    per_kg: 0.01
+    min_repeat_s: null
+    indication: bronchospasm, impending respiratory failure
+    source: Respiratory Distress p.192
+  - route: NEB
+    unit: mg
+    min: 5.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: null
+    indication: anaphylaxis with wheeze or stridor
+    source: Anaphylaxis p.67
+  - route: IV
+    unit: mg
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: null
+    indication: cardiac arrest
+    source: Cardiac Arrest p.121 Pearl 11
+  - route: IO
+    unit: mg
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: null
+    indication: cardiac arrest
+    source: Cardiac Arrest p.121 Pearl 11
+  - route: IV
+    unit: mg
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: 180
+    indication: cardiac arrest
+    source: 'SECONDARY: AHA 2025 ACLS via acls-algorithms.com'
+    secondary: true
+  - route: IO
+    unit: mg
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: 180
+    indication: cardiac arrest
+    source: 'SECONDARY: AHA 2025 ACLS via acls-algorithms.com'
+    secondary: true
+  - route: IV
+    unit: mcg
+    min: 10.0
+    max: 20.0
+    per_kg: null
+    min_repeat_s: 120
+    indication: push-dose, symptomatic bradycardia
+    source: Bradycardia p.36
+  - route: IV
+    unit: mcg
+    min: null
+    max: 10.0
+    per_kg: 0.01
+    min_repeat_s: 180
+    indication: push-dose, shock (pediatric-style wording)
+    source: Shock p.109
+  fentanyl:
+  - route: IV
+    unit: mcg
+    min: null
+    max: 100.0
+    per_kg: 1.0
+    min_repeat_s: 300
+    indication: moderate-severe pain
+    source: Pain Management p.94
+  - route: IO
+    unit: mcg
+    min: null
+    max: 100.0
+    per_kg: 1.0
+    min_repeat_s: 300
+    indication: moderate-severe pain
+    source: Pain Management p.94
+  - route: IN
+    unit: mcg
+    min: null
+    max: 100.0
+    per_kg: 1.0
+    min_repeat_s: 300
+    indication: moderate-severe pain
+    source: Pain Management p.94
+  - route: IM
+    unit: mcg
+    min: null
+    max: 100.0
+    per_kg: 1.0
+    min_repeat_s: 300
+    indication: moderate-severe pain
+    source: Pain Management p.94
+  glucagon:
+  - route: IM
+    unit: mg
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hypoglycaemia, no IV access
+    source: Hypoglycemia p.85
+  - route: IN
+    unit: mg
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hypoglycaemia, no IV access
+    source: Hypoglycemia p.85
+  - route: IN
+    unit: mg
+    min: 3.0
+    max: 3.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hypoglycaemia, prefilled dry-powder device
+    source: Hypoglycemia p.85
+  - route: IV
+    unit: mg
+    min: 5.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: 300
+    indication: beta-blocker overdose (10 mg total)
+    source: Beta Blocker OD p.288
+  - route: IV
+    unit: mg
+    min: 1.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: 300
+    indication: CCB overdose (5 mg, then 1 mg q5 min)
+    source: CCB OD p.296
+  hydrocortisone:
+  - route: IV
+    unit: mg
+    min: null
+    max: 100.0
+    per_kg: 2.0
+    min_repeat_s: null
+    indication: adrenal insufficiency / refractory shock (preferred)
+    source: Shock p.109
+  - route: IM
+    unit: mg
+    min: null
+    max: 100.0
+    per_kg: 2.0
+    min_repeat_s: null
+    indication: adrenal insufficiency / refractory shock (preferred)
+    source: Shock p.109
+  ipratropium:
+  - route: NEB
+    unit: mg
+    min: 0.5
+    max: 0.5
+    per_kg: null
+    min_repeat_s: null
+    indication: bronchospasm with albuterol (max 3 doses)
+    source: Respiratory Distress pp.191-192
+  ketamine:
+  - route: IV
+    unit: mg
+    min: null
+    max: 25.0
+    per_kg: 0.25
+    min_repeat_s: 300
+    indication: analgesia
+    source: Pain Management p.94
+  - route: IO
+    unit: mg
+    min: null
+    max: 25.0
+    per_kg: 0.25
+    min_repeat_s: 300
+    indication: analgesia
+    source: Pain Management p.94
+  - route: IM
+    unit: mg
+    min: null
+    max: 25.0
+    per_kg: 0.25
+    min_repeat_s: 300
+    indication: analgesia
+    source: Pain Management p.94
+  - route: IV
+    unit: mg
+    min: null
+    max: null
+    per_kg: 2.0
+    min_repeat_s: null
+    indication: agitation, high violence risk
+    source: Agitated or Violent Patient p.61
+  - route: IM
+    unit: mg
+    min: null
+    max: null
+    per_kg: 4.0
+    min_repeat_s: null
+    indication: agitation, high violence risk
+    source: Agitated or Violent Patient p.61
+  ketorolac:
+  - route: IV
+    unit: mg
+    min: 15.0
+    max: 15.0
+    per_kg: null
+    min_repeat_s: null
+    indication: minor pain or adjunct
+    source: Pain Management p.94
+  - route: IM
+    unit: mg
+    min: 30.0
+    max: 30.0
+    per_kg: null
+    min_repeat_s: null
+    indication: minor pain or adjunct
+    source: Pain Management p.94
+  lorazepam:
+  - route: IV
+    unit: mg
+    min: null
+    max: 4.0
+    per_kg: 0.1
+    min_repeat_s: null
+    indication: seizure
+    source: Seizures p.102
+  - route: IO
+    unit: mg
+    min: null
+    max: 4.0
+    per_kg: 0.1
+    min_repeat_s: null
+    indication: seizure
+    source: Seizures p.102
+  - route: IV
+    unit: mg
+    min: 2.0
+    max: 2.0
+    per_kg: null
+    min_repeat_s: null
+    indication: agitation
+    source: Agitated or Violent Patient p.60
+  - route: IM
+    unit: mg
+    min: 4.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: null
+    indication: agitation
+    source: Agitated or Violent Patient p.60
+  - route: IV
+    unit: mg
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: 300
+    indication: shivering during cooling (repeat once)
+    source: Hyperthermia p.322
+  - route: IM
+    unit: mg
+    min: 2.0
+    max: 2.0
+    per_kg: null
+    min_repeat_s: 600
+    indication: shivering during cooling (repeat once)
+    source: Hyperthermia p.322
+  - route: SL
+    unit: mg
+    min: 1.0
+    max: 1.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hospice anxiety
+    source: End-of-Life Care p.79
+  magnesium sulfate:
+  - route: IV
+    unit: g
+    min: 2.0
+    max: 2.0
+    per_kg: null
+    min_repeat_s: null
+    indication: torsades in cardiac arrest
+    source: Cardiac Arrest p.119
+  - route: IV
+    unit: g
+    min: 1.0
+    max: 2.0
+    per_kg: null
+    min_repeat_s: null
+    indication: torsades with a pulse
+    source: Tachycardia with a Pulse p.44
+  - route: IV
+    unit: g
+    min: null
+    max: 2.0
+    per_kg: 40.0
+    min_repeat_s: null
+    indication: severe asthma
+    source: Respiratory Distress p.192
+  - route: IV
+    unit: g
+    min: 4.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: null
+    indication: severe pre-eclampsia / seizure prophylaxis (then 2 g/hr)
+    source: Eclampsia/Pre-Eclampsia p.172
+  - route: IV
+    unit: g
+    min: 6.0
+    max: 6.0
+    per_kg: null
+    min_repeat_s: null
+    indication: eclamptic seizure
+    source: Eclampsia/Pre-Eclampsia p.172
+  - route: IM
+    unit: g
+    min: 8.0
+    max: 8.0
+    per_kg: null
+    min_repeat_s: null
+    indication: eclamptic seizure (4 g each buttock)
+    source: Eclampsia/Pre-Eclampsia p.172
+  methylprednisolone:
+  - route: IV
+    unit: mg
+    min: null
+    max: 125.0
+    per_kg: 2.0
+    min_repeat_s: null
+    indication: asthma/COPD, critically ill (single dose)
+    source: Respiratory Distress p.192
+  - route: IM
+    unit: mg
+    min: null
+    max: 125.0
+    per_kg: 2.0
+    min_repeat_s: null
+    indication: asthma/COPD, critically ill (single dose)
+    source: Respiratory Distress p.192
+  - route: IV
+    unit: mg
+    min: null
+    max: 125.0
+    per_kg: 2.0
+    min_repeat_s: null
+    indication: shock / adrenal insufficiency (alternative)
+    source: Shock p.109
+  metoclopramide:
+  - route: IV
+    unit: mg
+    min: 10.0
+    max: 10.0
+    per_kg: null
+    min_repeat_s: null
+    indication: nausea/vomiting
+    source: Nausea-Vomiting p.89
+  - route: IM
+    unit: mg
+    min: 10.0
+    max: 10.0
+    per_kg: null
+    min_repeat_s: null
+    indication: nausea/vomiting
+    source: Nausea-Vomiting p.89
+  - route: IV
+    unit: mg
+    min: 5.0
+    max: 10.0
+    per_kg: null
+    min_repeat_s: null
+    indication: first-trimester nausea
+    source: Nausea-Vomiting p.90
+  midazolam:
+  - route: IM
+    unit: mg
+    min: null
+    max: 10.0
+    per_kg: 0.2
+    min_repeat_s: null
+    indication: seizure, no vascular access
+    source: Seizures p.102
+  - route: IN
+    unit: mg
+    min: null
+    max: 10.0
+    per_kg: 0.2
+    min_repeat_s: null
+    indication: seizure, no vascular access
+    source: Seizures p.102
+  - route: IV
+    unit: mg
+    min: null
+    max: 4.0
+    per_kg: 0.1
+    min_repeat_s: null
+    indication: seizure, vascular access
+    source: Seizures p.102
+  - route: IO
+    unit: mg
+    min: null
+    max: 4.0
+    per_kg: 0.1
+    min_repeat_s: null
+    indication: seizure, vascular access
+    source: Seizures p.102
+  - route: IV
+    unit: mg
+    min: 5.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: null
+    indication: agitation
+    source: Agitated or Violent Patient p.60
+  - route: IM
+    unit: mg
+    min: 5.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: null
+    indication: agitation
+    source: Agitated or Violent Patient p.60
+  - route: IN
+    unit: mg
+    min: 5.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: null
+    indication: agitation
+    source: Agitated or Violent Patient p.60
+  - route: IV
+    unit: mg
+    min: null
+    max: 5.0
+    per_kg: 0.1
+    min_repeat_s: null
+    indication: toxicological agitation
+    source: Poisoning/Overdose Universal Care pp.256-257
+  - route: IV
+    unit: mg
+    min: 2.5
+    max: 2.5
+    per_kg: null
+    min_repeat_s: 300
+    indication: shivering during heat-stroke cooling (repeat once)
+    source: Hyperthermia p.322
+  - route: IN
+    unit: mg
+    min: 2.5
+    max: 2.5
+    per_kg: null
+    min_repeat_s: 300
+    indication: shivering during heat-stroke cooling (repeat once)
+    source: Hyperthermia p.322
+  - route: IM
+    unit: mg
+    min: 5.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: 600
+    indication: shivering during heat-stroke cooling (repeat once)
+    source: Hyperthermia p.322
+  morphine:
+  - route: IV
+    unit: mg
+    min: null
+    max: 10.0
+    per_kg: 0.1
+    min_repeat_s: 300
+    indication: moderate-severe pain
+    source: Pain Management p.94
+  - route: IO
+    unit: mg
+    min: null
+    max: 10.0
+    per_kg: 0.1
+    min_repeat_s: 300
+    indication: moderate-severe pain
+    source: Pain Management p.94
+  - route: IM
+    unit: mg
+    min: null
+    max: 10.0
+    per_kg: 0.1
+    min_repeat_s: 300
+    indication: moderate-severe pain
+    source: Pain Management p.94
+  - route: IV
+    unit: mg
+    min: 1.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hospice dyspnoea
+    source: End-of-Life Care pp.78-79
+  - route: IM
+    unit: mg
+    min: 1.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hospice dyspnoea
+    source: End-of-Life Care pp.78-79
+  - route: SC
+    unit: mg
+    min: 1.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hospice dyspnoea
+    source: End-of-Life Care pp.78-79
+  naloxone:
+  - route: IV
+    unit: mg
+    min: 0.4
+    max: 2.0
+    per_kg: null
+    min_repeat_s: null
+    indication: opioid overdose (titrate)
+    source: Opioid Poisoning/Overdose p.304
+  - route: IM
+    unit: mg
+    min: 0.4
+    max: 2.0
+    per_kg: null
+    min_repeat_s: null
+    indication: opioid overdose (titrate)
+    source: Opioid Poisoning/Overdose p.304
+  - route: IN
+    unit: mg
+    min: null
+    max: 4.0
+    per_kg: null
+    min_repeat_s: null
+    indication: opioid overdose (titrate)
+    source: Opioid Poisoning/Overdose p.304
+  nitroglycerin:
+  - route: SL
+    unit: mg
+    min: 0.4
+    max: 0.4
+    per_kg: null
+    min_repeat_s: 180
+    indication: chest pain / ACS, SBP >100
+    source: Chest Pain/ACS/STEMI p.32
+  - route: SL
+    unit: mg
+    min: 0.4
+    max: 0.4
+    per_kg: null
+    min_repeat_s: 300
+    indication: pulmonary oedema, SBP 100-159
+    source: Respiratory Distress p.192
+  - route: SL
+    unit: mg
+    min: 0.8
+    max: 0.8
+    per_kg: null
+    min_repeat_s: 300
+    indication: pulmonary oedema, SBP ≥160 or MAP >120
+    source: Respiratory Distress p.192
+  normal saline:
+  - route: IV
+    unit: ml
+    min: 500.0
+    max: 500.0
+    per_kg: null
+    min_repeat_s: null
+    indication: medical shock bolus
+    source: Shock p.108
+  - route: IO
+    unit: ml
+    min: 500.0
+    max: 500.0
+    per_kg: null
+    min_repeat_s: null
+    indication: medical shock bolus
+    source: Shock p.108
+  - route: IV
+    unit: ml
+    min: 500.0
+    max: 500.0
+    per_kg: null
+    min_repeat_s: null
+    indication: trauma hypotension bolus
+    source: General Trauma Management pp.209-210
+  - route: IV
+    unit: ml
+    min: null
+    max: null
+    per_kg: 20.0
+    min_repeat_s: null
+    indication: anaphylaxis with hypoperfusion
+    source: Anaphylaxis p.67
+  - route: IO
+    unit: ml
+    min: null
+    max: null
+    per_kg: 20.0
+    min_repeat_s: null
+    indication: anaphylaxis with hypoperfusion
+    source: Anaphylaxis p.67
+  - route: IV
+    unit: ml
+    min: null
+    max: 2000.0
+    per_kg: 20.0
+    min_repeat_s: null
+    indication: envenomation
+    source: Bites and Envenomation p.292
+  - route: IV
+    unit: ml
+    min: 1000.0
+    max: 1000.0
+    per_kg: null
+    min_repeat_s: null
+    indication: crush injury before release
+    source: Crush Injury p.222
+  - route: IV
+    unit: ml
+    min: 2000.0
+    max: 2000.0
+    per_kg: null
+    min_repeat_s: null
+    indication: cardiac arrest from hypovolaemia
+    source: Cardiac Arrest p.119
+  - route: IV
+    unit: ml
+    min: null
+    max: 1000.0
+    per_kg: 10.0
+    min_repeat_s: null
+    indication: sickle-cell crisis
+    source: Sickle Cell Pain Crisis p.115
+  - route: IV
+    unit: ml
+    min: null
+    max: null
+    per_kg: 20.0
+    min_repeat_s: null
+    indication: hyperglycaemia with dehydration
+    source: Hyperglycemia p.82
+  ondansetron:
+  - route: IV
+    unit: mg
+    min: 4.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: null
+    indication: nausea/vomiting
+    source: Nausea-Vomiting p.89
+  - route: PO
+    unit: mg
+    min: 4.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: null
+    indication: nausea/vomiting
+    source: Nausea-Vomiting p.89
+  - route: SL
+    unit: mg
+    min: 4.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: null
+    indication: nausea/vomiting
+    source: Nausea-Vomiting p.89
+  - route: PO
+    unit: mg
+    min: 4.0
+    max: 8.0
+    per_kg: null
+    min_repeat_s: null
+    indication: nausea/vomiting
+    source: Nausea-Vomiting p.89
+  - route: IV
+    unit: mg
+    min: 4.0
+    max: 8.0
+    per_kg: null
+    min_repeat_s: null
+    indication: antiemetic prophylaxis, stimulant poisoning
+    source: Stimulant Poisoning p.280
+  - route: IM
+    unit: mg
+    min: 4.0
+    max: 8.0
+    per_kg: null
+    min_repeat_s: null
+    indication: antiemetic prophylaxis, stimulant poisoning
+    source: Stimulant Poisoning p.280
+  - route: IV
+    unit: mg
+    min: 4.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: 21600
+    indication: acute mountain sickness
+    source: Altitude Illness p.342
+  - route: PO
+    unit: mg
+    min: 4.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: 21600
+    indication: acute mountain sickness
+    source: Altitude Illness p.342
+  - route: SL
+    unit: mg
+    min: 4.0
+    max: 4.0
+    per_kg: null
+    min_repeat_s: 21600
+    indication: acute mountain sickness
+    source: Altitude Illness p.342
+  paracetamol:
+  - route: PO
+    unit: mg
+    min: null
+    max: 1000.0
+    per_kg: 15.0
+    min_repeat_s: null
+    indication: minor pain or adjunct
+    source: Pain Management p.93
+  - route: IV
+    unit: mg
+    min: null
+    max: 1000.0
+    per_kg: 15.0
+    min_repeat_s: null
+    indication: minor pain or adjunct
+    source: Pain Management p.93
+  - route: PO
+    unit: mg
+    min: null
+    max: 650.0
+    per_kg: 15.0
+    min_repeat_s: null
+    indication: fever after febrile seizure
+    source: Seizures p.102
+  - route: PR
+    unit: mg
+    min: null
+    max: 650.0
+    per_kg: 15.0
+    min_repeat_s: null
+    indication: fever after febrile seizure
+    source: Seizures p.102
+  - route: IV
+    unit: mg
+    min: null
+    max: 650.0
+    per_kg: 15.0
+    min_repeat_s: null
+    indication: fever after febrile seizure
+    source: Seizures p.102
+  - route: IO
+    unit: mg
+    min: null
+    max: 650.0
+    per_kg: 15.0
+    min_repeat_s: null
+    indication: fever after febrile seizure
+    source: Seizures p.102
+  pentazocine:
+  - route: IM
+    unit: mg
+    min: 30.0
+    max: 60.0
+    per_kg: null
+    min_repeat_s: 10800
+    indication: moderate-severe pain (360 mg/day)
+    source: 'INDIA: NFI 2011 p.12; Fortwin SmPC 4.2'
+  - route: SC
+    unit: mg
+    min: 30.0
+    max: 60.0
+    per_kg: null
+    min_repeat_s: 10800
+    indication: moderate-severe pain (360 mg/day)
+    source: 'INDIA: NFI 2011 p.12; Fortwin SmPC 4.2'
+  - route: IV
+    unit: mg
+    min: 30.0
+    max: 30.0
+    per_kg: null
+    min_repeat_s: 10800
+    indication: moderate-severe pain (360 mg/day)
+    source: 'INDIA: NFI 2011 p.12; Fortwin SmPC 4.2; Kwality SmPC 1.4(b)'
+  pheniramine:
+  - route: IM
+    unit: mg
+    min: 22.75
+    max: 45.5
+    per_kg: null
+    min_repeat_s: 43200
+    indication: allergy, urticaria (1-2 mL of 22.75 mg/mL)
+    source: 'INDIA: NFI 2011 p.34'
+  - route: IV
+    unit: mg
+    min: 22.75
+    max: 45.5
+    per_kg: null
+    min_repeat_s: 43200
+    indication: allergic conditions, slow IV 1 mL/min
+    source: 'INDIA: Sanofi India Avil PI 2019 pp.1-2'
+  ringer lactate:
+  - route: IV
+    unit: ml
+    min: 500.0
+    max: 500.0
+    per_kg: null
+    min_repeat_s: null
+    indication: medical shock bolus
+    source: Shock p.108
+  - route: IO
+    unit: ml
+    min: 500.0
+    max: 500.0
+    per_kg: null
+    min_repeat_s: null
+    indication: medical shock bolus
+    source: Shock p.108
+  - route: IV
+    unit: ml
+    min: 500.0
+    max: 500.0
+    per_kg: null
+    min_repeat_s: null
+    indication: trauma hypotension bolus
+    source: General Trauma Management pp.209-210
+  - route: IV
+    unit: ml
+    min: null
+    max: null
+    per_kg: 20.0
+    min_repeat_s: null
+    indication: anaphylaxis with hypoperfusion
+    source: Anaphylaxis p.67
+  - route: IO
+    unit: ml
+    min: null
+    max: null
+    per_kg: 20.0
+    min_repeat_s: null
+    indication: anaphylaxis with hypoperfusion
+    source: Anaphylaxis p.67
+  - route: IV
+    unit: ml
+    min: null
+    max: 2000.0
+    per_kg: 20.0
+    min_repeat_s: null
+    indication: envenomation
+    source: Bites and Envenomation p.292
+  salbutamol:
+  - route: NEB
+    unit: mg
+    min: 2.5
+    max: 2.5
+    per_kg: null
+    min_repeat_s: null
+    indication: mild wheeze
+    source: Respiratory Distress p.191
+  - route: NEB
+    unit: mg
+    min: 5.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: 0
+    indication: bronchospasm with distress (unlimited frequency)
+    source: Respiratory Distress p.191
+  - route: NEB
+    unit: mg
+    min: 2.5
+    max: 5.0
+    per_kg: null
+    min_repeat_s: null
+    indication: anaphylaxis with wheeze
+    source: Anaphylaxis p.67
+  - route: NEB
+    unit: mg
+    min: 5.0
+    max: 5.0
+    per_kg: null
+    min_repeat_s: null
+    indication: hyperkalaemia
+    source: Hyperglycemia p.82; Crush Injury p.223
+  - route: INH
+    unit: puffs
+    min: 6.0
+    max: 6.0
+    per_kg: null
+    min_repeat_s: 0
+    indication: bronchospasm with distress (unlimited frequency)
+    source: Respiratory Distress p.191
+  - route: INH
+    unit: puffs
+    min: 4.0
+    max: 8.0
+    per_kg: null
+    min_repeat_s: null
+    indication: irritant inhalation with wheeze
+    source: Airway Respiratory Irritants p.314
+  sodium bicarbonate:
+  - route: IV
+    unit: mEq
+    min: null
+    max: null
+    per_kg: 1.0
+    min_repeat_s: null
+    indication: cardiac arrest with hyperkalaemia or TCA overdose
+    source: Cardiac Arrest p.119
+  - route: IV
+    unit: mEq
+    min: null
+    max: 50.0
+    per_kg: 1.0
+    min_repeat_s: null
+    indication: hyperkalaemia; crush injury
+    source: Hyperglycemia p.82; Crush Injury pp.222-223
+  - route: IV
+    unit: mEq
+    min: null
+    max: null
+    per_kg: 1.0
+    min_repeat_s: null
+    indication: TCA/Na-channel or beta-blocker toxicity, QRS ≥100 ms
+    source: Poisoning Universal Care p.257; Beta Blocker OD p.288
+  tranexamic acid:
+  - route: IV
+    unit: g
+    min: 1.0
+    max: 2.0
+    per_kg: null
+    min_repeat_s: null
+    indication: haemorrhagic shock ≤3 h from injury
+    source: 'SECONDARY-UNVERIFIED: NAEMSP/ACEP/ACS-COT 2025 via UMEM summary'
+    secondary: true
+  - route: IO
+    unit: g
+    min: 1.0
+    max: 2.0
+    per_kg: null
+    min_repeat_s: null
+    indication: haemorrhagic shock ≤3 h from injury
+    source: 'SECONDARY-UNVERIFIED: NAEMSP/ACEP/ACS-COT 2025 via UMEM summary'
+    secondary: true

@@ -1,5 +1,4 @@
-# EMS drug lexicon. dose_ranges / min_repeat_s / source are filled in Plan 3 from the
-# NASEMSO National Model EMS Clinical Guidelines (cited per row). Until then the validator has no ranges.
+# EMS drug lexicon. Adult dose ranges live in dose_ranges.yaml (NASEMSO v3.0, cited per row).
 # Lines marked "# verify" are Indian brand names for Akhil to spot-check.
 drugs:
   epinephrine:
@@ -45,7 +44,7 @@ drugs:
   ondansetron:
     aliases: [zofran, emeset, vomikind, ondem]      # emeset, vomikind, ondem: verify
     atc: A04AA01
-    routes: [IV, IM, PO, IO]
+    routes: [IV, IM, PO, IO, SL]
     units: [mg]
   metoclopramide:
     aliases: [perinorm, reglan, maxolon]            # perinorm: verify
@@ -65,7 +64,7 @@ drugs:
   lorazepam:
     aliases: [ativan]
     atc: N05BA06
-    routes: [IV, IM, IO]
+    routes: [IV, IM, IO, SL]
     units: [mg]
   fentanyl:
     aliases: [fentanil, sublimaze]
@@ -85,7 +84,7 @@ drugs:
   pentazocine:
     aliases: [fortwin, talwin]                      # fortwin: verify
     atc: N02AD01
-    routes: [IV, IM]
+    routes: [IV, IM, SC]
     units: [mg]
   dextrose:
     aliases: [glucose, d50, d25, d10]
@@ -170,7 +169,7 @@ drugs:
   paracetamol:
     aliases: [acetaminophen, tylenol, calpol, dolo, crocin, pcm]   # calpol, dolo, crocin: verify
     atc: N02BE01
-    routes: [PO, IV, PR]
+    routes: [PO, IV, PR, IO]
     units: [mg, g]
   ketorolac:
     aliases: [toradol, ketorol]                     # ketorol: verify

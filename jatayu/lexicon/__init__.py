@@ -15,15 +15,26 @@ def _key(term: str) -> str:
     return " ".join(term.lower().split())
 
 
+class DoseRange(BaseModel):
+    """One cited adult dose row. min/max are in `unit`; per_kg rows use max as the adult cap."""
+    route: str
+    unit: str
+    min: float | None = None
+    max: float | None = None
+    per_kg: float | None = None
+    min_repeat_s: int | None = None
+    indication: str
+    source: str
+    secondary: bool = False  # not a NASEMSO value (AHA via secondary source, or unverified)
+
+
 class DrugInfo(BaseModel):
     name: str
     aliases: list[str]
     atc: str
     routes: list[str]
     units: list[str]
-    dose_ranges: list = []
-    min_repeat_s: int | None = None
-    source: str | None = None
+    dose_ranges: list[DoseRange] = []
 
 
 class ProcedureInfo(BaseModel):
@@ -48,7 +59,8 @@ class Lexicon:
     def load(cls, dir: Path | None = None) -> "Lexicon":
         d = dir or _HERE
         read = lambda name: yaml.safe_load((d / name).read_text(encoding="utf-8"))  # noqa: E731
-        drugs = {n: DrugInfo(name=n, **v) for n, v in read("drugs.yaml")["drugs"].items()}
+        ranges = read("dose_ranges.yaml")["dose_ranges"] if (d / "dose_ranges.yaml").exists() else {}
+        drugs = {n: DrugInfo(name=n, dose_ranges=ranges.get(n, []), **v) for n, v in read("drugs.yaml")["drugs"].items()}
         procs = {n: ProcedureInfo(name=n, **v) for n, v in read("procedures.yaml")["procedures"].items()}
         return cls(drugs, procs, read("units.yaml")["units"], read("routes.yaml")["routes"])
 
@@ -72,6 +84,14 @@ class Lexicon:
 
     def drug(self, name: str) -> DrugInfo:
         return self._drugs[name]
+
+    def dose_ranges(self, drug: str, route: str) -> list[DoseRange]:
+        return [r for r in self._drugs[drug].dose_ranges if r.route == route]
+
+    def min_repeat_s(self, drug: str, route: str) -> int | None:
+        """The smallest repeat interval any cited row states for this drug and route (None if none is stated)."""
+        stated = [r.min_repeat_s for r in self.dose_ranges(drug, route) if r.min_repeat_s is not None]
+        return min(stated) if stated else None
 
     def procedure(self, name: str) -> ProcedureInfo:
         return self._procedures[name]
