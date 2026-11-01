@@ -1,0 +1,10 @@
+$ python -m f2r.cli --db sample.sqlite verify    # before tamper
+{"ok": true, "checked": 10, "first_bad_seq": null, "reason": null}
+exit code: 0
+
+$ python scripts/tamper.py --db sample.sqlite --seq 5 --dose 1500    # fentanyl 150 mcg -> 1500
+tampered seq 5: 1 dose value(s) set to 1500.0 (trigger dropped and restored)
+
+$ python -m f2r.cli --db sample.sqlite verify    # after tamper
+{"ok": false, "checked": 4, "first_bad_seq": 5, "reason": "payload hash mismatch"}
+exit code: 1

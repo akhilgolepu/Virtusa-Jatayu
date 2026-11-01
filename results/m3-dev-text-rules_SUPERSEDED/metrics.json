@@ -1,0 +1,222 @@
+{
+  "config": {
+    "split": "dev",
+    "mode": "text",
+    "extractor": "rules",
+    "tag": "m3-dev-text-rules",
+    "n_utterances": 480,
+    "n_clips": 480,
+    "split_sha256": null,
+    "commit": "263fc6b",
+    "created": "2026-11-01T22:29:34.954032+05:30",
+    "asr_model": null,
+    "llm_model": null
+  },
+  "metrics": {
+    "entity": {
+      "micro": {
+        "tp": 1878,
+        "gold": 1878,
+        "pred": 1918,
+        "precision": 0.9791,
+        "recall": 1.0,
+        "f1": 0.9895
+      },
+      "per_field": {
+        "drug": {
+          "tp": 460,
+          "gold": 460,
+          "pred": 460,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "dose_value": {
+          "tp": 380,
+          "gold": 380,
+          "pred": 420,
+          "precision": 0.9048,
+          "recall": 1.0,
+          "f1": 0.95
+        },
+        "dose_unit": {
+          "tp": 380,
+          "gold": 380,
+          "pred": 380,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "route": {
+          "tp": 360,
+          "gold": 360,
+          "pred": 360,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "time": {
+          "tp": 238,
+          "gold": 238,
+          "pred": 238,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "procedure": {
+          "tp": 60,
+          "gold": 60,
+          "pred": 60,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      }
+    },
+    "record_exact_match": {
+      "count": 480,
+      "denominator": 520,
+      "rate": 0.9231
+    },
+    "dangerous_error": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "context_error": {
+      "count": 20,
+      "denominator": 80,
+      "rate": 0.25
+    },
+    "anomaly_flagged": {
+      "count": 23,
+      "denominator": 23,
+      "rate": 1.0
+    },
+    "source_quote_coverage": {
+      "count": 1680,
+      "denominator": 1680,
+      "rate": 1.0
+    }
+  },
+  "groups": {
+    "category:context_measurement": {
+      "entity_f1": 0.6667,
+      "record_exact_match": 0.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:context_negation": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:hinglish": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 60,
+        "rate": 0.0
+      }
+    },
+    "category:med_basic": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 40,
+        "rate": 0.0
+      }
+    },
+    "category:med_correction": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 60,
+        "rate": 0.0
+      }
+    },
+    "category:med_incomplete": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 40,
+        "rate": 0.0
+      }
+    },
+    "category:med_messy": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 60,
+        "rate": 0.0
+      }
+    },
+    "category:med_multi": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 80,
+        "rate": 0.0
+      }
+    },
+    "category:procedure": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 60,
+        "rate": 0.0
+      }
+    },
+    "category:time_clock": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 40,
+        "rate": 0.0
+      }
+    },
+    "lang:en": {
+      "entity_f1": 0.988,
+      "record_exact_match": 0.913,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 380,
+        "rate": 0.0
+      }
+    },
+    "lang:hinglish": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 60,
+        "rate": 0.0
+      }
+    }
+  },
+  "latency_s": {
+    "n": 480,
+    "p50": 0.0001,
+    "p95": 0.0002,
+    "mean": 0.0001
+  },
+  "leakage": {
+    "test_families_in_train_or_dev": 0,
+    "test_patterns_in_final_test": 0
+  }
+}

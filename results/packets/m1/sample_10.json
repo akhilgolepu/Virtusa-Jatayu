@@ -1,0 +1,87 @@
+{
+  "utterance": {
+    "id": "fda70022fad4460d83eae30e180b8a26",
+    "incident_id": "a151ed73d4dc43a8a869319619f68d89",
+    "capture_time": "2026-11-01T23:20:17.763713+05:30",
+    "raw_transcript": "ondansetron 4, no sorry, 2 mg IV",
+    "audio_sha256": null,
+    "audio_path": null
+  },
+  "entries": [
+    {
+      "kind": "medication",
+      "id": "e97a2fbff11643b483503afe99cb30d2",
+      "drug": {
+        "value": "ondansetron",
+        "span": [
+          0,
+          11
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "ondansetron"
+      },
+      "dose_value": {
+        "value": 2.0,
+        "span": [
+          25,
+          26
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "2"
+      },
+      "dose_unit": {
+        "value": "mg",
+        "span": [
+          27,
+          29
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "mg"
+      },
+      "route": {
+        "value": "IV",
+        "span": [
+          30,
+          32
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "IV"
+      },
+      "time": {
+        "value": "2026-11-01T23:20:17.763713+05:30",
+        "span": null,
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": null
+      },
+      "flags": [
+        {
+          "code": "time_not_stated",
+          "field": "time",
+          "severity": "low",
+          "message": "No time stated; using capture time."
+        },
+        {
+          "code": "dose_below_range",
+          "field": "dose_value",
+          "severity": "medium",
+          "message": "2 mg is below the published adult dose. Source: Altitude Illness p.342; Nausea-Vomiting p.89."
+        },
+        {
+          "code": "repeat_too_soon",
+          "field": "time",
+          "severity": "high",
+          "message": "ondansetron repeated after 3 s; the published minimum interval is 21600 s."
+        }
+      ],
+      "time_source": "device_clock"
+    }
+  ],
+  "audit_seq": 10,
+  "asr": null,
+  "warnings": []
+}

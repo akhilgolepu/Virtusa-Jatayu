@@ -1,0 +1,97 @@
+"""Core data model. Every extracted value carries a span into the raw transcript."""
+from __future__ import annotations
+
+import uuid
+from datetime import datetime
+from typing import Annotated, Generic, Literal, TypeVar, Union
+
+from pydantic import BaseModel, Discriminator, computed_field, field_validator, model_validator
+from pydantic import Field as PydField
+
+T = TypeVar("T")
+Span = tuple[int, int]
+Source = Literal["rules", "llm", "ner", "user"]
+
+
+class Field(BaseModel, Generic[T]):
+    value: T | None
+    span: Span | None
+    confidence: float = PydField(ge=0.0, le=1.0)
+    source: Source
+    raw: str | None = None  # the transcript words the value was read from (e.g. "Emeset" for ondansetron)
+
+    @field_validator("span")
+    @classmethod
+    def _ordered(cls, v: Span | None) -> Span | None:
+        if v is not None and not (0 <= v[0] <= v[1]):
+            raise ValueError(f"span must satisfy 0 <= start <= end, got {v}")
+        return v
+
+    @model_validator(mode="after")
+    def _aware_datetime(self) -> "Field[T]":
+        if isinstance(self.value, datetime) and self.value.tzinfo is None:
+            raise ValueError("datetime values must be timezone-aware")
+        return self
+
+    @classmethod
+    def missing(cls, source: Source) -> "Field":
+        return cls(value=None, span=None, confidence=0.0, source=source)
+
+
+class Flag(BaseModel):
+    code: str
+    field: str | None = None
+    severity: Literal["high", "medium", "low"]
+    message: str
+
+
+def _new_id() -> str:
+    return uuid.uuid4().hex
+
+
+class MedicationEntry(BaseModel):
+    kind: Literal["medication"] = "medication"
+    id: str = PydField(default_factory=_new_id)
+    drug: Field[str]
+    dose_value: Field[float]
+    dose_unit: Field[str]
+    route: Field[str]
+    time: Field[datetime]
+    flags: list[Flag] = []
+
+    @computed_field
+    @property
+    def time_source(self) -> Literal["spoken", "device_clock", "user"]:
+        """spoken: a time phrase in the transcript; device_clock: none stated, capture time used; user: edited."""
+        if self.time.source == "user":
+            return "user"
+        return "spoken" if self.time.span is not None else "device_clock"
+
+
+class ProcedureEntry(BaseModel):
+    kind: Literal["procedure"] = "procedure"
+    id: str = PydField(default_factory=_new_id)
+    procedure: Field[str]
+    time: Field[datetime]
+    detail: Field[str] | None = None
+    flags: list[Flag] = []
+
+    @computed_field
+    @property
+    def time_source(self) -> Literal["spoken", "device_clock", "user"]:
+        """spoken: a time phrase in the transcript; device_clock: none stated, capture time used; user: edited."""
+        if self.time.source == "user":
+            return "user"
+        return "spoken" if self.time.span is not None else "device_clock"
+
+
+Entry = Annotated[Union[MedicationEntry, ProcedureEntry], Discriminator("kind")]
+
+
+class Utterance(BaseModel):
+    id: str = PydField(default_factory=_new_id)
+    incident_id: str
+    capture_time: datetime
+    raw_transcript: str
+    audio_sha256: str | None = None
+    audio_path: str | None = None

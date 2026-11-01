@@ -1,0 +1,75 @@
+{
+  "utterance": {
+    "id": "016122da33ad4d528fcca6cd179001fd",
+    "incident_id": "a151ed73d4dc43a8a869319619f68d89",
+    "capture_time": "2026-11-01T23:20:14.200966+05:30",
+    "raw_transcript": "gave 0.3 mg adrenaline IM",
+    "audio_sha256": null,
+    "audio_path": null
+  },
+  "entries": [
+    {
+      "kind": "medication",
+      "id": "fb598a4251e9425792335672aa7996c0",
+      "drug": {
+        "value": "epinephrine",
+        "span": [
+          12,
+          22
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "adrenaline"
+      },
+      "dose_value": {
+        "value": 0.3,
+        "span": [
+          5,
+          8
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "0.3"
+      },
+      "dose_unit": {
+        "value": "mg",
+        "span": [
+          9,
+          11
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "mg"
+      },
+      "route": {
+        "value": "IM",
+        "span": [
+          23,
+          25
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "IM"
+      },
+      "time": {
+        "value": "2026-11-01T23:20:14.200966+05:30",
+        "span": null,
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": null
+      },
+      "flags": [
+        {
+          "code": "time_not_stated",
+          "field": "time",
+          "severity": "low",
+          "message": "No time stated; using capture time."
+        }
+      ],
+      "time_source": "device_clock"
+    }
+  ],
+  "audit_seq": 1,
+  "asr": null,
+  "warnings": []
+}

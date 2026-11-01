@@ -1,0 +1,106 @@
+[
+  {
+    "input": "morphine 2 to 4 mg IV",
+    "what_it_tests": "a dose range: both values, or a flag that a range was spoken",
+    "output": [
+      {
+        "drug": "morphine",
+        "dose": 4.0,
+        "unit": "mg",
+        "route": "IV",
+        "time_source": "device_clock",
+        "flags": [
+          "time_not_stated"
+        ]
+      }
+    ],
+    "expected": "morphine 2-4 mg IV (or flagged)"
+  },
+  {
+    "input": "ketamine 1 mg per kg IV",
+    "what_it_tests": "a weight-based dose (1 mg/kg)",
+    "output": [
+      {
+        "drug": "ketamine",
+        "dose": 1.0,
+        "unit": "mg",
+        "route": "IV",
+        "time_source": "device_clock",
+        "flags": [
+          "time_not_stated",
+          "weight_based_dose"
+        ]
+      }
+    ],
+    "expected": "ketamine 1 mg/kg IV, flagged as per-kg"
+  },
+  {
+    "input": "adrenaline 1 mg IV, then another 1 mg two minutes later",
+    "what_it_tests": "two administrations",
+    "output": [
+      {
+        "drug": "epinephrine",
+        "dose": 1.0,
+        "unit": "mg",
+        "route": "IV",
+        "time_source": "device_clock",
+        "flags": [
+          "time_not_stated"
+        ]
+      }
+    ],
+    "expected": "2 x epinephrine 1 mg IV"
+  },
+  {
+    "input": "adrenaline 1 mg IV at 10:40 and amiodarone 300 mg IV",
+    "what_it_tests": "amiodarone's time not stated",
+    "output": [
+      {
+        "drug": "epinephrine",
+        "dose": 1.0,
+        "unit": "mg",
+        "route": "IV",
+        "time_source": "spoken",
+        "flags": []
+      },
+      {
+        "drug": "amiodarone",
+        "dose": 300.0,
+        "unit": "mg",
+        "route": "IV",
+        "time_source": "spoken",
+        "flags": []
+      }
+    ],
+    "expected": "amiodarone time = not stated (flagged)"
+  },
+  {
+    "input": "gave 4 mg ondansetron 10 mg metoclopramide IV",
+    "what_it_tests": "two drugs, two doses, no separator",
+    "output": [
+      {
+        "drug": "ondansetron",
+        "dose": 4.0,
+        "unit": "mg",
+        "route": null,
+        "time_source": "device_clock",
+        "flags": [
+          "time_not_stated",
+          "field_missing"
+        ]
+      },
+      {
+        "drug": "metoclopramide",
+        "dose": null,
+        "unit": null,
+        "route": "IV",
+        "time_source": "device_clock",
+        "flags": [
+          "time_not_stated",
+          "field_missing"
+        ]
+      }
+    ],
+    "expected": "ondansetron 4 mg IV; metoclopramide 10 mg IV"
+  }
+]

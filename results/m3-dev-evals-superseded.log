@@ -1,0 +1,15 @@
+m3-dev-text-rules: entity F1 0.990 · exact 0.923 · dangerous 0/440 → /home/akhil/VirtusaJatayu/results/m3-dev-text-rules
+m3-dev-text-hybrid: entity F1 0.978 · exact 0.852 · dangerous 3/440 → /home/akhil/VirtusaJatayu/results/m3-dev-text-hybrid
+m3-dev-text-llm: entity F1 0.874 · exact 0.752 · dangerous 1/440 → /home/akhil/VirtusaJatayu/results/m3-dev-text-llm
+hybrid falling back to rules: LLM call failed: Expecting value: line 1 column 925 (char 924)
+hybrid falling back to rules: LLM call failed: Unterminated string starting at: line 1 column 918 (char 917)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 1385 (char 1384)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 1385 (char 1384)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 1385 (char 1384)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 917 (char 916)
+hybrid falling back to rules: LLM call failed: Expecting value: line 1 column 926 (char 925)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 917 (char 916)
+m3-dev-audio-hybrid: entity F1 0.575 · exact 0.262 · dangerous 6/440 → /home/akhil/VirtusaJatayu/results/m3-dev-audio-hybrid
+hybrid falling back to rules: LLM call failed: Expecting ',' delimiter: line 1 column 927 (char 926)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 917 (char 916)
+m3-dev-noise-hybrid: entity F1 0.594 · exact 0.371 · dangerous 2/240 → /home/akhil/VirtusaJatayu/results/m3-dev-noise-hybrid

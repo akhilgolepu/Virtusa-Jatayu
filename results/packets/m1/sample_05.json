@@ -1,0 +1,78 @@
+{
+  "utterance": {
+    "id": "65244793166c4976b985b0bff6cd0bd4",
+    "incident_id": "a151ed73d4dc43a8a869319619f68d89",
+    "capture_time": "2026-11-01T23:20:15.722210+05:30",
+    "raw_transcript": "fentanyl one hundred and fifty micrograms IV just now",
+    "audio_sha256": null,
+    "audio_path": null
+  },
+  "entries": [
+    {
+      "kind": "medication",
+      "id": "40bcef3702244241b5b108dc41a95ac6",
+      "drug": {
+        "value": "fentanyl",
+        "span": [
+          0,
+          8
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "fentanyl"
+      },
+      "dose_value": {
+        "value": 150.0,
+        "span": [
+          9,
+          30
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "one hundred and fifty"
+      },
+      "dose_unit": {
+        "value": "mcg",
+        "span": [
+          31,
+          41
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "micrograms"
+      },
+      "route": {
+        "value": "IV",
+        "span": [
+          42,
+          44
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "IV"
+      },
+      "time": {
+        "value": "2026-11-01T23:20:15.722210+05:30",
+        "span": [
+          45,
+          53
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "just now"
+      },
+      "flags": [
+        {
+          "code": "dose_out_of_range",
+          "field": "dose_value",
+          "severity": "high",
+          "message": "150 mcg is outside the published adult dose range. Source: Pain Management p.94."
+        }
+      ],
+      "time_source": "spoken"
+    }
+  ],
+  "audit_seq": 5,
+  "asr": null,
+  "warnings": []
+}

@@ -1,0 +1,6 @@
+{"timestamp": "2026-11-01T23:17:47.881537+05:30", "commit": "bce5504", "runner": "eval.run", "split": "dev", "tag": "m3-dev-text-rules", "mode": "text", "extractor": "rules", "limit": 0}
+{"timestamp": "2026-11-01T23:17:48.230441+05:30", "commit": "bce5504", "runner": "eval.run", "split": "dev", "tag": "m3-dev-text-hybrid", "mode": "text", "extractor": "hybrid", "limit": 0}
+{"timestamp": "2026-11-01T23:18:21.532681+05:30", "commit": "bce5504-dirty", "runner": "eval.seeded_errors (reproduction of the first run on worktree @d05ea05)", "split": "dev", "tag": "m3-seeded-dev-seed7-FIRST-RUN", "variant": "standard", "seed": 7, "n": 200}
+{"timestamp": "2026-11-01T23:18:39.039056+05:30", "commit": "bce5504-dirty", "runner": "eval.seeded_errors", "split": "dev", "tag": "m3-seeded-dev-seed7-false-flags", "variant": "standard", "seed": 7, "n": 200}
+{"timestamp": "2026-11-01T23:18:39.314860+05:30", "commit": "bce5504-dirty", "runner": "eval.seeded_errors", "split": "test", "tag": "m3-seeded-test-seed2026-FRESH", "variant": "standard", "seed": 2026, "n": 200}
+{"timestamp": "2026-11-01T23:18:39.580204+05:30", "commit": "bce5504-dirty", "runner": "eval.seeded_errors", "split": "test", "tag": "m3-seeded-test-seed2027-HARDER", "variant": "harder", "seed": 2027, "n": 200}

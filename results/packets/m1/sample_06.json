@@ -1,0 +1,75 @@
+{
+  "utterance": {
+    "id": "2f853097665d4c55a8597b8d1f857adc",
+    "incident_id": "a151ed73d4dc43a8a869319619f68d89",
+    "capture_time": "2026-11-01T23:20:16.119427+05:30",
+    "raw_transcript": "morphine 5 mg IV, pain score 8, no nausea",
+    "audio_sha256": null,
+    "audio_path": null
+  },
+  "entries": [
+    {
+      "kind": "medication",
+      "id": "9083d045ca67436cab9fab794199240c",
+      "drug": {
+        "value": "morphine",
+        "span": [
+          0,
+          8
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "morphine"
+      },
+      "dose_value": {
+        "value": 5.0,
+        "span": [
+          9,
+          10
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "5"
+      },
+      "dose_unit": {
+        "value": "mg",
+        "span": [
+          11,
+          13
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "mg"
+      },
+      "route": {
+        "value": "IV",
+        "span": [
+          14,
+          16
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "IV"
+      },
+      "time": {
+        "value": "2026-11-01T23:20:16.119427+05:30",
+        "span": null,
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": null
+      },
+      "flags": [
+        {
+          "code": "time_not_stated",
+          "field": "time",
+          "severity": "low",
+          "message": "No time stated; using capture time."
+        }
+      ],
+      "time_source": "device_clock"
+    }
+  ],
+  "audit_seq": 6,
+  "asr": null,
+  "warnings": []
+}

@@ -1,0 +1,84 @@
+{
+  "utterance": {
+    "id": "4ce13071d9164d1794c8271a04180f9b",
+    "incident_id": "a151ed73d4dc43a8a869319619f68d89",
+    "capture_time": "2026-11-01T23:20:16.969342+05:30",
+    "raw_transcript": "patient allergic to morphine",
+    "audio_sha256": null,
+    "audio_path": null
+  },
+  "entries": [
+    {
+      "kind": "medication",
+      "id": "c735de93f4f94ac894dd2cf90a83bda4",
+      "drug": {
+        "value": "morphine",
+        "span": [
+          20,
+          28
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "morphine"
+      },
+      "dose_value": {
+        "value": null,
+        "span": null,
+        "confidence": 0.0,
+        "source": "rules",
+        "raw": null
+      },
+      "dose_unit": {
+        "value": null,
+        "span": null,
+        "confidence": 0.0,
+        "source": "rules",
+        "raw": null
+      },
+      "route": {
+        "value": null,
+        "span": null,
+        "confidence": 0.0,
+        "source": "rules",
+        "raw": null
+      },
+      "time": {
+        "value": "2026-11-01T23:20:16.969342+05:30",
+        "span": null,
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": null
+      },
+      "flags": [
+        {
+          "code": "time_not_stated",
+          "field": "time",
+          "severity": "low",
+          "message": "No time stated; using capture time."
+        },
+        {
+          "code": "field_missing",
+          "field": "dose_value",
+          "severity": "high",
+          "message": "No dose stated for morphine."
+        },
+        {
+          "code": "field_missing",
+          "field": "route",
+          "severity": "medium",
+          "message": "No route stated for morphine."
+        },
+        {
+          "code": "possible_not_given",
+          "field": "drug",
+          "severity": "high",
+          "message": "Context suggests morphine may not have been given now (negation, allergy or regular medication)."
+        }
+      ],
+      "time_source": "device_clock"
+    }
+  ],
+  "audit_seq": 8,
+  "asr": null,
+  "warnings": []
+}

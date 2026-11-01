@@ -1,0 +1,106 @@
+{
+  "utterance": {
+    "id": "779b022264b74bcab61a642d23b933d7",
+    "incident_id": "a151ed73d4dc43a8a869319619f68d89",
+    "capture_time": "2026-11-01T23:20:17.361779+05:30",
+    "raw_transcript": "started CPR and gave adrenaline 1 mg IV",
+    "audio_sha256": null,
+    "audio_path": null
+  },
+  "entries": [
+    {
+      "kind": "procedure",
+      "id": "4271af710cb747fbaf273fa220bcbef9",
+      "procedure": {
+        "value": "cpr",
+        "span": [
+          8,
+          11
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "CPR"
+      },
+      "time": {
+        "value": "2026-11-01T23:20:17.361779+05:30",
+        "span": null,
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": null
+      },
+      "detail": null,
+      "flags": [
+        {
+          "code": "time_not_stated",
+          "field": "time",
+          "severity": "low",
+          "message": "No time stated; using capture time."
+        }
+      ],
+      "time_source": "device_clock"
+    },
+    {
+      "kind": "medication",
+      "id": "1eb81ecf09cb4baa8a0b8c1c795d07d3",
+      "drug": {
+        "value": "epinephrine",
+        "span": [
+          21,
+          31
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "adrenaline"
+      },
+      "dose_value": {
+        "value": 1.0,
+        "span": [
+          32,
+          33
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "1"
+      },
+      "dose_unit": {
+        "value": "mg",
+        "span": [
+          34,
+          36
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "mg"
+      },
+      "route": {
+        "value": "IV",
+        "span": [
+          37,
+          39
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "IV"
+      },
+      "time": {
+        "value": "2026-11-01T23:20:17.361779+05:30",
+        "span": null,
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": null
+      },
+      "flags": [
+        {
+          "code": "time_not_stated",
+          "field": "time",
+          "severity": "low",
+          "message": "No time stated; using capture time."
+        }
+      ],
+      "time_source": "device_clock"
+    }
+  ],
+  "audit_seq": 9,
+  "asr": null,
+  "warnings": []
+}

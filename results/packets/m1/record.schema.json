@@ -1,0 +1,391 @@
+{
+  "$defs": {
+    "Field_datetime_": {
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Span"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "source": {
+          "enum": [
+            "rules",
+            "llm",
+            "ner",
+            "user"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "raw": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw"
+        }
+      },
+      "required": [
+        "value",
+        "span",
+        "confidence",
+        "source"
+      ],
+      "title": "Field[datetime]",
+      "type": "object"
+    },
+    "Field_float_": {
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Span"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "source": {
+          "enum": [
+            "rules",
+            "llm",
+            "ner",
+            "user"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "raw": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw"
+        }
+      },
+      "required": [
+        "value",
+        "span",
+        "confidence",
+        "source"
+      ],
+      "title": "Field[float]",
+      "type": "object"
+    },
+    "Field_str_": {
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Span"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "source": {
+          "enum": [
+            "rules",
+            "llm",
+            "ner",
+            "user"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "raw": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw"
+        }
+      },
+      "required": [
+        "value",
+        "span",
+        "confidence",
+        "source"
+      ],
+      "title": "Field[str]",
+      "type": "object"
+    },
+    "Flag": {
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field"
+        },
+        "severity": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message"
+      ],
+      "title": "Flag",
+      "type": "object"
+    },
+    "MedicationEntry": {
+      "properties": {
+        "kind": {
+          "const": "medication",
+          "default": "medication",
+          "title": "Kind",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "drug": {
+          "$ref": "#/$defs/Field_str_"
+        },
+        "dose_value": {
+          "$ref": "#/$defs/Field_float_"
+        },
+        "dose_unit": {
+          "$ref": "#/$defs/Field_str_"
+        },
+        "route": {
+          "$ref": "#/$defs/Field_str_"
+        },
+        "time": {
+          "$ref": "#/$defs/Field_datetime_"
+        },
+        "flags": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Flag"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "time_source": {
+          "description": "spoken: a time phrase in the transcript; device_clock: none stated, capture time used; user: edited.",
+          "enum": [
+            "spoken",
+            "device_clock",
+            "user"
+          ],
+          "readOnly": true,
+          "title": "Time Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "drug",
+        "dose_value",
+        "dose_unit",
+        "route",
+        "time",
+        "time_source"
+      ],
+      "title": "MedicationEntry",
+      "type": "object"
+    },
+    "ProcedureEntry": {
+      "properties": {
+        "kind": {
+          "const": "procedure",
+          "default": "procedure",
+          "title": "Kind",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "procedure": {
+          "$ref": "#/$defs/Field_str_"
+        },
+        "time": {
+          "$ref": "#/$defs/Field_datetime_"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Field_str_"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "flags": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Flag"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "time_source": {
+          "description": "spoken: a time phrase in the transcript; device_clock: none stated, capture time used; user: edited.",
+          "enum": [
+            "spoken",
+            "device_clock",
+            "user"
+          ],
+          "readOnly": true,
+          "title": "Time Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "procedure",
+        "time",
+        "time_source"
+      ],
+      "title": "ProcedureEntry",
+      "type": "object"
+    }
+  },
+  "discriminator": {
+    "mapping": {
+      "medication": "#/$defs/MedicationEntry",
+      "procedure": "#/$defs/ProcedureEntry"
+    },
+    "propertyName": "kind"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/MedicationEntry"
+    },
+    {
+      "$ref": "#/$defs/ProcedureEntry"
+    }
+  ]
+}

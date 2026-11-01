@@ -1,0 +1,78 @@
+{
+  "utterance": {
+    "id": "b71fef59c1cb47bfb52d23d73efadb6f",
+    "incident_id": "a151ed73d4dc43a8a869319619f68d89",
+    "capture_time": "2026-11-01T23:20:16.575602+05:30",
+    "raw_transcript": "gave aspirin",
+    "audio_sha256": null,
+    "audio_path": null
+  },
+  "entries": [
+    {
+      "kind": "medication",
+      "id": "76454dde70de45f8b2e909bfa6abce35",
+      "drug": {
+        "value": "aspirin",
+        "span": [
+          5,
+          12
+        ],
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": "aspirin"
+      },
+      "dose_value": {
+        "value": null,
+        "span": null,
+        "confidence": 0.0,
+        "source": "rules",
+        "raw": null
+      },
+      "dose_unit": {
+        "value": null,
+        "span": null,
+        "confidence": 0.0,
+        "source": "rules",
+        "raw": null
+      },
+      "route": {
+        "value": null,
+        "span": null,
+        "confidence": 0.0,
+        "source": "rules",
+        "raw": null
+      },
+      "time": {
+        "value": "2026-11-01T23:20:16.575602+05:30",
+        "span": null,
+        "confidence": 1.0,
+        "source": "rules",
+        "raw": null
+      },
+      "flags": [
+        {
+          "code": "time_not_stated",
+          "field": "time",
+          "severity": "low",
+          "message": "No time stated; using capture time."
+        },
+        {
+          "code": "field_missing",
+          "field": "dose_value",
+          "severity": "high",
+          "message": "No dose stated for aspirin."
+        },
+        {
+          "code": "field_missing",
+          "field": "route",
+          "severity": "medium",
+          "message": "No route stated for aspirin."
+        }
+      ],
+      "time_source": "device_clock"
+    }
+  ],
+  "audit_seq": 7,
+  "asr": null,
+  "warnings": []
+}
