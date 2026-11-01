@@ -1,6 +1,7 @@
 """FastAPI app: incidents, utterances (text or audio), audit log + verify, and the throwaway capture page."""
 from __future__ import annotations
 
+import threading
 from dataclasses import asdict
 from importlib import resources
 from pathlib import Path
@@ -39,6 +40,7 @@ class EditIn(BaseModel):
 class ConfirmIn(BaseModel):
     entry_ids: list[str]
     acknowledged: list[str] = []
+    expected: dict[str, int] = {}  # entry_id -> history seq the medic was looking at
 
 
 def _state_json(inc: dict, state) -> dict:
@@ -77,6 +79,7 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
     pipeline = Pipeline(lexicon, extractors[config.DEFAULT_EXTRACTOR], audit, asr, audio_dir=audio_dir,
                         validator=lambda entries, history: validate_all(entries, lexicon, history))
     incidents = IncidentStore(db_path)
+    write_lock = threading.Lock()  # check-then-append for edit/confirm must not interleave
 
     def _incident(incident_id: str) -> dict:
         inc = incidents.get(incident_id)
@@ -146,17 +149,25 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
     @app.post("/api/incidents/{incident_id}/confirm")
     def confirm(incident_id: str, body: ConfirmIn):
         _incident(incident_id)
+        with write_lock:
+            return _confirm(incident_id, body)
+
+    def _confirm(incident_id: str, body: ConfirmIn):
         state = incident_state(audit, incident_id)
         missing = [eid for eid in body.entry_ids if eid not in state.entries]
         if missing or not body.entry_ids:
             raise HTTPException(404, f"unknown entries: {missing}")
+        stale = [eid for eid, seq in body.expected.items() if eid in state.entries and state.entries[eid].history[-1] != seq]
+        if stale:  # the entry changed since the medic looked at it: confirm what they saw, or nothing
+            raise HTTPException(409, {"stale": stale, "message": "entry changed since it was displayed; reload"})
         unack = [{"entry_id": eid, "code": f.code, "message": f.message}
                  for eid in body.entry_ids for f in state.entries[eid].entry.flags
                  if f.severity == "high" and f.code not in body.acknowledged]
         if unack:  # nothing is written: high flags must be acknowledged explicitly
             raise HTTPException(409, {"unacknowledged": unack})
+        seen = {eid: state.entries[eid].history[-1] for eid in body.entry_ids}
         row = audit.append("confirm", incident_id, {"type": "confirm", "entry_ids": body.entry_ids,
-                                                    "acknowledged": body.acknowledged})
+                                                    "acknowledged": body.acknowledged, "confirmed_versions": seen})
         return {"seq": row.seq}
 
     def _entry(incident_id: str, entry_id: str):

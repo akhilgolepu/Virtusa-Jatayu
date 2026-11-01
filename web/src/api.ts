@@ -58,8 +58,8 @@ export const api = {
   },
   edit: (incident: string, entry: Entry) =>
     call<{ seq: number; entry: Entry }>(`/api/incidents/${incident}/entries/${entry.id}/edit`, json("POST", { entry })),
-  confirm: (incident: string, entry_ids: string[], acknowledged: string[]) =>
-    call<{ seq: number }>(`/api/incidents/${incident}/confirm`, json("POST", { entry_ids, acknowledged })),
+  confirm: (incident: string, entry_ids: string[], acknowledged: string[], expected: Record<string, number>) =>
+    call<{ seq: number }>(`/api/incidents/${incident}/confirm`, json("POST", { entry_ids, acknowledged, expected })),
   audit: () => call<AuditRow[]>("/api/audit"),
   verify: () => call<Verify>("/api/audit/verify"),
   readbackWav: (incident: string, entry: string) => `/api/incidents/${incident}/entries/${entry}/readback.wav`,

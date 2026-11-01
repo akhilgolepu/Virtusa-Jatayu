@@ -62,10 +62,26 @@ class HybridExtractor:
         prompt = f"Transcript: {raw}\nCandidates:\n" + "\n".join(_describe(c) for c in cands)
         try:
             out = self.runner_factory().complete_json(SYSTEM, prompt, schema_for(cands))
-        except Exception as exc:  # LlmError, missing model, CUDA trouble: never lose the utterance
+            linked = self._link(out, cands, rules_entries, capture_time)
+        except Exception as exc:  # LlmError, missing model, CUDA trouble, malformed output: never lose the utterance
             log.warning("hybrid falling back to rules: %s", exc)
             return rules_entries, [f"llm unavailable: {exc}; used rules"]
-        return self._link(out, cands, rules_entries, capture_time), []
+        return self._keep_omitted(linked, rules_entries)
+
+    @staticmethod
+    def _keep_omitted(linked: list[Entry], rules_entries: list[Entry]) -> tuple[list[Entry], list[str]]:
+        """A drug or procedure the rules layer found but the LLM left out is kept (from rules) and flagged, so the
+        LLM can never silently drop an administration."""
+        covered = {(getattr(e, "drug", None) or getattr(e, "procedure", None)).span for e in linked}
+        omitted = []
+        for r in rules_entries:
+            anchor = getattr(r, "drug", None) or getattr(r, "procedure", None)
+            if anchor is not None and anchor.span not in covered:
+                flag = Flag(code="llm_omitted", field="drug" if r.kind == "medication" else "procedure",
+                            severity="medium", message="The model did not link this mention; kept from the rule-based reading.")
+                omitted.append(r.model_copy(update={"flags": [*r.flags, flag]}))
+        warnings = [f"llm left out {len(omitted)} mention(s); kept from rules"] if omitted else []
+        return linked + omitted, warnings
 
     def _link(self, out: dict, cands: list[Candidate], rules_entries: list[Entry], capture_time: datetime) -> list[Entry]:
         by_id = {c.id: c for c in cands}

@@ -51,7 +51,7 @@ def test_uncapped_weight_based_dose(lexicon):
 
 
 def test_no_cited_range_checks_route_and_unit_only(lexicon):
-    assert validate(med("furosemide", 40, "mg", "IV"), lexicon) == []
+    assert codes(validate(med("furosemide", 40, "mg", "IV"), lexicon)) == ["no_reference_range"]
 
 
 def test_repeat_too_soon_and_duplicate(lexicon):
@@ -63,8 +63,8 @@ def test_repeat_too_soon_and_duplicate(lexicon):
     assert "repeat_too_soon" not in codes(validate(later, lexicon, history=[first]))
 
 
-def test_context_entries_are_not_range_checked(lexicon):
-    ctx = Flag(code="possible_not_given", field="drug", severity="high", message="x")
+def test_measurement_entries_are_not_range_checked(lexicon):
+    ctx = Flag(code="possible_measurement", field="drug", severity="high", message="x")
     assert validate(med("aspirin", 3000, "mg", "PO", flags=[ctx]), lexicon) == []
 
 
@@ -77,3 +77,23 @@ def test_validate_never_mutates_and_validate_all_merges_without_duplicates(lexic
     twice = validate_all([once], lexicon, history=[])[0]
     assert codes(twice.flags) == codes(once.flags) == ["dose_out_of_range"]
     assert e.flags == []
+
+
+def test_no_route_is_still_range_checked(lexicon):
+    f = lambda v: Field(value=v, span=None, confidence=1.0, source="rules")  # noqa: E731
+    e = MedicationEntry(drug=f("morphine"), dose_value=f(100), dose_unit=f("mg"), route=Field.missing("rules"), time=f(T0))
+    assert "dose_out_of_range" in codes(validate(e, lexicon))
+    ok = MedicationEntry(drug=f("morphine"), dose_value=f(5), dose_unit=f("mg"), route=Field.missing("rules"), time=f(T0))
+    assert "dose_out_of_range" not in codes(validate(ok, lexicon))
+
+
+def test_not_given_entries_are_still_range_checked_measurements_are_not(lexicon):
+    ng = Flag(code="possible_not_given", field="drug", severity="high", message="x")
+    assert "dose_out_of_range" in codes(validate(med("morphine", 100, "mg", "IV", flags=[ng]), lexicon))
+    meas = Flag(code="possible_measurement", field="drug", severity="high", message="x")
+    assert validate(med("dextrose", 3.2, "mmol", "IV", flags=[meas]), lexicon) == []
+
+
+def test_unchecked_dose_is_marked_not_silent(lexicon):
+    for args in [("furosemide", 2000, "mg", "IV"), ("epinephrine", 10, "ml", "IV"), ("naloxone", 40, "mg", "SC")]:
+        assert "no_reference_range" in codes(validate(med(*args), lexicon)), args

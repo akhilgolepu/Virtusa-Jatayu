@@ -106,3 +106,15 @@ def test_repeat_across_utterances_is_flagged(client):
     _say(client, inc, "adrenaline 0.3 mg IM at 10 40")
     second = _say(client, inc, "adrenaline 0.3 mg IM at 10 42")["entries"][0]
     assert "repeat_too_soon" in [f["code"] for f in second["flags"]]
+
+
+def test_confirm_is_bound_to_the_version_seen(client):
+    inc = client.post("/api/incidents", json={}).json()["id"]
+    e = _say(client, inc, "aspirin 300 mg PO two mins ago")["entries"][0]
+    seen = client.get(f"/api/incidents/{inc}").json()["entries"][0]["history"][-1]
+    e["dose_value"]["value"] = 325
+    client.post(f"/api/incidents/{inc}/entries/{e['id']}/edit", json={"entry": e})
+    r = client.post(f"/api/incidents/{inc}/confirm", json={"entry_ids": [e["id"]], "acknowledged": [], "expected": {e["id"]: seen}})
+    assert r.status_code == 409 and "stale" in str(r.json()["detail"])
+    now = client.get(f"/api/incidents/{inc}").json()["entries"][0]["history"][-1]
+    assert client.post(f"/api/incidents/{inc}/confirm", json={"entry_ids": [e["id"]], "acknowledged": [], "expected": {e["id"]: now}}).status_code == 200

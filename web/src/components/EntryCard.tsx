@@ -26,6 +26,8 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
   const dialog = useRef<HTMLDialogElement>(null);
   const audio = useRef<HTMLAudioElement>(null);
   const high = e.flags.filter((f) => f.severity === "high");
+  // One tick per distinct check: two flags can share a code (e.g. llm_unsupported on two fields).
+  const highCodes = [...new Set(high.map((f) => f.code))];
   const confirmed = state.status === "confirmed";
 
   const title = e.kind === "medication" ? e.drug.value ?? "Unknown drug" : e.procedure.value ?? "Procedure";
@@ -40,8 +42,12 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
 
   async function confirm(acknowledged: string[]) {
     setBusy("confirm"); setError("");
-    try { await api.confirm(incident, [e.id], acknowledged); dialog.current?.close(); onChange(); }
-    catch (err) { setError(err instanceof ApiError && err.status === 409 ? "Acknowledge every check first." : "Could not confirm."); }
+    try { await api.confirm(incident, [e.id], acknowledged, { [e.id]: state.history[state.history.length - 1] }); dialog.current?.close(); onChange(); }
+    catch (err) {
+      const stale = err instanceof ApiError && JSON.stringify(err.detail).includes("stale");
+      setError(stale ? "This entry changed since you opened it — reloading." : err instanceof ApiError && err.status === 409 ? "Acknowledge every check first." : "Could not confirm.");
+      if (stale) onChange();
+    }
     finally { setBusy(""); }
   }
 
@@ -123,16 +129,16 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
       <dialog ref={dialog} aria-labelledby={`ack-${e.id}`}>
         <div class="stack">
           <h3 id={`ack-${e.id}`}>Check before confirming</h3>
-          <p class="muted">This entry has {high.length} high-severity check{high.length === 1 ? "" : "s"}. Confirm only if each one is understood.</p>
-          {high.map((f) => (
-            <label class="check" key={f.code}>
-              <input type="checkbox" checked={ack.includes(f.code)}
-                     onChange={(ev) => setAck((ev.target as HTMLInputElement).checked ? [...ack, f.code] : ack.filter((c) => c !== f.code))} />
-              <span><code>{f.code.replaceAll("_", " ")}</code> — {f.message}</span>
+          <p class="muted">This entry has {highCodes.length} high-severity check{highCodes.length === 1 ? "" : "s"}. Confirm only if each one is understood.</p>
+          {highCodes.map((code) => (
+            <label class="check" key={code}>
+              <input type="checkbox" checked={ack.includes(code)}
+                     onChange={(ev) => setAck((ev.target as HTMLInputElement).checked ? [...ack, code] : ack.filter((c) => c !== code))} />
+              <span><code>{code.replaceAll("_", " ")}</code> — {high.filter((f) => f.code === code).map((f) => f.message).join(" ")}</span>
             </label>
           ))}
           <div class="row">
-            <button class="btn btn-primary" disabled={ack.length < high.length || busy !== ""} onClick={() => confirm(ack)}>Confirm with checks</button>
+            <button class="btn btn-primary" disabled={highCodes.some((c) => !ack.includes(c)) || busy !== ""} onClick={() => confirm(ack)}>Confirm with checks</button>
             <button class="btn btn-ghost" onClick={() => dialog.current?.close()}>Back</button>
           </div>
         </div>

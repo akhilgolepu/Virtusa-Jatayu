@@ -10,7 +10,7 @@ from jatayu.models import Entry, Flag, MedicationEntry
 DUPLICATE_WINDOW_S = 120
 MAX_PLAUSIBLE_WEIGHT_KG = 200  # an uncapped mg/kg dose implying a heavier patient is treated as out of range
 CONTEXT_CODES = {"possible_not_given", "possible_measurement"}
-VALIDATOR_CODES = {"dose_out_of_range", "dose_below_range", "possible_mg_mcg_confusion", "unit_not_allowed",
+VALIDATOR_CODES = {"no_reference_range", "dose_out_of_range", "dose_below_range", "possible_mg_mcg_confusion", "unit_not_allowed",
                    "route_not_allowed", "duplicate_dose", "repeat_too_soon", "weight_based_dose"}
 TO_MG = {"mcg": 0.001, "mg": 1.0, "g": 1000.0}  # exact equivalences, not errors
 
@@ -32,15 +32,25 @@ def _cite(rows: list[DoseRange]) -> str:
     return "; ".join(sources[:2])
 
 
+def _no_reference(e: MedicationEntry, why: str) -> list[Flag]:
+    return [Flag(code="no_reference_range", field="dose_value", severity="medium",
+                 message=f"{e.dose_value.value:g} {e.dose_unit.value} {e.drug.value} was not range-checked: {why}.")]
+
+
 def _range_flags(e: MedicationEntry, lexicon: Lexicon) -> list[Flag]:
-    rows = lexicon.dose_ranges(e.drug.value, e.route.value)
     value, unit = e.dose_value.value, e.dose_unit.value
-    if not rows or value is None or unit is None:
+    if value is None or unit is None:
         return []
+    # No route spoken: compare against every route the drug has a cited range for, so an unspoken route can
+    # never hide a 10x dose ("gave 100 mg morphine").
+    info = lexicon.drug(e.drug.value)
+    rows = lexicon.dose_ranges(e.drug.value, e.route.value) if e.route.value else list(info.dose_ranges)
+    if not rows:
+        return _no_reference(e, f"no published adult range for {e.route.value or 'any route'}")
     # Express the dose in each row's unit by exact conversion (300 mcg == 0.3 mg is not an error).
     comparable = [(r, v) for r in rows if (v := _convert(value, unit, r.unit)) is not None]
     if not comparable:
-        return []
+        return _no_reference(e, f"the cited ranges are not in {unit}")
     checkable = [(r, v) for r, v in comparable if not (r.max is None and r.per_kg is not None)]
     # Order matters: a real dose band (stated min and max) first, then a x1000 slip into a band, and only then
     # an open-ended "up to N" row — otherwise 0.3 mcg of adrenaline "fits" "up to 0.3 mg" and passes silently.
@@ -95,8 +105,10 @@ def _history_flags(e: MedicationEntry, lexicon: Lexicon, history: Sequence[Entry
 def validate(entry: Entry, lexicon: Lexicon, history: Sequence[Entry] = ()) -> list[Flag]:
     if not isinstance(entry, MedicationEntry) or entry.drug.value is None:
         return []
-    if any(f.code in CONTEXT_CODES for f in entry.flags):
-        return []  # not an administration: nothing to range-check
+    if any(f.code == "possible_measurement" for f in entry.flags):
+        return []  # a reading (blood glucose, sats), not a dose: nothing to range-check
+    # possible_not_given entries ARE range-checked: if the medic acknowledges "it was given", the dose must
+    # already have been judged.
     info = lexicon.drug(entry.drug.value)
     flags = []
     if entry.dose_unit.value is not None and entry.dose_unit.value not in info.units:

@@ -137,3 +137,10 @@ def test_fields_outside_the_entry_kind_are_ignored_not_consumed(lexicon):
     med, proc = hybrid(lexicon, StubRunner(out)).extract(raw, CAP)
     assert med.drug.value == "epinephrine" and proc.kind == "procedure" and proc.procedure.value == "cpr"
     assert not any(f.code == "llm_unsupported" for f in med.flags + proc.flags)
+
+
+def test_drugs_the_llm_leaves_out_are_kept_from_rules(lexicon):
+    entries, warnings = hybrid(lexicon, StubRunner({"entries": []})).extract_with_warnings(
+        "gave 1 mg adrenaline IV and 10 mg morphine IV", CAP)
+    assert sorted(e.drug.value for e in entries) == ["epinephrine", "morphine"]
+    assert all(any(f.code == "llm_omitted" for f in e.flags) for e in entries) and warnings
