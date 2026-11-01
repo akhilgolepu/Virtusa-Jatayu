@@ -19,6 +19,7 @@ from jatayu.output.fhir import to_incident_bundle, validate_bundle
 from jatayu.lexicon import Lexicon
 from jatayu.pipeline import Pipeline, PipelineResult
 from jatayu.readback import readback_text, synthesize_readback
+from jatayu.validate import validate_all
 
 
 class IncidentIn(BaseModel):
@@ -48,7 +49,8 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
     transcriber = transcriber or Transcriber(lexicon=lexicon)  # model loads lazily on first audio request
     rules = RulesExtractor(lexicon)
     extractors = {"rules": rules}
-    pipeline = Pipeline(lexicon, rules, audit, transcriber, audio_dir=audio_dir)
+    pipeline = Pipeline(lexicon, rules, audit, transcriber, audio_dir=audio_dir,
+                        validator=lambda entries, history: validate_all(entries, lexicon, history))
     incidents = IncidentStore(db_path)
 
     def _incident(incident_id: str) -> dict:

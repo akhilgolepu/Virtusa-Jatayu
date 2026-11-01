@@ -86,3 +86,23 @@ def test_readback_text_endpoint(client):
     r = client.get(f"/api/incidents/{inc}/entries/{e['id']}/readback.txt")
     assert r.status_code == 200 and r.text.startswith("Aspirin, three hundred milligrams, by mouth, at ten forty-two.")
     assert client.get(f"/api/incidents/{inc}/entries/nope/readback.txt").status_code == 404
+
+
+def test_edit_to_out_of_range_dose_blocks_confirm_until_acknowledged(client):
+    inc = client.post("/api/incidents", json={}).json()["id"]
+    entry = _say(client, inc, "adrenaline 0.3 mg IM two mins ago")["entries"][0]
+    assert entry["flags"] == []
+    entry["dose_value"]["value"] = 3
+    edited = client.post(f"/api/incidents/{inc}/entries/{entry['id']}/edit", json={"entry": entry}).json()["entry"]
+    assert [f["code"] for f in edited["flags"]] == ["dose_out_of_range"]
+    r = client.post(f"/api/incidents/{inc}/confirm", json={"entry_ids": [entry["id"]], "acknowledged": []})
+    assert r.status_code == 409
+    r = client.post(f"/api/incidents/{inc}/confirm", json={"entry_ids": [entry["id"]], "acknowledged": ["dose_out_of_range"]})
+    assert r.status_code == 200
+
+
+def test_repeat_across_utterances_is_flagged(client):
+    inc = client.post("/api/incidents", json={}).json()["id"]
+    _say(client, inc, "adrenaline 0.3 mg IM at 10 40")
+    second = _say(client, inc, "adrenaline 0.3 mg IM at 10 42")["entries"][0]
+    assert "repeat_too_soon" in [f["code"] for f in second["flags"]]
