@@ -8,8 +8,11 @@ version = "0.1.0"
 description = "Offline EMS voice scribe — decision-support demo, not a clinical device."
 requires-python = ">=3.12"
 
+[project.scripts]
+f2r = "f2r.cli:main"
+
 [tool.setuptools.packages.find]
-include = ["jatayu*", "datagen*"]
+include = ["jatayu*", "datagen*", "f2r*", "eval*", "scripts*"]
 
 [tool.setuptools.package-data]
 jatayu = ["lexicon/*.yaml", "schemas/*.json", "web/*"]
