@@ -19,3 +19,5 @@ ASR_COMPUTE_TYPE = os.environ.get("JATAYU_ASR_COMPUTE", "int8_float16")
 DISCLAIMER = "Decision-support demo, not a clinical device."
 
 READBACK_VOICE = MODELS_DIR / "tts/en/en_US/lessac/medium/en_US-lessac-medium.onnx"
+
+DEFAULT_EXTRACTOR = os.environ.get("JATAYU_EXTRACTOR", "rules")  # becomes "hybrid" once the LLM is wired (Task 11)

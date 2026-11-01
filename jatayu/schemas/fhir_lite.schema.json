@@ -16,6 +16,8 @@
     },
     "incident": {"type": "string", "minLength": 1},
     "utterance": {"type": "string", "minLength": 1},
+    "utterances": {"type": "array", "items": {"type": "object", "required": ["id", "transcript"],
+      "properties": {"id": {"type": "string"}, "transcript": {"type": "string"}, "capture_time": {"type": "string"}}}},
     "transcript": {"type": "string", "description": "Raw transcript; provenance spans are [start, end) Unicode code-point offsets into it (use Array.from() in JS, not UTF-16 indices)."},
     "entry": {
       "type": "array",

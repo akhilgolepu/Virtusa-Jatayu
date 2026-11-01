@@ -5,7 +5,7 @@ import pytest
 from jatayu.asr import Transcriber
 from jatayu.audit import AuditLog, canonical_json, sha256_hex
 from jatayu.extract.rules import RulesExtractor
-from jatayu.pipeline import Pipeline
+from jatayu.pipeline import Pipeline, draft_payload
 
 
 def test_text_run_logs_verified_row(lexicon, tmp_db, tmp_path):
@@ -13,7 +13,8 @@ def test_text_run_logs_verified_row(lexicon, tmp_db, tmp_path):
     r = p.run("inc1", text="pushed 4 mg ondansetron IV")
     assert r.entries[0].drug.value == "ondansetron"
     row = AuditLog(tmp_db).rows("inc1")[-1]
-    assert row.seq == r.audit_seq and row.json_sha256 == sha256_hex(canonical_json(r.bundle))
+    assert row.seq == r.audit_seq
+    assert row.json_sha256 == sha256_hex(canonical_json(draft_payload(r.utterance, r.entries, r.bundle)))
     assert AuditLog(tmp_db).verify().ok
 
 

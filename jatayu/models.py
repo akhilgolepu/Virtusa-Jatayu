@@ -44,8 +44,13 @@ class Flag(BaseModel):
     message: str
 
 
+def _new_id() -> str:
+    return uuid.uuid4().hex
+
+
 class MedicationEntry(BaseModel):
     kind: Literal["medication"] = "medication"
+    id: str = PydField(default_factory=_new_id)
     drug: Field[str]
     dose_value: Field[float]
     dose_unit: Field[str]
@@ -56,6 +61,7 @@ class MedicationEntry(BaseModel):
 
 class ProcedureEntry(BaseModel):
     kind: Literal["procedure"] = "procedure"
+    id: str = PydField(default_factory=_new_id)
     procedure: Field[str]
     time: Field[datetime]
     detail: Field[str] | None = None
@@ -66,7 +72,7 @@ Entry = Annotated[Union[MedicationEntry, ProcedureEntry], Discriminator("kind")]
 
 
 class Utterance(BaseModel):
-    id: str = PydField(default_factory=lambda: uuid.uuid4().hex)
+    id: str = PydField(default_factory=_new_id)
     incident_id: str
     capture_time: datetime
     raw_transcript: str

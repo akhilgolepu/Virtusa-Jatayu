@@ -1,6 +1,7 @@
 """capture -> ASR -> extract -> FHIR-lite -> audit draft row."""
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
 from datetime import datetime
 from pathlib import Path
 
@@ -27,17 +28,29 @@ class PipelineResult(BaseModel):
     warnings: list[str] = []
 
 
+Validator = Callable[[list[Entry], Sequence[Entry]], list[Entry]]
+
+
+def draft_payload(utterance: Utterance, entries: list[Entry], bundle: dict) -> dict:
+    """What a draft audit row stores: the FHIR-lite bundle plus everything needed to rebuild incident state."""
+    return {"type": "draft", "utterance": utterance.model_dump(mode="json"),
+            "entries": [e.model_dump(mode="json") for e in entries], "bundle": bundle}
+
+
 class Pipeline:
     def __init__(self, lexicon: Lexicon, extractor: Extractor, audit: AuditLog,
-                 transcriber: Transcriber | None = None, audio_dir: Path = config.AUDIO_DIR):
+                 transcriber: Transcriber | None = None, audio_dir: Path = config.AUDIO_DIR,
+                 validator: Validator | None = None):
         self.lexicon = lexicon
         self.extractor = extractor
         self.audit = audit
         self.transcriber = transcriber
         self.audio_dir = Path(audio_dir)
+        self.validator = validator
 
     def run(self, incident_id: str, *, text: str | None = None, audio: bytes | None = None,
-            capture_time: datetime | None = None) -> PipelineResult:
+            capture_time: datetime | None = None, extractor: Extractor | None = None,
+            history: Sequence[Entry] = ()) -> PipelineResult:
         if (text is None) == (audio is None):
             raise ValueError("give exactly one of text or audio")
         capture_time = capture_time or datetime.now().astimezone()
@@ -57,15 +70,22 @@ class Pipeline:
 
         utterance = Utterance(incident_id=incident_id, capture_time=capture_time, raw_transcript=text,
                               audio_sha256=audio_sha, audio_path=audio_path)
-        warnings = []
-        if text.strip():
-            entries = self.extractor.extract(text, capture_time)
-        else:
+        warnings: list[str] = []
+        extractor = extractor or self.extractor
+        if not text.strip():
             entries = []
             warnings.append(NO_SPEECH)
+        elif hasattr(extractor, "extract_with_warnings"):
+            entries, extra = extractor.extract_with_warnings(text, capture_time)
+            warnings += extra
+        else:
+            entries = extractor.extract(text, capture_time)
+        if self.validator is not None:
+            entries = self.validator(entries, history)
 
         bundle = to_bundle(utterance, entries, self.lexicon)
         validate_bundle(bundle)
-        row = self.audit.append("draft", incident_id, bundle, transcript=text, audio_sha256=audio_sha)
+        row = self.audit.append("draft", incident_id, draft_payload(utterance, entries, bundle),
+                                transcript=text, audio_sha256=audio_sha)
         return PipelineResult(utterance=utterance, entries=entries, bundle=bundle, audit_seq=row.seq,
                               asr=asr, warnings=warnings)

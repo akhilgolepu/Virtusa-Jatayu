@@ -19,8 +19,10 @@ def _canonical(obj) -> str:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False, default=str)
 
 
-def _prov(entry: Entry, names: tuple[str, ...]) -> list[dict]:
-    record = {}
+def _prov(entry: Entry, names: tuple[str, ...], utterance_id: str | None = None) -> list[dict]:
+    record = {"entry_id": entry.id}
+    if utterance_id:
+        record["utterance_id"] = utterance_id
     for name in names:
         f: Field | None = getattr(entry, name)
         if f is not None:
@@ -29,10 +31,11 @@ def _prov(entry: Entry, names: tuple[str, ...]) -> list[dict]:
     return [{"url": "urn:jatayu:provenance", "valueString": _canonical(record)}]
 
 
-def _medication(e: MedicationEntry, lexicon: Lexicon) -> dict:
+def _medication(e: MedicationEntry, lexicon: Lexicon, status: str = "in-progress",
+                utterance_id: str | None = None) -> dict:
     res = {
         "resourceType": "MedicationAdministration",
-        "status": "in-progress",
+        "status": status,
         "medicationCodeableConcept": {"text": e.drug.value,
                                       "coding": [{"system": ATC, "code": lexicon.drug(e.drug.value).atc}]},
         "effectiveDateTime": e.time.value.isoformat(),
@@ -46,21 +49,27 @@ def _medication(e: MedicationEntry, lexicon: Lexicon) -> dict:
             dosage["dose"]["unit"] = e.dose_unit.value
     if dosage:
         res["dosage"] = dosage
-    res["extension"] = _prov(e, ("drug", "dose_value", "dose_unit", "route", "time"))
+    res["extension"] = _prov(e, ("drug", "dose_value", "dose_unit", "route", "time"), utterance_id)
     return res
 
 
-def _procedure(e: ProcedureEntry, lexicon: Lexicon) -> dict:
+def _procedure(e: ProcedureEntry, lexicon: Lexicon, status: str = "in-progress",
+               utterance_id: str | None = None) -> dict:
     code = {"text": e.procedure.value}
     snomed = lexicon.procedure(e.procedure.value).snomed
     if snomed:
         code["coding"] = [{"system": SNOMED, "code": snomed}]
-    res = {"resourceType": "Procedure", "status": "in-progress", "code": code,
+    res = {"resourceType": "Procedure", "status": status, "code": code,
            "performedDateTime": e.time.value.isoformat()}
     if e.detail is not None and e.detail.value:
         res["note"] = [{"text": e.detail.value}]
-    res["extension"] = _prov(e, ("procedure", "time", "detail"))
+    res["extension"] = _prov(e, ("procedure", "time", "detail"), utterance_id)
     return res
+
+
+def _resource(e: Entry, lexicon: Lexicon, status: str = "in-progress", utterance_id: str | None = None) -> dict:
+    build = _medication if isinstance(e, MedicationEntry) else _procedure
+    return build(e, lexicon, status, utterance_id)
 
 
 def to_bundle(utterance: Utterance, entries: list[Entry], lexicon: Lexicon) -> dict:
@@ -72,8 +81,27 @@ def to_bundle(utterance: Utterance, entries: list[Entry], lexicon: Lexicon) -> d
         "incident": utterance.incident_id,
         "utterance": utterance.id,
         "transcript": utterance.raw_transcript,  # spans in each resource's provenance index into this text
-        "entry": [{"resource": _medication(e, lexicon) if isinstance(e, MedicationEntry) else _procedure(e, lexicon)}
-                  for e in entries],
+        "entry": [{"resource": _resource(e, lexicon)} for e in entries],
+    }
+
+
+def to_incident_bundle(incident: dict, items: list[tuple[Entry, str, str]], utterances: list[dict],
+                       lexicon: Lexicon) -> dict:
+    """items: (entry, status, utterance_id). Spans in each resource's provenance index into the transcript of
+    the utterance it names; the top-level transcript is empty for an incident bundle."""
+    fhir_status = {"confirmed": "completed"}
+    return {
+        "resourceType": "Bundle",
+        "type": "collection",
+        "timestamp": incident["started_at"],
+        "meta": {"tag": [{"code": "demo", "display": DISCLAIMER}]},
+        "incident": incident["id"],
+        "utterance": incident["id"],
+        "transcript": "",
+        "utterances": [{"id": u["id"], "transcript": u["transcript"], "capture_time": u["capture_time"]}
+                       for u in utterances],
+        "entry": [{"resource": _resource(e, lexicon, fhir_status.get(status, "in-progress"), utt)}
+                  for e, status, utt in items],
     }
 
 
