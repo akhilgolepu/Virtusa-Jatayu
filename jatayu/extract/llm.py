@@ -19,7 +19,7 @@ ENTRY_FIELD = {"drug": "drug", "dose": "dose_value", "unit": "dose_unit", "route
 
 SYSTEM = (
     "You extract ambulance medication administrations and procedures from a responder's transcript.\n"
-    "Return one entry per drug given or procedure done. For each field COPY THE EXACT WORDS from the transcript "
+    "Return one entry per drug given or procedure done (never repeat an entry); omit fields that were not said. For each field COPY THE EXACT WORDS from the transcript "
     "(same spelling, same order), or null if not said. Never write words that are not in the transcript.\n"
     "drug: the drug name as said. dose: only the number words/digits. unit: the unit words. route: the route words. "
     "time: the whole time phrase (e.g. 'two mins ago', 'at 10 42'). procedure: the procedure words. "
@@ -32,12 +32,21 @@ SCHEMA = {
     "type": "object",
     "properties": {"entries": {"type": "array", "items": {
         "type": "object",
-        "properties": {"kind": {"enum": ["medication", "procedure"]},
-                       "context": {"enum": ["given", "not_given", "measurement"]},
-                       **{f: _Q for f in FIELDS}},
-        "required": ["kind", "context", *FIELDS]}}},
+        # Every field optional: the model writes only what it links (~30 tokens instead of ~150 of nulls, which
+        # at ~31 tok/s under the grammar was most of the latency). The entry kind is inferred from the anchor.
+        "properties": {"context": {"enum": ["given", "not_given", "measurement"]}, **{f: _Q for f in FIELDS}},
+        "required": []}}},
     "required": ["entries"],
 }
+
+
+def _kind(item: dict) -> str | None:
+    """Inferred from what the model linked; its own 'kind' label is not trusted (Qwen mislabels medications)."""
+    if item.get("drug") is not None:
+        return "medication"
+    if item.get("procedure") is not None:
+        return "procedure"
+    return None
 
 
 def locate(raw: str, quote: str, near: int | None = None) -> tuple[int, int] | None:
@@ -116,7 +125,10 @@ class LlmExtractor:
         out = self.runner_factory().complete_json(SYSTEM, f"Transcript: {raw}", SCHEMA)
         entries = []
         for item in out.get("entries", []):
-            kind, context = item.get("kind", "medication"), item.get("context", "given")
+            kind = _kind(item)
+            if kind is None:
+                continue
+            context = item.get("context") or "given"
             anchor = item.get("drug") if kind == "medication" else item.get("procedure")
             anchor_span = locate(raw, anchor) if anchor else None
             near = anchor_span[0] if anchor_span else None

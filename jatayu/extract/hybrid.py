@@ -7,7 +7,7 @@ import logging
 from collections.abc import Callable
 from datetime import datetime
 
-from jatayu.extract.llm import FIELDS, LLM_CONFIDENCE, assemble
+from jatayu.extract.llm import FIELDS, LLM_CONFIDENCE, _kind, assemble
 from jatayu.extract.rules import Candidate, RulesExtractor
 from jatayu.lexicon import Lexicon
 from jatayu.llm import LlmRunner
@@ -21,23 +21,23 @@ CONTEXT_CODES = {"possible_not_given", "possible_measurement"}
 SYSTEM = (
     "You link pre-found spans of an ambulance responder's transcript into entries. You get the transcript and a "
     "numbered list of candidate spans (drug, number, unit, route, time, procedure, detail). Return one entry per drug "
-    "given or procedure done, using candidate NUMBERS only (null when not said). dose must be a number candidate, "
+    "given or procedure done (never repeat an entry), using candidate NUMBERS only; omit fields that were not said. dose must be a number candidate, "
     "unit a unit candidate, and so on. Link each value to the drug it belongs to, as the speaker meant it; if the "
     "speaker corrected themselves ('4, no sorry, 2 mg'), use the corrected value.\n"
     "context: 'given' if administered; 'not_given' for allergies, refused, withheld, not given, or the patient's own "
     "regular medication; 'measurement' for readings such as blood glucose or oxygen saturation."
 )
-_ID = {"type": ["integer", "null"]}
-SCHEMA = {
-    "type": "object",
-    "properties": {"entries": {"type": "array", "items": {
-        "type": "object",
-        "properties": {"kind": {"enum": ["medication", "procedure"]},
-                       "context": {"enum": ["given", "not_given", "measurement"]},
-                       **{f: _ID for f in FIELDS}},
-        "required": ["kind", "context", *FIELDS]}}},
-    "required": ["entries"],
-}
+SHAREABLE = {"time"}  # one time phrase may cover several drugs ("at 10 40 aspirin ... and ondansetron ...")
+def schema_for(cands: list[Candidate]) -> dict:
+    """Per-utterance schema: each field may only name candidates of its kind (or null); fields with no candidate are
+    left out. The model then cannot link a unit to a time or fill fields with stray ids, and writes fewer tokens."""
+    props: dict = {"context": {"enum": ["given", "not_given", "measurement"]}}
+    for name in FIELDS:
+        ids = [c.id for c in cands if c.kind == FIELD_KIND[name]]
+        if ids:
+            props[name] = {"enum": [*ids, None]}
+    item = {"type": "object", "properties": props, "required": []}
+    return {"type": "object", "properties": {"entries": {"type": "array", "items": item}}, "required": ["entries"]}
 
 
 def _describe(c: Candidate) -> str:
@@ -61,7 +61,7 @@ class HybridExtractor:
         rules_entries = self.fallback.extract(raw, capture_time)
         prompt = f"Transcript: {raw}\nCandidates:\n" + "\n".join(_describe(c) for c in cands)
         try:
-            out = self.runner_factory().complete_json(SYSTEM, prompt, SCHEMA)
+            out = self.runner_factory().complete_json(SYSTEM, prompt, schema_for(cands))
         except Exception as exc:  # LlmError, missing model, CUDA trouble: never lose the utterance
             log.warning("hybrid falling back to rules: %s", exc)
             return rules_entries, [f"llm unavailable: {exc}; used rules"]
@@ -72,7 +72,10 @@ class HybridExtractor:
         used: dict[str, set[int]] = {f: set() for f in FIELDS}
         entries = []
         for item in out.get("entries", []):
-            kind, context = item.get("kind", "medication"), item.get("context", "given")
+            kind = _kind(item)
+            if kind is None:
+                continue
+            context = item.get("context") or "given"
             fields: dict[str, Field | None] = {}
             unsupported: list[str] = []
             for name in FIELDS:
@@ -80,7 +83,7 @@ class HybridExtractor:
                 if cid is None:
                     continue
                 c = by_id.get(cid)
-                if c is None or c.kind != FIELD_KIND[name] or cid in used[name]:
+                if c is None or c.kind != FIELD_KIND[name] or (cid in used[name] and name not in SHAREABLE):
                     unsupported.append(name)
                     continue
                 used[name].add(cid)

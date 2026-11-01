@@ -80,3 +80,45 @@ def test_real_llm_hybrid(lexicon):
         "aspirin 300 mg PO and 4 mg ondansetron IV", CAP)
     assert [(e.drug.value, e.dose_value.value, e.dose_unit.value, e.route.value) for e in got] == \
         [("aspirin", 300.0, "mg", "PO"), ("ondansetron", 4.0, "mg", "IV")]
+
+
+def test_kind_is_inferred_from_the_anchor_not_trusted(lexicon):
+    runner = StubRunner({"entries": [{"kind": "procedure", "drug": 1, "dose": 2, "unit": 3, "route": 4}]})
+    [e] = hybrid(lexicon, runner).extract("morphine 5 mg IM", CAP)
+    assert e.kind == "medication" and e.dose_value.value == 5.0
+
+
+def test_omitted_fields_mean_not_said(lexicon):
+    runner = StubRunner({"entries": [{"drug": 1, "route": 2}]})
+    [e] = hybrid(lexicon, runner).extract("aspirin PO", CAP)
+    assert e.route.value == "PO" and e.dose_value.value is None
+
+
+def test_schema_keeps_output_short(lexicon):
+    from jatayu.extract.hybrid import schema_for
+    cands = RulesExtractor(lexicon).candidates("aspirin 300 mg PO", CAP)
+    item = schema_for(cands)["properties"]["entries"]["items"]
+    assert "kind" not in item["properties"] and item.get("required", []) == []
+
+
+def test_schema_only_offers_right_kind_ids(lexicon):
+    seen = {}
+
+    class Spy(StubRunner):
+        def complete_json(self, system, user, schema, max_tokens=512):
+            seen["schema"] = schema
+            return {"entries": [{"drug": 1, "dose": 2, "unit": 3, "route": 4}]}
+
+    hybrid(lexicon, Spy()).extract("aspirin 300 mg PO", CAP)
+    props = seen["schema"]["properties"]["entries"]["items"]["properties"]
+    assert props["drug"]["enum"] == [1, None] and props["dose"]["enum"] == [2, None]
+    assert "time" not in props and "procedure" not in props and "detail" not in props
+
+
+def test_one_time_phrase_can_cover_two_drugs(lexicon):
+    raw = "at 10 40 aspirin 300 mg PO and 4 mg ondansetron IV"
+    # 1 time, 2 drug aspirin, 3 number 300, 4 unit, 5 route PO, 6 number 4, 7 unit, 8 drug ondansetron, 9 route IV
+    runner = StubRunner({"entries": [{"drug": 2, "dose": 3, "unit": 4, "route": 5, "time": 1},
+                                     {"drug": 8, "dose": 6, "unit": 7, "route": 9, "time": 1}]})
+    a, b = hybrid(lexicon, runner).extract(raw, CAP)
+    assert a.time.value == b.time.value and not any(f.code == "llm_unsupported" for f in a.flags + b.flags)
