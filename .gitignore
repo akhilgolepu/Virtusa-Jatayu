@@ -35,3 +35,6 @@ reports/
 
 # frontend dependencies (build output in jatayu/web/dist IS committed)
 web/node_modules/
+docs/*.docx
+docs/imp_docs/
+jatayu.egg-info/
