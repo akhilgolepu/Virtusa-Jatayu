@@ -1,6 +1,7 @@
 """Find time mentions ("two mins ago", "at 10:42", "just now") and anchor them to the capture time."""
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
@@ -57,6 +58,15 @@ def _match(nt: NormalisedText, i: int, capture: datetime) -> tuple[datetime, int
 
     if word(i) in ("just", "right") and word(i + 1) == "now":
         return capture, i + 2
+
+    # Whisper writes spoken clock times as "at 10.12": a 2-digit fraction after "at" is minutes, not a decimal.
+    if word(i) == "at" and (t := tok(i + 1)) is not None and t.kind == "number":
+        raw_num = nt.raw[t.raw_start:t.raw_end]
+        if re.fullmatch(r"\d{1,2}\.\d{2}", raw_num):
+            hh, mm = (int(x) for x in raw_num.split("."))
+            if hh <= 23 and mm <= 59:
+                return _clock(capture, hh, mm, meridiem_known=False), i + 2
+            return None
 
     if word(i) == "at" and (hour := _int(tok(i + 1), 0, 23)) is not None:
         j = i + 2

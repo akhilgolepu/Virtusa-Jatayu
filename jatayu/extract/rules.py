@@ -23,6 +23,17 @@ SHARED_TIME_CONFIDENCE = 0.7
 
 
 @dataclass
+class Candidate:
+    """A span the rules layer found in the raw transcript; the hybrid LLM may only link these."""
+    id: int
+    kind: str  # drug | procedure | number | unit | route | time | detail
+    text: str
+    span: tuple[int, int]
+    value: object
+    confidence: float
+
+
+@dataclass
 class Mention:
     kind: str  # drug | procedure | unit | route
     canon: str
@@ -95,6 +106,32 @@ class RulesExtractor:
             bounds.append(k)
         bounds.append(len(toks))
         return list(zip(bounds, bounds[1:]))
+
+    # ---- candidates (for the hybrid extractor) --------------------------------------------
+    def candidates(self, raw: str, capture_time: datetime) -> list[Candidate]:
+        nt = normalise(raw)
+        times = find_times(nt, capture_time)
+        time_tokens = {k for t in times for k in range(t.tok_start, t.tok_end)}
+        mentions = self._mentions(nt, time_tokens)
+        consumed = time_tokens | {k for m in mentions for k in range(m.i, m.j)}
+        found: list[tuple[tuple[int, int], str, object, float]] = []
+        for m in mentions:
+            found.append((nt.raw_span(m.i, m.j), m.kind, m.canon, m.confidence))
+        for t in times:
+            found.append((t.span, "time", t.value, 1.0))
+        toks = nt.tokens
+        detail_tokens = set()
+        for k in range(len(toks) - 1):
+            if toks[k].text == "size" and toks[k + 1].kind == "number" and k + 1 not in consumed:
+                span = nt.raw_span(k, k + 2)
+                found.append((span, "detail", raw[span[0]:span[1]], 1.0))
+                detail_tokens.add(k + 1)
+        for k, t in enumerate(toks):
+            if t.kind == "number" and k not in consumed and k not in detail_tokens:
+                found.append((nt.raw_span(k, k + 1), "number", t.value, 1.0))
+        found.sort(key=lambda f: f[0])
+        return [Candidate(i + 1, kind, raw[span[0]:span[1]], span, value, conf)
+                for i, (span, kind, value, conf) in enumerate(found)]
 
     # ---- extraction -----------------------------------------------------------------------
     def extract(self, raw: str, capture_time: datetime) -> list[Entry]:

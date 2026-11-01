@@ -40,3 +40,10 @@ def test_clock_without_meridiem_picks_most_recent():
     assert (m.value.hour, m.value.minute, m.value.date()) == (14, 30, cap.date())
     [m] = find_times(normalise("at 10 42 gave morphine"), CAP)
     assert (m.value.hour, m.value.minute) == (10, 42)
+
+
+def test_whisper_dotted_clock_after_at():
+    [m] = find_times(normalise("ativan 1 mg at 10.12."), CAP)
+    assert (m.value.hour, m.value.minute) == (10, 12)
+    assert find_times(normalise("adrenaline 0.3 mg"), CAP) == []
+    assert find_times(normalise("at 10.75 something"), CAP) == []
