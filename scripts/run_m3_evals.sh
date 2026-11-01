@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Reproduce the M3 evidence: ablation on dev (text), spoken dev, noise curve on dev, one test run.
+# Reproduce the M3 dev evidence: ablation on dev (text), spoken dev, noise curve on dev. Nothing runs on test
+# here: at M3 only the rules baseline runs on test, once, after the code freeze (evaluator round 1).
 # Usage: conda activate anpr && bash scripts/run_m3_evals.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -8,4 +9,3 @@ for x in rules hybrid llm; do
 done
 python -m f2r.cli eval --split dev --tag m3-dev-audio-hybrid --extractor hybrid --mode audio
 python -m f2r.cli eval --split dev --tag m3-dev-noise-hybrid --extractor hybrid --mode noisy --limit 160
-python -m f2r.cli eval --split test --tag m3-test-text-hybrid --extractor hybrid --mode text
