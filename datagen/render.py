@@ -27,13 +27,14 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     for split in args.splits:
         t0 = time.perf_counter()
-        utts = load_split(split, final=(split == "test"), root=args.root)  # rendering builds the test set
+        # Rendering is part of building the held-out sets, not evaluating on them.
+        utts = load_split(split, final=split in ("test", "final_test"), sealed_ok=split == "final_test", root=args.root)
         rows = render_split(split, utts, args.root / "audio" / "tts")
         hours = sum(r["duration_s"] for r in rows) / 3600
         print(f"{split}: {len(rows)} clips, {hours:.2f} h audio, {time.perf_counter() - t0:.0f}s", flush=True)
     if args.noise:
         tts_root = args.root / "audio" / "tts"
-        for split in ("dev", "test"):
+        for split in [s for s in args.splits if s in ("dev", "test", "final_test")]:
             t0 = time.perf_counter()
             rows = [json.loads(line) for line in (tts_root / f"{split}.jsonl").read_text().splitlines() if line]
             noisy = build_noisy(split, rows, tts_root, args.root / "audio" / "noisy", args.seed)

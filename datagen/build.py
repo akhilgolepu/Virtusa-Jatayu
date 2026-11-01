@@ -20,7 +20,8 @@ def _stats(utts: list[GoldUtterance], fam_split: dict[str, str]) -> str:
     split_of = lambda u: fam_split[u.family]  # noqa: E731
     lines = ["# Synthetic dataset stats", "", "| split | utterances | families |", "|---|---|---|"]
     for s in ("train", "dev", "test"):
-        lines.append(f"| {s} | {sum(split_of(u) == s for u in utts)} | {sum(v == s for v in fam_split.values())} |")
+        lines.append(f"| {s}{' + final_test' if s == 'test' else ''} | {sum(split_of(u) == s for u in utts)} | "
+                     f"{sum(v == s for v in fam_split.values())} |")
     cats = Counter((u.category, split_of(u)) for u in utts)
     lines += ["", "| category | train | dev | test |", "|---|---|---|---|"]
     for cat in sorted({c for c, _ in cats}):
@@ -74,7 +75,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--refreeze", action="store_true", help="overwrite an existing frozen test split")
     args = ap.parse_args(argv)
 
-    if (args.root / "test" / "FROZEN.json").exists() and not args.refreeze:
+    if (args.root / "test" / "test.jsonl").exists() and not args.refreeze:
         print("test split already frozen; pass --refreeze to regenerate it (this invalidates past results)",
               file=sys.stderr)
         return 2

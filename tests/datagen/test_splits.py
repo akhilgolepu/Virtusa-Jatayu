@@ -81,3 +81,25 @@ def test_hard_categories_have_dev_and_two_test_families(fam_split):
 
 def splits_count(splits, name):
     return sum(s == name for s in splits)
+
+
+def test_final_test_is_sealed_and_template_disjoint_from_test(utts, tmp_path, fam_split):
+    write_splits(utts, fam_split, tmp_path)
+    test = load_split("test", final=True, root=tmp_path)
+    with pytest.raises(PermissionError):
+        load_split("final_test", final=True, root=tmp_path)
+    final = load_split("final_test", final=True, sealed_ok=True, root=tmp_path)
+    pattern = lambda u: u.id.rsplit("-", 1)[0]  # noqa: E731
+    assert test and final and not ({pattern(u) for u in test} & {pattern(u) for u in final})
+    assert {u.category for u in final} == {u.category for u in test}
+    assert all(u.split == "final_test" for u in final)
+
+
+def test_committed_hash_file_guards_both_sets(utts, tmp_path, fam_split):
+    write_splits(utts, fam_split, tmp_path)
+    lines = (tmp_path / "frozen.sha256").read_text().split("\n")
+    assert any(l.endswith("test.jsonl") for l in lines) and any(l.endswith("final_test.jsonl") for l in lines)
+    with open(tmp_path / "final_test" / "final_test.jsonl", "a") as fh:
+        fh.write(" ")
+    with pytest.raises(ValueError, match="modified"):
+        load_split("final_test", final=True, sealed_ok=True, root=tmp_path)

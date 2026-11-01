@@ -42,7 +42,7 @@ class GoldUtterance(BaseModel):
     id: str
     family: str
     category: Category
-    split: Literal["train", "dev", "test", "unsplit"] = "unsplit"
+    split: Literal["train", "dev", "test", "final_test", "unsplit"] = "unsplit"
     lang: Literal["en", "hinglish"]
     text: str
     capture_time: str
