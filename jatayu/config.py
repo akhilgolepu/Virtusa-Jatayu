@@ -17,3 +17,5 @@ ASR_DEVICE = os.environ.get("JATAYU_ASR_DEVICE", "cuda")
 ASR_COMPUTE_TYPE = os.environ.get("JATAYU_ASR_COMPUTE", "int8_float16")
 
 DISCLAIMER = "Decision-support demo, not a clinical device."
+
+READBACK_VOICE = MODELS_DIR / "tts/en/en_US/lessac/medium/en_US-lessac-medium.onnx"

@@ -1,34 +1,7 @@
 """Render dose values the way responders say (and ASR writes) them: "0.3", ".3", "point three", "1,000"..."""
 from __future__ import annotations
 
-ONES = ("zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen "
-        "sixteen seventeen eighteen nineteen").split()
-TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
-
-
-def _below_100(n: int) -> str:
-    if n < 20:
-        return ONES[n]
-    tens, ones = divmod(n, 10)
-    return TENS[tens] + (f" {ONES[ones]}" if ones else "")
-
-
-def to_words(n: int, hundred_and: bool = False) -> str:
-    """0-99999 in English words; hundred_and=True gives the British/Indian "three hundred and twenty five"."""
-    if not 0 <= n <= 99999:
-        raise ValueError(f"out of range: {n}")
-    if n < 100:
-        return _below_100(n)
-    parts = []
-    thousands, rest = divmod(n, 1000)
-    if thousands:
-        parts.append(f"{_below_100(thousands)} thousand")
-    hundreds, rest = divmod(rest, 100)
-    if hundreds:
-        parts.append(f"{ONES[hundreds]} hundred")
-    if rest:
-        parts.append(("and " if hundred_and else "") + _below_100(rest))
-    return " ".join(parts)
+from jatayu.spoken import ONES, to_words  # noqa: F401  (to_words re-exported for datagen callers)
 
 
 def _digit_words(digits: str) -> str:
