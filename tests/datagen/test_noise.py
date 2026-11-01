@@ -40,3 +40,9 @@ def test_noise_bank_folds():
     assert test_bank and all(folds[p.name] == "5" for p in test_bank)
     assert all(folds[p.name] in "123" for p in noise_bank("train"))
     assert {cats[p.name] for p in test_bank} == set(NOISE_CATEGORIES)
+
+
+@needs_esc50
+def test_final_test_noise_comes_from_the_held_out_fold():
+    folds = {r["filename"]: r["fold"] for r in csv.DictReader(open(ESC50 / "meta" / "esc50.csv"))}
+    assert noise_bank("final_test") and all(folds[p.name] == "5" for p in noise_bank("final_test"))

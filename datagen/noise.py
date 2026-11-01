@@ -17,7 +17,7 @@ from jatayu.audio import SAMPLE_RATE, decode_to_16k
 ESC50 = config.DATA_DIR / "raw" / "ESC-50-master"
 NOISE_CATEGORIES = ("siren", "engine", "car_horn", "train", "helicopter", "rain", "wind", "crying_baby",
                     "coughing", "breathing")
-FOLDS = {"train": {"1", "2", "3"}, "dev": {"4"}, "test": {"5"}}  # no noise clip is shared between splits
+FOLDS = {"train": {"1", "2", "3"}, "dev": {"4"}, "test": {"5"}, "final_test": {"5"}}  # held-out sets share fold 5, never train/dev
 SNRS = (20, 10, 5)
 _MIN_POWER = 1e-10
 

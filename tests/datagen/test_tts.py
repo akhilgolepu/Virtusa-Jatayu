@@ -66,3 +66,8 @@ def test_changed_text_gets_a_new_clip(tmp_path):
     changed = _utt(0).model_copy(update={"text": "gave eight milligrams of ondansetron IV"})
     b = render_split("dev", [changed], tmp_path)
     assert a[0]["path"] != b[0]["path"] and (tmp_path / b[0]["path"]).exists()
+
+
+def test_final_test_gets_three_voices_like_test():
+    for i in range(5):
+        assert len(assign_voices(_utt(i, split="final_test"))) == 3

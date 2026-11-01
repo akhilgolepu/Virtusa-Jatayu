@@ -51,7 +51,7 @@ def assign_voices(utt: GoldUtterance) -> list[Voice]:
     indian = [v for v in VOICES if v.accent == "in"] + (HINDI_VOICES if USE_HINDI_VOICES else [])
     western = [v for v in VOICES if v.accent in ("us", "gb")]
     pool_all = indian if utt.lang == "hinglish" else VOICES
-    if utt.split != "test":
+    if utt.split not in ("test", "final_test"):
         return [pool_all[_h(utt.id) % len(pool_all)]]
     first_pool = indian if utt.lang == "hinglish" else western
     first = first_pool[_h(utt.id, "a") % len(first_pool)]
