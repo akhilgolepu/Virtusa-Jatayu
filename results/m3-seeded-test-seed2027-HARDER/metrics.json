@@ -1,0 +1,57 @@
+{
+  "split": "test",
+  "variant": "harder",
+  "n": 200,
+  "seed": 2027,
+  "pool_size": 191,
+  "catch_rate": {
+    "count": 139,
+    "denominator": 200,
+    "rate": 0.695
+  },
+  "false_flag_rate": {
+    "count": 15,
+    "denominator": 200,
+    "rate": 0.075
+  },
+  "by_corruption": {
+    "dose_x2": {
+      "count": 20,
+      "denominator": 50,
+      "rate": 0.4
+    },
+    "dose_x5": {
+      "count": 40,
+      "denominator": 50,
+      "rate": 0.8
+    },
+    "digit_slip": {
+      "count": 29,
+      "denominator": 50,
+      "rate": 0.58
+    },
+    "mg_to_g": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0
+    }
+  },
+  "by_range_class": {
+    "cited": {
+      "count": 134,
+      "denominator": 189,
+      "rate": 0.709
+    },
+    "illustrative": {
+      "count": 5,
+      "denominator": 11,
+      "rate": 0.4545
+    }
+  },
+  "not_counted_as_catch": [
+    "no_reference_range"
+  ],
+  "target": null,
+  "commit_at_start": "bce5504-dirty",
+  "created": "2026-11-01T23:18:39.664113+05:30"
+}
