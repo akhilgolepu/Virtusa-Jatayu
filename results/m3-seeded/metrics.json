@@ -1,0 +1,39 @@
+{
+  "n": 200,
+  "seed": 7,
+  "pool_size": 297,
+  "catch_rate": {
+    "count": 197,
+    "denominator": 200,
+    "rate": 0.985
+  },
+  "by_corruption": {
+    "dose_x10": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0
+    },
+    "dose_div10": {
+      "count": 47,
+      "denominator": 50,
+      "rate": 0.94
+    },
+    "mg_mcg_swap": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0
+    },
+    "wrong_route": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0
+    }
+  },
+  "false_flag_rate": {
+    "count": 19,
+    "denominator": 200,
+    "rate": 0.095
+  },
+  "target": 0.95,
+  "created": "2026-11-01T22:26:29.501374+05:30"
+}

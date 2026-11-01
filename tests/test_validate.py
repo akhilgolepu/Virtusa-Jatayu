@@ -51,7 +51,7 @@ def test_uncapped_weight_based_dose(lexicon):
 
 
 def test_no_cited_range_checks_route_and_unit_only(lexicon):
-    assert codes(validate(med("furosemide", 40, "mg", "IV"), lexicon)) == ["no_reference_range"]
+    assert codes(validate(med("atropine", 1, "mg", "IO"), lexicon)) == ["no_reference_range"]
 
 
 def test_repeat_too_soon_and_duplicate(lexicon):
@@ -95,5 +95,19 @@ def test_not_given_entries_are_still_range_checked_measurements_are_not(lexicon)
 
 
 def test_unchecked_dose_is_marked_not_silent(lexicon):
-    for args in [("furosemide", 2000, "mg", "IV"), ("epinephrine", 10, "ml", "IV"), ("naloxone", 40, "mg", "SC")]:
+    for args in [("atropine", 10, "mg", "IO"), ("epinephrine", 10, "ml", "IV"), ("naloxone", 40, "mg", "SC")]:
         assert "no_reference_range" in codes(validate(med(*args), lexicon)), args
+
+
+def test_decimal_slip_floor_on_open_ended_rows(lexicon):
+    assert "dose_below_range" in codes(validate(med("diphenhydramine", 2.5, "mg", "IV"), lexicon))
+    assert validate(med("fentanyl", 25, "mcg", "IV"), lexicon) == []          # small titrated dose still fine
+    assert validate(med("morphine", 2, "mg", "IV"), lexicon) == []
+
+
+def test_illustrative_ranges_are_used_and_labelled(lexicon):
+    [f] = validate(med("furosemide", 400, "mg", "IV"), lexicon)
+    assert f.code == "dose_out_of_range" and "ILLUSTRATIVE" in f.message
+    assert validate(med("oxygen", 4, "L/min", "INH"), lexicon) == []
+    assert any(r.illustrative for r in lexicon.dose_ranges("oxygen", "INH"))
+    assert "dose_out_of_range" in codes(validate(med("sodium bicarbonate", 500, "mmol", "IV"), lexicon))

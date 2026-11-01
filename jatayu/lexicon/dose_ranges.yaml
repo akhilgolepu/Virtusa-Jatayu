@@ -1396,3 +1396,58 @@ dose_ranges:
     indication: haemorrhagic shock ≤3 h from injury
     source: 'SECONDARY-UNVERIFIED: NAEMSP/ACEP/ACS-COT 2025 via UMEM summary'
     secondary: true
+# ---------------------------------------------------------------------------------------------------------------
+# ILLUSTRATIVE rows (Field-to-Record plan M2: "where you cannot cite a public guideline, mark the range illustrative").
+# NASEMSO v3.0 gives no adult prehospital range for these; the values are plausible demo bounds, NOT clinical guidance.
+# Derived rows restate a cited row in another unit.
+illustrative_ranges:
+  norepinephrine:
+  - route: IV
+    unit: mcg
+    min: 2.0
+    max: 20.0
+    per_kg: null
+    min_repeat_s: null
+    indication: pressor rate spoken as mcg (per minute)
+    source: ILLUSTRATIVE — no public adult prehospital range found (NASEMSO v3.0 silent); plausible demo bound, not clinical guidance (NASEMSO
+      gives mcg/kg/min only, pp.36,109)
+    illustrative: true
+  ketamine:
+  - route: IN
+    unit: mg
+    min: 25.0
+    max: 100.0
+    per_kg: null
+    min_repeat_s: null
+    indication: intranasal analgesia
+    source: ILLUSTRATIVE — no public adult prehospital range found (NASEMSO v3.0 silent); plausible demo bound, not clinical guidance
+    illustrative: true
+  oxygen:
+  - route: INH
+    unit: L/min
+    min: 1.0
+    max: 15.0
+    per_kg: null
+    min_repeat_s: null
+    indication: flow by device (cannula 1-6, mask/NRB 6-15); NASEMSO gives SpO2 targets only (p.179)
+    source: ILLUSTRATIVE — no public adult prehospital range found (NASEMSO v3.0 silent); plausible demo bound, not clinical guidance
+    illustrative: true
+  furosemide:
+  - route: IV
+    unit: mg
+    min: 20.0
+    max: 80.0
+    per_kg: null
+    min_repeat_s: null
+    indication: pulmonary oedema (NASEMSO p.194 advises against prehospital diuretics)
+    source: ILLUSTRATIVE — no public adult prehospital range found (NASEMSO v3.0 silent); plausible demo bound, not clinical guidance
+    illustrative: true
+  sodium bicarbonate:
+  - route: IV
+    unit: mmol
+    min: null
+    max: 50.0
+    per_kg: 1.0
+    min_repeat_s: null
+    indication: hyperkalaemia; crush injury (1 mmol = 1 mEq)
+    source: DERIVED from Hyperglycemia p.82; Crush Injury pp.222-223 (mEq row restated in mmol)

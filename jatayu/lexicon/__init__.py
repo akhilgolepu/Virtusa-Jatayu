@@ -26,6 +26,7 @@ class DoseRange(BaseModel):
     indication: str
     source: str
     secondary: bool = False  # not a NASEMSO value (AHA via secondary source, or unverified)
+    illustrative: bool = False  # no public guideline range exists; plausible demo bound (plan M2 rule)
 
 
 class DrugInfo(BaseModel):
@@ -59,7 +60,10 @@ class Lexicon:
     def load(cls, dir: Path | None = None) -> "Lexicon":
         d = dir or _HERE
         read = lambda name: yaml.safe_load((d / name).read_text(encoding="utf-8"))  # noqa: E731
-        ranges = read("dose_ranges.yaml")["dose_ranges"] if (d / "dose_ranges.yaml").exists() else {}
+        doc = read("dose_ranges.yaml") if (d / "dose_ranges.yaml").exists() else {}
+        ranges = {k: list(v) for k, v in (doc.get("dose_ranges") or {}).items()}
+        for k, v in (doc.get("illustrative_ranges") or {}).items():
+            ranges.setdefault(k, []).extend(v)
         drugs = {n: DrugInfo(name=n, dose_ranges=ranges.get(n, []), **v) for n, v in read("drugs.yaml")["drugs"].items()}
         procs = {n: ProcedureInfo(name=n, **v) for n, v in read("procedures.yaml")["procedures"].items()}
         return cls(drugs, procs, read("units.yaml")["units"], read("routes.yaml")["routes"])

@@ -23,8 +23,18 @@ def _convert(value: float, unit: str, target: str) -> float | None:
     return None
 
 
+DECIMAL_SLIP_FLOOR = 0.2  # an open-ended "up to N" row assumes a floor of N/5 (catches a x0.1 decimal slip; see DECISIONS)
+
+
+def _lo(r: DoseRange) -> float | None:
+    if r.min is not None:
+        return r.min
+    return r.max * DECIMAL_SLIP_FLOOR if r.max is not None else None
+
+
 def _fits(value: float, r: DoseRange) -> bool:
-    return (r.min is None or value >= r.min) and (r.max is None or value <= r.max)
+    lo = _lo(r)
+    return (lo is None or value >= lo) and (r.max is None or value <= r.max)
 
 
 def _cite(rows: list[DoseRange]) -> str:
@@ -73,7 +83,7 @@ def _range_flags(e: MedicationEntry, lexicon: Lexicon) -> list[Flag]:
     if not checkable:
         checkable = comparable
     rows_only = [r for r, _ in checkable]
-    if all(r.min is not None and v < r.min for r, v in checkable):
+    if all(_lo(r) is not None and v < _lo(r) for r, v in checkable):
         return [Flag(code="dose_below_range", field="dose_value", severity="medium",
                      message=f"{value:g} {unit} is below the published adult dose. Source: {_cite(rows_only)}.")]
     return [Flag(code="dose_out_of_range", field="dose_value", severity="high",
