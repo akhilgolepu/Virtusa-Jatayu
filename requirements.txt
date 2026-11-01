@@ -13,3 +13,5 @@ RapidFuzz==3.14.5
 uvicorn==0.34.3
 jiwer==4.0.0
 llama-cpp-python==0.3.36  # built from source with CUDA 13.0 (conda env cudabuild), sm_120; see README
+pypdf==6.21.4
+reportlab==5.1.0

@@ -20,6 +20,7 @@ from jatayu.llm import LlmError, LlmRunner
 from jatayu.models_manager import ModelManager
 from jatayu.incident import ENTRY, IncidentStore, apply_user_edit, incident_state
 from jatayu.output.fhir import to_incident_bundle, validate_bundle
+from jatayu.output.pdf import render_note
 from jatayu.lexicon import Lexicon
 from jatayu.pipeline import Pipeline, PipelineResult
 from jatayu.readback import readback_text, synthesize_readback
@@ -171,6 +172,13 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
     @app.get("/api/incidents/{incident_id}/entries/{entry_id}/readback.wav")
     def readback_wav(incident_id: str, entry_id: str):
         return Response(synthesize_readback(readback_text(_entry(incident_id, entry_id))), media_type="audio/wav")
+
+    @app.get("/api/incidents/{incident_id}/note.pdf")
+    def incident_pdf(incident_id: str):
+        inc = _incident(incident_id)
+        pdf = render_note(inc, incident_state(audit, incident_id), audit.rows(incident_id), audit.verify())
+        return Response(pdf, media_type="application/pdf",
+                        headers={"Content-Disposition": f'inline; filename="jatayu-{incident_id[:8]}.pdf"'})
 
     @app.get("/api/incidents/{incident_id}/bundle")
     def incident_bundle(incident_id: str):
