@@ -20,7 +20,7 @@ DISCLAIMER = "Decision-support demo, not a clinical device."
 
 READBACK_VOICE = MODELS_DIR / "tts/en/en_US/lessac/medium/en_US-lessac-medium.onnx"
 
-DEFAULT_EXTRACTOR = os.environ.get("JATAYU_EXTRACTOR", "rules")  # becomes "hybrid" once the LLM is wired (Task 11)
+DEFAULT_EXTRACTOR = os.environ.get("JATAYU_EXTRACTOR", "hybrid")  # rules | llm | hybrid
 
 LLM_MODEL_PATH = MODELS_DIR / "llm/Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
 LLM_BACKUP_PATH = MODELS_DIR / "llm/Llama-3.2-3B-Instruct-Q4_K_M.gguf"

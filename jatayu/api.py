@@ -13,7 +13,11 @@ from jatayu import config
 from jatayu.asr import Transcriber
 from jatayu.audit import AuditLog
 from jatayu.corpus import create_corpus_router
+from jatayu.extract.hybrid import HybridExtractor
+from jatayu.extract.llm import LlmExtractor
 from jatayu.extract.rules import RulesExtractor
+from jatayu.llm import LlmError, LlmRunner
+from jatayu.models_manager import ModelManager
 from jatayu.incident import ENTRY, IncidentStore, apply_user_edit, incident_state
 from jatayu.output.fhir import to_incident_bundle, validate_bundle
 from jatayu.lexicon import Lexicon
@@ -42,14 +46,33 @@ def _state_json(inc: dict, state) -> dict:
                         for s in state.entries.values()]}
 
 
+class ManagedTranscriber:
+    """Routes ASR through the ModelManager so that, in swap mode, the LLM is unloaded before Whisper runs."""
+
+    def __init__(self, inner: Transcriber, manager: ModelManager):
+        self.inner, self.manager = inner, manager
+
+    @property
+    def device(self) -> str:
+        return self.inner.device
+
+    def transcribe(self, samples):
+        return self.manager.get("asr").transcribe(samples)
+
+
 def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None = None,
                audio_dir: Path = config.AUDIO_DIR, recordings_dir: Path = config.DATA_DIR / "recordings") -> FastAPI:
     lexicon = Lexicon.load()
     audit = AuditLog(db_path)
     transcriber = transcriber or Transcriber(lexicon=lexicon)  # model loads lazily on first audio request
+    runner = LlmRunner(config.LLM_MODEL_PATH)
+    manager = ModelManager({"asr": lambda: transcriber, "llm": lambda: runner},
+                           {"asr": lambda t: t.unload(), "llm": lambda r: r.close()}, keep_all=config.KEEP_MODELS)
+    llm = lambda: manager.get("llm")  # noqa: E731
     rules = RulesExtractor(lexicon)
-    extractors = {"rules": rules}
-    pipeline = Pipeline(lexicon, rules, audit, transcriber, audio_dir=audio_dir,
+    extractors = {"rules": rules, "llm": LlmExtractor(lexicon, llm), "hybrid": HybridExtractor(lexicon, llm, rules)}
+    asr = ManagedTranscriber(transcriber, manager) if hasattr(transcriber, "unload") else transcriber
+    pipeline = Pipeline(lexicon, extractors[config.DEFAULT_EXTRACTOR], audit, asr, audio_dir=audio_dir,
                         validator=lambda entries, history: validate_all(entries, lexicon, history))
     incidents = IncidentStore(db_path)
 
@@ -93,6 +116,8 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
             if audio is not None:
                 return pipeline.run(incident_id, audio=audio.file.read(), **kwargs)
             return pipeline.run(incident_id, text=text, **kwargs)
+        except LlmError as exc:
+            raise HTTPException(503, f"LLM unavailable: {exc}") from exc
         except ValueError as exc:
             raise HTTPException(400, str(exc)) from exc
 

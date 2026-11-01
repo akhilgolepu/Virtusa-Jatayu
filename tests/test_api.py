@@ -47,3 +47,27 @@ def test_page_has_no_external_urls(client):
 def test_health(client):
     body = client.get("/api/health").json()
     assert body["ok"] is True and body["offline"] is True
+
+
+def test_extractor_choice(client):
+    inc = _incident(client)
+    for name in ("rules", "llm", "hybrid"):
+        r = client.post("/api/utterances", data={"incident_id": inc, "text": "aspirin 300 mg PO", "extractor": name})
+        assert r.status_code == 200, (name, r.text)
+        assert r.json()["entries"][0]["drug"]["value"] == "aspirin"
+    assert client.post("/api/utterances", data={"incident_id": inc, "text": "x", "extractor": "magic"}).status_code == 422
+
+
+def test_default_extractor_is_hybrid():
+    from jatayu import config
+    assert config.DEFAULT_EXTRACTOR == "hybrid"
+
+
+def test_llm_mode_without_model_is_503_and_hybrid_falls_back(tmp_path, monkeypatch):
+    from jatayu import config
+    monkeypatch.setattr(config, "LLM_MODEL_PATH", tmp_path / "missing.gguf")
+    c = TestClient(create_app(db_path=tmp_path / "t.sqlite", audio_dir=tmp_path / "audio"))
+    inc = _incident(c)
+    assert c.post("/api/utterances", data={"incident_id": inc, "text": "aspirin 300 mg", "extractor": "llm"}).status_code == 503
+    r = c.post("/api/utterances", data={"incident_id": inc, "text": "aspirin 300 mg", "extractor": "hybrid"}).json()
+    assert r["entries"][0]["drug"]["value"] == "aspirin" and r["warnings"][0].startswith("llm unavailable")

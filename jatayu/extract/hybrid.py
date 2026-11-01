@@ -1,0 +1,109 @@
+"""Hybrid extractor (default): the rules layer finds candidate spans; the LLM only LINKS candidate ids into entries.
+It cannot introduce text, so every value is a span the rules layer already read. If the LLM is unavailable or
+fails, the rules result is returned with a warning, so no utterance is lost."""
+from __future__ import annotations
+
+import logging
+from collections.abc import Callable
+from datetime import datetime
+
+from jatayu.extract.llm import FIELDS, LLM_CONFIDENCE, assemble
+from jatayu.extract.rules import Candidate, RulesExtractor
+from jatayu.lexicon import Lexicon
+from jatayu.llm import LlmRunner
+from jatayu.models import Entry, Field, Flag
+
+log = logging.getLogger(__name__)
+FIELD_KIND = {"drug": "drug", "dose": "number", "unit": "unit", "route": "route", "time": "time",
+              "procedure": "procedure", "detail": "detail"}
+CONTEXT_CODES = {"possible_not_given", "possible_measurement"}
+
+SYSTEM = (
+    "You link pre-found spans of an ambulance responder's transcript into entries. You get the transcript and a "
+    "numbered list of candidate spans (drug, number, unit, route, time, procedure, detail). Return one entry per drug "
+    "given or procedure done, using candidate NUMBERS only (null when not said). dose must be a number candidate, "
+    "unit a unit candidate, and so on. Link each value to the drug it belongs to, as the speaker meant it; if the "
+    "speaker corrected themselves ('4, no sorry, 2 mg'), use the corrected value.\n"
+    "context: 'given' if administered; 'not_given' for allergies, refused, withheld, not given, or the patient's own "
+    "regular medication; 'measurement' for readings such as blood glucose or oxygen saturation."
+)
+_ID = {"type": ["integer", "null"]}
+SCHEMA = {
+    "type": "object",
+    "properties": {"entries": {"type": "array", "items": {
+        "type": "object",
+        "properties": {"kind": {"enum": ["medication", "procedure"]},
+                       "context": {"enum": ["given", "not_given", "measurement"]},
+                       **{f: _ID for f in FIELDS}},
+        "required": ["kind", "context", *FIELDS]}}},
+    "required": ["entries"],
+}
+
+
+def _describe(c: Candidate) -> str:
+    extra = f" -> {c.value}" if c.kind in ("drug", "unit", "route", "procedure") and str(c.value) != c.text else ""
+    return f'[{c.id}] {c.kind} "{c.text}"{extra}'
+
+
+class HybridExtractor:
+    name = "hybrid"
+
+    def __init__(self, lexicon: Lexicon, runner_factory: Callable[[], LlmRunner], fallback: RulesExtractor):
+        self.lexicon, self.runner_factory, self.fallback = lexicon, runner_factory, fallback
+
+    def extract(self, raw: str, capture_time: datetime) -> list[Entry]:
+        return self.extract_with_warnings(raw, capture_time)[0]
+
+    def extract_with_warnings(self, raw: str, capture_time: datetime) -> tuple[list[Entry], list[str]]:
+        cands = self.fallback.candidates(raw, capture_time)
+        if not any(c.kind in ("drug", "procedure") for c in cands):
+            return [], []
+        rules_entries = self.fallback.extract(raw, capture_time)
+        prompt = f"Transcript: {raw}\nCandidates:\n" + "\n".join(_describe(c) for c in cands)
+        try:
+            out = self.runner_factory().complete_json(SYSTEM, prompt, SCHEMA)
+        except Exception as exc:  # LlmError, missing model, CUDA trouble: never lose the utterance
+            log.warning("hybrid falling back to rules: %s", exc)
+            return rules_entries, [f"llm unavailable: {exc}; used rules"]
+        return self._link(out, cands, rules_entries, capture_time), []
+
+    def _link(self, out: dict, cands: list[Candidate], rules_entries: list[Entry], capture_time: datetime) -> list[Entry]:
+        by_id = {c.id: c for c in cands}
+        used: dict[str, set[int]] = {f: set() for f in FIELDS}
+        entries = []
+        for item in out.get("entries", []):
+            kind, context = item.get("kind", "medication"), item.get("context", "given")
+            fields: dict[str, Field | None] = {}
+            unsupported: list[str] = []
+            for name in FIELDS:
+                cid = item.get(name)
+                if cid is None:
+                    continue
+                c = by_id.get(cid)
+                if c is None or c.kind != FIELD_KIND[name] or cid in used[name]:
+                    unsupported.append(name)
+                    continue
+                used[name].add(cid)
+                fields[name] = Field(value=c.value, span=c.span, confidence=min(c.confidence, LLM_CONFIDENCE),
+                                     source="llm")
+            anchor = fields.get("drug" if kind == "medication" else "procedure")
+            if anchor is None:
+                continue  # an entry without its drug/procedure (or one reusing it) is not an entry
+            extra = self._rules_flags(anchor, rules_entries)
+            if kind == "medication" and anchor.confidence < 0.95:
+                extra.append(Flag(code="low_confidence", field="drug", severity="medium",
+                                  message=f"Drug name matched approximately ({anchor.confidence:.2f})."))
+            entry = assemble(kind, context, fields, unsupported, capture_time, extra)
+            if entry is not None:
+                entries.append(entry)
+        return entries
+
+    @staticmethod
+    def _rules_flags(anchor: Field, rules_entries: list[Entry]) -> list[Flag]:
+        """Context cues the rules layer saw around the same drug span ("allergic to", "blood glucose") are kept even
+        if the LLM called the entry 'given'."""
+        for r in rules_entries:
+            r_anchor = getattr(r, "drug", None) or getattr(r, "procedure", None)
+            if r_anchor is not None and r_anchor.span == anchor.span:
+                return [f for f in r.flags if f.code in CONTEXT_CODES]
+        return []
