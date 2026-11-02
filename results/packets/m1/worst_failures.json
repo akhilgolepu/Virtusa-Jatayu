@@ -28,7 +28,7 @@
         "time_source": "device_clock",
         "flags": [
           "time_not_stated",
-          "weight_based_dose"
+          "dose_below_range"
         ]
       }
     ],
