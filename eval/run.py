@@ -177,7 +177,9 @@ def _report(o: dict, errors: list[dict]) -> str:
              f"| Record exact match | {m['record_exact_match']['count']}/{m['record_exact_match']['denominator']} "
              f"= {m['record_exact_match']['rate']:.3f} |",
              f"| **Dangerous errors** | **{m['dangerous_error']['count']} of {m['dangerous_error']['denominator']}** "
-             f"({m['dangerous_error']['rate']:.2%}) |",
+             f"({m['dangerous_error']['rate']:.2%}; strict: weight_based_dose does not catch) |",
+             f"| Dangerous errors, lenient (weight_based_dose counts as a catch) | "
+             f"{m['dangerous_error_lenient']['count']} of {m['dangerous_error_lenient']['denominator']} |",
              f"| Context errors (not-given / measurement emitted unflagged) | {m['context_error']['count']} of "
              f"{m['context_error']['denominator']} |",
              f"| Deliberate dose anomalies flagged | {m['anomaly_flagged']['count']} of {m['anomaly_flagged']['denominator']} |",

@@ -1,0 +1,218 @@
+{
+  "split": "test",
+  "variant": "standard",
+  "n": 200,
+  "seed": 2026,
+  "pool_size": 191,
+  "catch_rate": {
+    "count": 189,
+    "denominator": 200,
+    "rate": 0.945,
+    "ci95": [
+      0.9042,
+      0.969
+    ]
+  },
+  "catch_rate_new_flag": {
+    "count": 186,
+    "denominator": 200,
+    "rate": 0.93,
+    "ci95": [
+      0.8859,
+      0.9578
+    ]
+  },
+  "base_already_flagged": {
+    "count": 16,
+    "denominator": 200,
+    "rate": 0.08,
+    "ci95": [
+      0.0498,
+      0.126
+    ]
+  },
+  "false_flag_rate": {
+    "count": 16,
+    "denominator": 200,
+    "rate": 0.08,
+    "ci95": [
+      0.0498,
+      0.126
+    ]
+  },
+  "by_corruption": {
+    "dose_x10": {
+      "count": 49,
+      "denominator": 50,
+      "rate": 0.98,
+      "ci95": [
+        0.895,
+        0.9965
+      ]
+    },
+    "dose_div10": {
+      "count": 40,
+      "denominator": 50,
+      "rate": 0.8,
+      "ci95": [
+        0.6696,
+        0.8876
+      ]
+    },
+    "mg_mcg_swap": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    },
+    "wrong_route": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    }
+  },
+  "by_corruption_new_flag": {
+    "dose_x10": {
+      "count": 48,
+      "denominator": 50,
+      "rate": 0.96,
+      "ci95": [
+        0.8654,
+        0.989
+      ]
+    },
+    "dose_div10": {
+      "count": 38,
+      "denominator": 50,
+      "rate": 0.76,
+      "ci95": [
+        0.6259,
+        0.857
+      ]
+    },
+    "mg_mcg_swap": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    },
+    "wrong_route": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    }
+  },
+  "by_range_class": {
+    "cited": {
+      "count": 175,
+      "denominator": 186,
+      "rate": 0.9409,
+      "ci95": [
+        0.8972,
+        0.9667
+      ]
+    },
+    "illustrative": {
+      "count": 14,
+      "denominator": 14,
+      "rate": 1.0,
+      "ci95": [
+        0.7847,
+        1.0
+      ]
+    }
+  },
+  "by_range_class_new_flag": {
+    "cited": {
+      "count": 172,
+      "denominator": 186,
+      "rate": 0.9247,
+      "ci95": [
+        0.8776,
+        0.9546
+      ]
+    },
+    "illustrative": {
+      "count": 14,
+      "denominator": 14,
+      "rate": 1.0,
+      "ci95": [
+        0.7847,
+        1.0
+      ]
+    }
+  },
+  "not_counted_as_catch": [
+    "no_reference_range",
+    "weight_based_dose"
+  ],
+  "target": 0.95,
+  "commit_at_start": "0f8f983-dirty",
+  "created": "2026-11-02T18:41:13.301814+05:30",
+  "miss_breakdown": [
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 10
+    },
+    {
+      "corruption": "dose_x10",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 1
+    }
+  ],
+  "miss_breakdown_new_flag": [
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 10
+    },
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "only flags the base already had: dose_below_range",
+      "count": 2
+    },
+    {
+      "corruption": "dose_x10",
+      "range_class": "cited",
+      "outcome": "only flags the base already had: dose_out_of_range",
+      "count": 1
+    },
+    {
+      "corruption": "dose_x10",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 1
+    }
+  ],
+  "false_flags_by_rule": [
+    {
+      "rule": "dose_below_range",
+      "range_class": "cited",
+      "count": 8
+    },
+    {
+      "rule": "dose_out_of_range",
+      "range_class": "cited",
+      "count": 8
+    }
+  ]
+}

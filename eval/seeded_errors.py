@@ -5,7 +5,11 @@ many the validator flags.
   standard: dose x10, dose /10, mg<->mcg swap, a route the drug is never given by
   harder:   dose x2, dose x5, a single-digit slip (0.3 -> 0.5), mg -> g
 Only a real catch counts (out/below range, mg-mcg slip, unit or route not allowed). "no_reference_range" means the
-dose was NOT range-checked, so it is never a catch. Also reports the false-flag rate on the uncorrupted originals
+dose was NOT range-checked, and "weight_based_dose" is informational, so neither is ever a catch.
+Two catch definitions are reported:
+  existing:  the corrupted record gets any catching flag
+  new_flag:  the corrupted record gets a catching flag its uncorrupted base did NOT have (compare flag sets); for a
+             clean base this is the same as "existing". Headline from evaluator round 2. Also reports the false-flag rate on the uncorrupted originals
 (with the rule that fired for each) and splits the catch rate by range class (cited / illustrative / none).
 Use --split dev for tuning; the reported number comes from --split test, run once with the validator frozen.
 """
@@ -84,14 +88,23 @@ def _rate(n: int, d: int) -> dict:
     return {"count": n, "denominator": d, "rate": round(n / d, 4) if d else 0.0, "ci95": list(wilson(n, d))}
 
 
-def _outcome(flags: list[str]) -> str:
+def caught(base_codes: set[str], bad_codes: set[str]) -> tuple[bool, bool]:
+    """(existing, new_flag) catch verdicts from the flag codes on the base and the corrupted record."""
+    bad = set(bad_codes) & CATCH
+    return bool(bad), bool(bad - (set(base_codes) & CATCH))
+
+
+def _outcome(flags: list[str], base_flags: list[str] = ()) -> str:
+    repeated = sorted(set(flags) & set(base_flags) & CATCH)
+    if repeated:
+        return "only flags the base already had: " + ", ".join(repeated)
     return "no flag" if not flags else "only non-catching: " + ", ".join(flags)
 
 
 def aggregate_misses(misses: list[dict]) -> list[dict]:
     counts: dict[tuple, int] = defaultdict(int)
     for x in misses:
-        counts[(x["corruption"], x["range_class"], _outcome(x["flags"]))] += 1
+        counts[(x["corruption"], x["range_class"], _outcome(x["flags"], x.get("base_flags", ())))] += 1
     return [{"corruption": c, "range_class": r, "outcome": o, "count": n}
             for (c, r, o), n in sorted(counts.items(), key=lambda kv: -kv[1])]
 
@@ -111,11 +124,15 @@ def _pct(r: dict) -> str:
 def finalize(out: Path, m: dict, misses: list[dict], false_flags: list[dict]) -> None:
     """Write metrics.json + report.md. Record-level files and tables are written for dev only: a test-split run
     reports aggregates, so no individual test record is exposed."""
-    for key in ("catch_rate", "false_flag_rate"):
-        m[key] = _rate(m[key]["count"], m[key]["denominator"])
-    m["by_corruption"] = {k: _rate(v["count"], v["denominator"]) for k, v in m["by_corruption"].items()}
-    m["by_range_class"] = {k: _rate(v["count"], v["denominator"]) for k, v in m["by_range_class"].items()}
-    m["miss_breakdown"] = aggregate_misses(misses)
+    for key in ("catch_rate", "catch_rate_new_flag", "false_flag_rate", "base_already_flagged"):
+        if key in m:
+            m[key] = _rate(m[key]["count"], m[key]["denominator"])
+    for key in ("by_corruption", "by_range_class", "by_corruption_new_flag", "by_range_class_new_flag"):
+        if key in m:
+            m[key] = {k: _rate(v["count"], v["denominator"]) for k, v in m[key].items()}
+    m["miss_breakdown"] = aggregate_misses([x for x in misses if not x.get("caught_existing", False)])
+    if "catch_rate_new_flag" in m:
+        m["miss_breakdown_new_flag"] = aggregate_misses([x for x in misses if not x.get("caught_new_flag", False)])
     m["false_flags_by_rule"] = aggregate_false_flags(false_flags)
     record_level = m["split"] != "test"
     out.mkdir(parents=True, exist_ok=True)
@@ -126,18 +143,35 @@ def finalize(out: Path, m: dict, misses: list[dict], false_flags: list[dict]) ->
             path.write_text("".join(json.dumps(x) + "\n" for x in rows))
         elif path.exists():
             path.unlink()
+    new = "catch_rate_new_flag" in m
     lines = [f"# Seeded-error test — {m['variant']}", "",
              f"{m['n']} corrupted **{m['split']}** records (seed {m['seed']}, pool {m['pool_size']}); commit at start "
-             f"`{m.get('commit_at_start')}`. 'no_reference_range' (not range-checked) is not counted as a catch.", "",
-             "| | Value |", "|---|---|",
-             f"| **Catch rate** | **{_pct(m['catch_rate'])}** |",
-             f"| **False-flag rate** (uncorrupted originals flagged) | **{_pct(m['false_flag_rate'])}** |", "",
-             "| Corruption | Flagged |", "|---|---|"]
-    lines += [f"| {k} | {_pct(v)} |" for k, v in m["by_corruption"].items()]
-    lines += ["", "| Range class (original drug + route) | Flagged |", "|---|---|"]
-    lines += [f"| {k} | {_pct(v)} |" for k, v in m["by_range_class"].items()]
-    lines += ["", "## Residual misses (aggregate)", "", "| Corruption | Range class | Outcome | Count |", "|---|---|---|---|"]
-    lines += [f"| {r['corruption']} | {r['range_class']} | {r['outcome']} | {r['count']} |" for r in m["miss_breakdown"]]
+             f"`{m.get('commit_at_start')}`. 'no_reference_range' (not range-checked) and 'weight_based_dose' "
+             f"(informational) are not counted as a catch.", "", "| | Value |", "|---|---|"]
+    if new:
+        lines += [f"| **Catch rate, new-flag definition** (a catching flag the base did not have) | "
+                  f"**{_pct(m['catch_rate_new_flag'])}** |",
+                  f"| Catch rate, existing definition (any catching flag) | {_pct(m['catch_rate'])} |",
+                  f"| Base records already flagged before corruption | {_pct(m['base_already_flagged'])} |"]
+    else:
+        lines += [f"| **Catch rate** | **{_pct(m['catch_rate'])}** |"]
+    lines += [f"| **False-flag rate** (uncorrupted originals flagged) | **{_pct(m['false_flag_rate'])}** |", ""]
+    if new:
+        lines += ["| Corruption | New-flag | Existing |", "|---|---|---|"]
+        lines += [f"| {k} | {_pct(m['by_corruption_new_flag'][k])} | {_pct(v)} |" for k, v in m["by_corruption"].items()]
+        lines += ["", "| Range class (original drug + route) | New-flag | Existing |", "|---|---|---|"]
+        lines += [f"| {k} | {_pct(m['by_range_class_new_flag'][k])} | {_pct(v)} |" for k, v in m["by_range_class"].items()]
+    else:
+        lines += ["| Corruption | Flagged |", "|---|---|"]
+        lines += [f"| {k} | {_pct(v)} |" for k, v in m["by_corruption"].items()]
+        lines += ["", "| Range class (original drug + route) | Flagged |", "|---|---|"]
+        lines += [f"| {k} | {_pct(v)} |" for k, v in m["by_range_class"].items()]
+    for title, key in (("existing definition", "miss_breakdown"), ("new-flag definition", "miss_breakdown_new_flag")):
+        if key not in m:
+            continue
+        lines += ["", f"## Residual misses, {title} (aggregate)", "", "| Corruption | Range class | Outcome | Count |",
+                  "|---|---|---|---|"]
+        lines += [f"| {r['corruption']} | {r['range_class']} | {r['outcome']} | {r['count']} |" for r in m[key]]
     lines += ["", "## False flags by rule (aggregate)", "", "| Rule fired | Range class | Count |", "|---|---|---|"]
     lines += [f"| {r['rule']} | {r['range_class']} | {r['count']} |" for r in m["false_flags_by_rule"]]
     if record_level:
@@ -158,6 +192,49 @@ def rerender(out: Path) -> None:
     finalize(out, m, read("errors.jsonl"), read("false_flags.jsonl"))
 
 
+def score(pool: list[dict], kinds: tuple[str, ...], n: int, seed: int, lex: Lexicon, validate_fn=validate):
+    """Corrupt n records drawn from `pool` (seeded) and judge them with `validate_fn`. The random stream is consumed
+    exactly as in the first seeded runs, so a seed draws the same records and corruptions every time."""
+    rng = random.Random(seed)
+    when = datetime(2026, 11, 1, 10, 0).astimezone()
+    per = n // len(kinds)
+    tally = {d: {k: [0, 0] for k in kinds} for d in ("existing", "new_flag")}
+    by_class = {d: defaultdict(lambda: [0, 0]) for d in ("existing", "new_flag")}
+    misses, false_flags = [], []
+    for i, kind in enumerate(kinds):
+        source = [r for r in pool if r["dose_unit"] in NEEDS_UNIT[kind]] if kind in NEEDS_UNIT else pool
+        quota = per + (1 if i < n % len(kinds) else 0)
+        for rec in [rng.choice(source) for _ in range(quota)]:
+            base = validate_fn(_entry(rec, when), lex)
+            base_codes = {f.code for f in base}
+            base_flags = [f for f in base if f.code in CATCH]
+            cls = range_class(rec, lex)
+            if base_flags:
+                false_flags.append({"record": rec, "rules": [f.code for f in base_flags],
+                                    "why": [f.message for f in base_flags], "range_class": cls})
+            bad = corrupt(rec, kind, lex, rng)
+            codes = {f.code for f in validate_fn(_entry(bad, when), lex)}
+            verdict = dict(zip(("existing", "new_flag"), caught(base_codes, codes)))
+            for d, ok in verdict.items():
+                tally[d][kind][0] += ok
+                tally[d][kind][1] += 1
+                by_class[d][cls][0] += ok
+                by_class[d][cls][1] += 1
+            if not verdict["new_flag"]:
+                misses.append({"corruption": kind, "range_class": cls, "original": rec, "corrupted": bad,
+                               "flags": sorted(codes), "base_flags": sorted(base_codes & CATCH),
+                               "caught_existing": verdict["existing"], "caught_new_flag": False})
+    total = {d: sum(c for c, _ in tally[d].values()) for d in tally}
+    m = {"catch_rate": _rate(total["existing"], n), "catch_rate_new_flag": _rate(total["new_flag"], n),
+         "base_already_flagged": _rate(len(false_flags), n), "false_flag_rate": _rate(len(false_flags), n),
+         "by_corruption": {k: _rate(*v) for k, v in tally["existing"].items()},
+         "by_corruption_new_flag": {k: _rate(*v) for k, v in tally["new_flag"].items()},
+         "by_range_class": {k: _rate(*v) for k, v in sorted(by_class["existing"].items())},
+         "by_range_class_new_flag": {k: _rate(*v) for k, v in sorted(by_class["new_flag"].items())},
+         "not_counted_as_catch": ["no_reference_range", "weight_based_dose"]}
+    return m, misses, false_flags
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--split", choices=["dev", "test"], default="dev")
@@ -167,54 +244,24 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--tag", default="m3-seeded")
     ap.add_argument("--root", type=Path, default=config.DATA_DIR)
     ap.add_argument("--out", type=Path, default=config.ROOT / "results")
+    ap.add_argument("--note", default="", help="free text for the run-log entry (e.g. why this run exists)")
     ap.add_argument("--rerender", type=Path, help="rebuild an existing run folder's report from its files; no re-run")
     args = ap.parse_args(argv)
     if args.rerender:
         rerender(args.rerender)
         return 0
     start = log_run(args.out, runner="eval.seeded_errors", split=args.split, tag=args.tag, variant=args.variant,
-                    seed=args.seed, n=args.n)
+                    seed=args.seed, n=args.n, **({"note": args.note} if args.note else {}))
     lex = Lexicon.load()
-    rng = random.Random(args.seed)
     pool = _records(args.root, args.split)
-    when = datetime(2026, 11, 1, 10, 0).astimezone()
-    kinds = VARIANTS[args.variant]
-    per = args.n // len(kinds)
-    by_kind = {k: [0, 0] for k in kinds}
-    by_class: dict[str, list[int]] = defaultdict(lambda: [0, 0])
-    misses, false_flags = [], []
-    base_n = 0
-    for i, kind in enumerate(kinds):
-        source = [r for r in pool if r["dose_unit"] in NEEDS_UNIT[kind]] if kind in NEEDS_UNIT else pool
-        quota = per + (1 if i < args.n % len(kinds) else 0)
-        for rec in [rng.choice(source) for _ in range(quota)]:
-            base_n += 1
-            base_flags = [f for f in validate(_entry(rec, when), lex) if f.code in CATCH]
-            if base_flags:
-                false_flags.append({"record": rec, "rules": [f.code for f in base_flags],
-                                    "why": [f.message for f in base_flags], "range_class": range_class(rec, lex)})
-            bad = corrupt(rec, kind, lex, rng)
-            codes = {f.code for f in validate(_entry(bad, when), lex)}
-            caught = bool(codes & CATCH)
-            cls = range_class(rec, lex)
-            by_kind[kind][0] += caught
-            by_kind[kind][1] += 1
-            by_class[cls][0] += caught
-            by_class[cls][1] += 1
-            if not caught:
-                misses.append({"corruption": kind, "range_class": cls, "original": rec, "corrupted": bad,
-                               "flags": sorted(codes)})
-    caught = sum(c for c, _ in by_kind.values())
-    m = {"split": args.split, "variant": args.variant, "n": args.n, "seed": args.seed, "pool_size": len(pool),
-         "catch_rate": _rate(caught, args.n), "false_flag_rate": _rate(len(false_flags), base_n),
-         "by_corruption": {k: _rate(*v) for k, v in by_kind.items()},
-         "by_range_class": {k: _rate(*v) for k, v in sorted(by_class.items())},
-         "not_counted_as_catch": ["no_reference_range"], "target": 0.95 if args.variant == "standard" else None,
-         "commit_at_start": start["commit"], "created": datetime.now().astimezone().isoformat()}
+    m, misses, false_flags = score(pool, VARIANTS[args.variant], args.n, args.seed, lex)
+    m = {"split": args.split, "variant": args.variant, "n": args.n, "seed": args.seed, "pool_size": len(pool), **m,
+         "target": 0.95 if args.variant == "standard" else None, "commit_at_start": start["commit"],
+         "created": datetime.now().astimezone().isoformat()}
     finalize(args.out / args.tag, m, misses, false_flags)
     out = args.out / args.tag
-    print(f"seeded {args.variant} on {args.split}: {caught}/{args.n} flagged ({m['catch_rate']['rate']:.1%}); "
-          f"false flags {len(false_flags)}/{base_n} → {out}")
+    print(f"seeded {args.variant} on {args.split}: new-flag {m['catch_rate_new_flag']['count']}/{args.n}, existing "
+          f"{m['catch_rate']['count']}/{args.n}; false flags {len(false_flags)}/{args.n} → {out}")
     return 0
 
 

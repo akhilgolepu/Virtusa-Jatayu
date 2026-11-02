@@ -85,3 +85,27 @@ def test_not_range_checked_flag_does_not_catch_a_dangerous_error():
     unchecked = Flag(code="no_reference_range", field="dose_value", severity="medium", message="")
     s.add(utt([gold()]), [pred(dose=5.0, flags=[unchecked])])
     assert s.metrics()["dangerous_error"]["count"] == 1
+
+
+def test_weight_based_flag_does_not_catch_strict_but_does_lenient():
+    s = Scorer()
+    info = Flag(code="weight_based_dose", field="dose_value", severity="low", message="")
+    s.add(utt([gold()]), [pred(dose=5.0, flags=[info])])
+    m = s.metrics()
+    assert m["dangerous_error"]["count"] == 1 and m["dangerous_error_lenient"]["count"] == 0
+    assert s.errors()[0]["dangerous"] is True and s.errors()[0]["dangerous_lenient"] is False
+
+
+def test_offline_rescore_from_errors_jsonl(tmp_path):
+    import json
+    from eval.rescore import rescore
+    (tmp_path / "metrics.json").write_text(json.dumps({"metrics": {"dangerous_error": {"count": 1, "denominator": 3}}}))
+    rows = [{"kind": "wrong", "context": "given", "expected": {"drug": "x"}, "wrong_fields": ["dose_value"],
+             "flags": ["weight_based_dose"], "dangerous": False},
+            {"kind": "wrong", "context": "given", "expected": {"drug": "y"}, "wrong_fields": ["route"],
+             "flags": [], "dangerous": True},
+            {"kind": "wrong", "context": "given", "expected": {"drug": "z"}, "wrong_fields": ["time"],
+             "flags": [], "dangerous": False}]
+    (tmp_path / "errors.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows))
+    o = rescore(tmp_path)
+    assert o["strict"]["count"] == 2 and o["lenient"]["count"] == 1 and o["strict"]["denominator"] == 3

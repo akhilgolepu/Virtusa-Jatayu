@@ -89,7 +89,7 @@ def test_test_split_runs_write_aggregates_only(tmp_path):
     assert sum(r["count"] for r in m["miss_breakdown"]) == 40 - m["catch_rate"]["count"]
     assert all(set(r) == {"corruption", "range_class", "outcome", "count"} for r in m["miss_breakdown"])
     report = (out / "report.md").read_text()
-    assert "Residual misses (aggregate)" in report and "| was " not in report
+    assert "Residual misses, new-flag definition (aggregate)" in report and "| was " not in report
 
 
 def test_rerender_strips_records_from_a_test_folder(tmp_path):
@@ -102,3 +102,23 @@ def test_rerender_strips_records_from_a_test_folder(tmp_path):
     rerender(out)
     m2 = json.loads((out / "metrics.json").read_text())
     assert "miss_breakdown" in m2 and "ci95" in m2["catch_rate"] and not (out / "errors.jsonl").exists()
+
+
+def test_new_flag_definition_needs_a_flag_the_base_did_not_have():
+    from eval.seeded_errors import caught
+    assert caught(set(), {"dose_out_of_range"}) == (True, True)  # clean base: both definitions agree
+    assert caught({"dose_out_of_range"}, {"dose_out_of_range"}) == (True, False)  # same flag as before corruption
+    assert caught({"dose_below_range"}, {"dose_out_of_range"}) == (True, True)  # a different, new flag
+    assert caught(set(), {"weight_based_dose", "no_reference_range"}) == (False, False)  # informational only
+
+
+def test_report_shows_both_definitions_and_base_already_flagged(tmp_path):
+    from eval.seeded_errors import main
+    root = _root(tmp_path)
+    assert main(["--n", "40", "--root", str(root), "--out", str(tmp_path / "res"), "--tag", "d"]) == 0
+    m = json.loads((tmp_path / "res" / "d" / "metrics.json").read_text())
+    assert m["catch_rate_new_flag"]["count"] <= m["catch_rate"]["count"]
+    assert m["base_already_flagged"]["count"] == m["false_flag_rate"]["count"]
+    assert set(m["by_corruption_new_flag"]) == set(m["by_corruption"])
+    report = (tmp_path / "res" / "d" / "report.md").read_text()
+    assert "new-flag definition" in report and "existing definition" in report and "already flagged" in report

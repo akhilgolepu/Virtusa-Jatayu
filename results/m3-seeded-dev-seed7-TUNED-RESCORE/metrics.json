@@ -1,0 +1,224 @@
+{
+  "split": "dev",
+  "variant": "standard",
+  "n": 200,
+  "seed": 7,
+  "pool_size": 297,
+  "catch_rate": {
+    "count": 197,
+    "denominator": 200,
+    "rate": 0.985,
+    "ci95": [
+      0.9568,
+      0.9949
+    ]
+  },
+  "catch_rate_new_flag": {
+    "count": 193,
+    "denominator": 200,
+    "rate": 0.965,
+    "ci95": [
+      0.9295,
+      0.9829
+    ]
+  },
+  "base_already_flagged": {
+    "count": 19,
+    "denominator": 200,
+    "rate": 0.095,
+    "ci95": [
+      0.0617,
+      0.1436
+    ]
+  },
+  "false_flag_rate": {
+    "count": 19,
+    "denominator": 200,
+    "rate": 0.095,
+    "ci95": [
+      0.0617,
+      0.1436
+    ]
+  },
+  "by_corruption": {
+    "dose_x10": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    },
+    "dose_div10": {
+      "count": 47,
+      "denominator": 50,
+      "rate": 0.94,
+      "ci95": [
+        0.8378,
+        0.9794
+      ]
+    },
+    "mg_mcg_swap": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    },
+    "wrong_route": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    }
+  },
+  "by_corruption_new_flag": {
+    "dose_x10": {
+      "count": 48,
+      "denominator": 50,
+      "rate": 0.96,
+      "ci95": [
+        0.8654,
+        0.989
+      ]
+    },
+    "dose_div10": {
+      "count": 46,
+      "denominator": 50,
+      "rate": 0.92,
+      "ci95": [
+        0.8116,
+        0.9685
+      ]
+    },
+    "mg_mcg_swap": {
+      "count": 49,
+      "denominator": 50,
+      "rate": 0.98,
+      "ci95": [
+        0.895,
+        0.9965
+      ]
+    },
+    "wrong_route": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    }
+  },
+  "by_range_class": {
+    "cited": {
+      "count": 176,
+      "denominator": 179,
+      "rate": 0.9832,
+      "ci95": [
+        0.9519,
+        0.9943
+      ]
+    },
+    "illustrative": {
+      "count": 21,
+      "denominator": 21,
+      "rate": 1.0,
+      "ci95": [
+        0.8454,
+        1.0
+      ]
+    }
+  },
+  "by_range_class_new_flag": {
+    "cited": {
+      "count": 172,
+      "denominator": 179,
+      "rate": 0.9609,
+      "ci95": [
+        0.9215,
+        0.9809
+      ]
+    },
+    "illustrative": {
+      "count": 21,
+      "denominator": 21,
+      "rate": 1.0,
+      "ci95": [
+        0.8454,
+        1.0
+      ]
+    }
+  },
+  "not_counted_as_catch": [
+    "no_reference_range",
+    "weight_based_dose"
+  ],
+  "target": 0.95,
+  "commit_at_start": "0f8f983-dirty",
+  "created": "2026-11-02T18:41:13.044793+05:30",
+  "miss_breakdown": [
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "no flag",
+      "count": 2
+    },
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 1
+    }
+  ],
+  "miss_breakdown_new_flag": [
+    {
+      "corruption": "dose_x10",
+      "range_class": "cited",
+      "outcome": "only flags the base already had: dose_out_of_range",
+      "count": 2
+    },
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "no flag",
+      "count": 2
+    },
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 1
+    },
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "only flags the base already had: dose_below_range",
+      "count": 1
+    },
+    {
+      "corruption": "mg_mcg_swap",
+      "range_class": "cited",
+      "outcome": "only flags the base already had: dose_below_range",
+      "count": 1
+    }
+  ],
+  "false_flags_by_rule": [
+    {
+      "rule": "dose_out_of_range",
+      "range_class": "cited",
+      "count": 10
+    },
+    {
+      "rule": "dose_below_range",
+      "range_class": "cited",
+      "count": 9
+    }
+  ]
+}

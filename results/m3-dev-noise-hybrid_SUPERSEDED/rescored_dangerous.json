@@ -1,0 +1,27 @@
+{
+  "source": "errors.jsonl (offline re-score, no re-run)",
+  "as_recorded": {
+    "count": 2,
+    "denominator": 240,
+    "rate": 0.0083
+  },
+  "strict": {
+    "count": 2,
+    "denominator": 240,
+    "rate": 0.0083,
+    "non_catching": [
+      "no_reference_range",
+      "time_not_stated",
+      "weight_based_dose"
+    ]
+  },
+  "lenient": {
+    "count": 2,
+    "denominator": 240,
+    "rate": 0.0083,
+    "non_catching": [
+      "no_reference_range",
+      "time_not_stated"
+    ]
+  }
+}

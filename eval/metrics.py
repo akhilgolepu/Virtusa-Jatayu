@@ -4,7 +4,8 @@
   normalised value equals gold (dose within 1e-6, time within 60 s of the anchored gold time).
 - Record exact match: every gold field of the record equals the matched prediction's.
 - Dangerous error: a matched given-medication record whose drug, dose, unit or route is wrong AND carries no
-  catching flag (any flag except time_not_stated / no_reference_range), over all given gold records, reported as count/denominator.
+  catching flag, over all given gold records, reported as count/denominator. Headline = strict: time_not_stated,
+  no_reference_range and weight_based_dose do not catch. Lenient (secondary row) also counts weight_based_dose.
   A gold record with no prediction is a miss (recall), not a dangerous error.
 - Context error (spec §9): a not_given/measurement gold record emitted without possible_not_given/possible_measurement.
 """
@@ -18,9 +19,11 @@ from jatayu.models import Entry, MedicationEntry
 
 FIELDS = ("drug", "dose_value", "dose_unit", "route", "time", "procedure")
 DANGER_FIELDS = ("drug", "dose_value", "dose_unit", "route")
-# Flags that do NOT catch an error: "time not stated" is about time, and "no_reference_range" says the dose was
-# NOT range-checked at all.
-NON_CATCHING = {"time_not_stated", "no_reference_range"}
+# Flags that do NOT catch an error: "time not stated" is about time, "no_reference_range" says the dose was NOT
+# range-checked at all, and "weight_based_dose" is informational (low; "check against weight") — strict, the headline.
+# The lenient definition (secondary row) counts weight_based_dose as a catch.
+NON_CATCHING_LENIENT = {"time_not_stated", "no_reference_range"}
+NON_CATCHING = NON_CATCHING_LENIENT | {"weight_based_dose"}
 CONTEXT_FLAGS = {"not_given": "possible_not_given", "measurement": "possible_measurement"}
 TIME_TOLERANCE_S = 60
 
@@ -61,6 +64,11 @@ def same(field: str, a, b) -> bool:
     return a == b
 
 
+def is_dangerous(wrong, flags, non_catching: set[str] = NON_CATCHING) -> bool:
+    """A wrong drug/dose/unit/route with no catching flag."""
+    return any(f in DANGER_FIELDS for f in wrong) and not (set(flags) - non_catching)
+
+
 def _overlap(gv: dict, pv: dict) -> int:
     anchor = ("drug", "procedure")
     if not any(gv[a] is not None and gv[a] == pv[a] for a in anchor):
@@ -75,6 +83,7 @@ class Scorer:
         self.exact = 0
         self.danger = 0
         self.danger_den = 0
+        self.danger_lenient = 0
         self.context_err = 0
         self.context_den = 0
         self.anomaly_caught = 0
@@ -131,7 +140,7 @@ class Scorer:
                 wrong.append(f)
         self.records += 1
         self.exact += not wrong
-        dangerous = False
+        dangerous = dangerous_lenient = False
         if g.context != "given":
             self.context_den += 1
             missed = p is not None and CONTEXT_FLAGS[g.context] not in flags
@@ -140,15 +149,17 @@ class Scorer:
             self.danger_den += 1
             if p is not None and g.kind == "medication":
                 bad = [f for f in DANGER_FIELDS if not same(f, gv[f], pv[f])]
-                dangerous = bool(bad) and not (flags - NON_CATCHING)
+                dangerous = is_dangerous(bad, flags)
+                dangerous_lenient = is_dangerous(bad, flags, NON_CATCHING_LENIENT)
                 self.danger += dangerous
+                self.danger_lenient += dangerous_lenient
             if g.anomaly:
                 self.anomaly_den += 1
                 self.anomaly_caught += bool(flags - NON_CATCHING)
         if wrong or p is None:
             self._errors.append({"id": utt.id, "input": utt.text, "category": utt.category, "lang": utt.lang,
                                  "kind": "miss" if p is None else "wrong", "wrong_fields": wrong,
-                                 "dangerous": dangerous, "flags": sorted(flags), "context": g.context,
+                                 "dangerous": dangerous, "dangerous_lenient": dangerous_lenient, "flags": sorted(flags), "context": g.context,
                                  "output": _show(pv) if p else None, "expected": _show(gv), **(meta or {})})
 
     def metrics(self) -> dict:
@@ -162,6 +173,7 @@ class Scorer:
             "entity": {"micro": {"tp": tp, "gold": gold, "pred": pred, **_prf(tp, gold, pred)}, "per_field": per},
             "record_exact_match": _rate(self.exact, self.records),
             "dangerous_error": _rate(self.danger, self.danger_den),
+            "dangerous_error_lenient": _rate(self.danger_lenient, self.danger_den),
             "context_error": _rate(self.context_err, self.context_den),
             "anomaly_flagged": _rate(self.anomaly_caught, self.anomaly_den),
             "source_quote_coverage": _rate(self.quote_ok, self.quote_den),
