@@ -52,11 +52,14 @@ def test_render_split_resumable(tmp_path):
 
 @pytest.mark.parametrize("text,spoken", [
     (".15 milligram adrenalin", "point one five milligram adrenalin"),
-    ("adrenaline .5 mg IM", "adrenaline point five mg IM"),
+    ("adrenaline .5 mg IM", "adrenaline point five mg I M"),
     ("gave 0.3 mg", "gave 0.3 mg"),
-    ("given i.m. at 10:42", "given i.m. at 10:42"),
+    ("given i.m. at 10:42", "given I M at 10:42"),
+    ("7.5 mgs Adenocard iv push", "7.5 mgs Adenocard I V push"),  # Piper read "iv" as "Roman four"
+    ("ondansetron ivp", "ondansetron I V P"),
+    ("I'm sure it was given into the vein", "I'm sure it was given into the vein"),
 ])
-def test_speakable_leading_dot_decimals(text, spoken):
+def test_speakable_leading_dot_decimals_and_spelled_routes(text, spoken):
     from datagen.tts import speakable
     assert speakable(text) == spoken
 

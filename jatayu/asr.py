@@ -51,8 +51,10 @@ class AsrResult:
 
 class Transcriber:
     def __init__(self, model_dir: Path = config.ASR_MODEL_DIR, device: str = config.ASR_DEVICE,
-                 compute_type: str = config.ASR_COMPUTE_TYPE, lexicon: Lexicon | None = None):
+                 compute_type: str = config.ASR_COMPUTE_TYPE, lexicon: Lexicon | None = None,
+                 beam_size: int = 5, vad_filter: bool = True, use_prompt: bool = True):
         self.model_dir = Path(model_dir)
+        self.beam_size, self.vad_filter, self.use_prompt = beam_size, vad_filter, use_prompt
         self.device = device
         self.compute_type = compute_type
         self.lexicon = lexicon or Lexicon.load()
@@ -87,8 +89,8 @@ class Transcriber:
         model = self._load()
         t0 = time.perf_counter()
         segments, info = model.transcribe(
-            samples, language="en", beam_size=5, vad_filter=True,
-            initial_prompt=self.initial_prompt, condition_on_previous_text=False,
+            samples, language="en", beam_size=self.beam_size, vad_filter=self.vad_filter,
+            initial_prompt=self.initial_prompt if self.use_prompt else None, condition_on_previous_text=False,
         )
         text = " ".join(s.text.strip() for s in segments).strip()
         return AsrResult(text=text, language=info.language, duration_s=len(samples) / 16000,

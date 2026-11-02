@@ -65,6 +65,18 @@ def test_context_entries_scored_separately():
     assert m["dangerous_error"]["denominator"] == 0
 
 
+def test_administration_status_error_counts_not_given_recorded_as_given():
+    s = Scorer()
+    s.add(utt([gold(ctx="not_given", dose=None, unit=None, route=None)], "a"), [pred(dose=None, unit=None, route=None)])
+    s.add(utt([gold(ctx="not_given", dose=None, unit=None, route=None)], "b"),
+          [pred(dose=None, unit=None, route=None, flags=[Flag(code="possible_not_given", field="drug", severity="high", message="")])])
+    s.add(utt([gold(ctx="not_given", dose=None, unit=None, route=None)], "c"), [])  # nothing recorded: not a claim
+    s.add(utt([gold(ctx="measurement", dose=None, unit=None, route=None)], "d"), [pred(dose=None, unit=None, route=None)])
+    m = s.metrics()
+    assert m["administration_status_error"] == {"count": 1, "denominator": 3, "rate": round(1 / 3, 4)}
+    assert m["context_error"]["count"] == 2
+
+
 def test_extra_prediction_is_a_false_positive():
     s = Scorer()
     s.add(utt([gold()]), [pred(), pred(drug="aspirin", dose=300, unit="mg", route="PO")])

@@ -8,6 +8,9 @@
   no_reference_range and weight_based_dose do not catch. Lenient (secondary row) also counts weight_based_dose.
   A gold record with no prediction is a miss (recall), not a dangerous error.
 - Context error (spec §9): a not_given/measurement gold record emitted without possible_not_given/possible_measurement.
+- Administration-status error: a not_given gold record (allergy, refused, withheld, home medication, "did not give")
+  emitted without possible_not_given, i.e. the record claims a drug was given when the utterance says it was not.
+  Reported next to the dangerous-error rate, over all not_given gold records.
 """
 from __future__ import annotations
 
@@ -22,7 +25,8 @@ DANGER_FIELDS = ("drug", "dose_value", "dose_unit", "route")
 # Flags that do NOT catch an error: "time not stated" is about time, "no_reference_range" says the dose was NOT
 # range-checked at all, and "weight_based_dose" is informational (low; "check against weight") — strict, the headline.
 # The lenient definition (secondary row) counts weight_based_dose as a catch.
-NON_CATCHING_LENIENT = {"time_not_stated", "no_reference_range"}
+# time_borrowed (round 3) is about time too, so it never catches a dose/unit/route error either.
+NON_CATCHING_LENIENT = {"time_not_stated", "time_borrowed", "no_reference_range"}
 NON_CATCHING = NON_CATCHING_LENIENT | {"weight_based_dose"}
 CONTEXT_FLAGS = {"not_given": "possible_not_given", "measurement": "possible_measurement"}
 TIME_TOLERANCE_S = 60
@@ -86,6 +90,8 @@ class Scorer:
         self.danger_lenient = 0
         self.context_err = 0
         self.context_den = 0
+        self.admin_err = 0
+        self.admin_den = 0
         self.anomaly_caught = 0
         self.anomaly_den = 0
         self.quote_ok = 0
@@ -145,6 +151,9 @@ class Scorer:
             self.context_den += 1
             missed = p is not None and CONTEXT_FLAGS[g.context] not in flags
             self.context_err += missed
+            if g.context == "not_given":
+                self.admin_den += 1
+                self.admin_err += p is not None and "possible_not_given" not in flags
         else:
             self.danger_den += 1
             if p is not None and g.kind == "medication":
@@ -175,6 +184,7 @@ class Scorer:
             "dangerous_error": _rate(self.danger, self.danger_den),
             "dangerous_error_lenient": _rate(self.danger_lenient, self.danger_den),
             "context_error": _rate(self.context_err, self.context_den),
+            "administration_status_error": _rate(self.admin_err, self.admin_den),
             "anomaly_flagged": _rate(self.anomaly_caught, self.anomaly_den),
             "source_quote_coverage": _rate(self.quote_ok, self.quote_den),
         }

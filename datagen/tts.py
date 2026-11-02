@@ -18,10 +18,18 @@ _LEADING_DOT = re.compile(r"(?<![\w.])\.(\d+)")
 _DIGITS = "zero one two three four five six seven eight nine".split()
 
 
+# Route abbreviations a responder says letter by letter. Piper's phonemiser reads a bare "iv" as the Roman numeral
+# ("Roman four": 8 of 9 such dev clips in the round-3 ASR diagnosis) and "io"/"im" as words.
+_ROUTE_ABBR = re.compile(r"(?<![\w.'])(i\.?v\.?p?|i\.?[mo]\.?|s\.?[cq]\.?|p\.?[or]\.?|s\.?l\.?|e\.?t\.?)(?![\w'])",
+                         re.IGNORECASE)
+
+
 def speakable(text: str) -> str:
     """What Piper is asked to say. Written ".15" is read ambiguously by TTS; a responder says "point one five".
-    The gold text is unchanged — only the audio rendering differs (normalised WER treats them as equal)."""
-    return _LEADING_DOT.sub(lambda m: "point " + " ".join(_DIGITS[int(d)] for d in m.group(1)), text)
+    Route abbreviations are spelled ("iv" -> "I V"). The gold text is unchanged — only the audio rendering differs
+    (normalised WER treats them as equal)."""
+    text = _LEADING_DOT.sub(lambda m: "point " + " ".join(_DIGITS[int(d)] for d in m.group(1)), text)
+    return _ROUTE_ABBR.sub(lambda m: " ".join(c.upper() for c in m.group() if c.isalpha()), text)
 
 
 @lru_cache(maxsize=8)
@@ -69,8 +77,9 @@ def render_split(split: str, utts: list[GoldUtterance], out_root: Path) -> list[
     rows = []
     for utt in utts:
         for voice in assign_voices(utt):
-            # Text hash in the name: if a template edit changes the sentence, the stale clip is never reused.
-            text_key = hashlib.sha256(utt.text.encode()).hexdigest()[:8]
+            # Hash of what is SPOKEN in the name: if a template edit or a rendering rule changes the words, the stale
+            # clip is never reused.
+            text_key = hashlib.sha256(speakable(utt.text).encode()).hexdigest()[:8]
             rel = Path(split) / f"{utt.id}__{voice.id}__{text_key}.wav"
             path = out_root / rel
             if not path.exists():
