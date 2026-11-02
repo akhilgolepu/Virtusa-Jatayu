@@ -1,0 +1,189 @@
+{
+  "config": {
+    "split": "dev",
+    "mode": "noisy",
+    "extractor": "hybrid",
+    "tag": "m3-dev-noise-hybrid",
+    "n_utterances": 160,
+    "n_clips": 480,
+    "split_sha256": null,
+    "commit_at_start": "cb16546-dirty",
+    "started": "2026-11-02T19:25:49.390086+05:30",
+    "created": "2026-11-02T19:33:03.345918+05:30",
+    "source_label": "synthetic speech (Piper)",
+    "asr_model": "faster-whisper-small.en",
+    "llm_model": "Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
+  },
+  "metrics": {
+    "entity": {
+      "micro": {
+        "tp": 654,
+        "gold": 1482,
+        "pred": 699,
+        "precision": 0.9356,
+        "recall": 0.4413,
+        "f1": 0.5997
+      },
+      "per_field": {
+        "drug": {
+          "tp": 304,
+          "gold": 480,
+          "pred": 320,
+          "precision": 0.95,
+          "recall": 0.6333,
+          "f1": 0.76
+        },
+        "dose_value": {
+          "tp": 159,
+          "gold": 360,
+          "pred": 182,
+          "precision": 0.8736,
+          "recall": 0.4417,
+          "f1": 0.5867
+        },
+        "dose_unit": {
+          "tp": 134,
+          "gold": 360,
+          "pred": 138,
+          "precision": 0.971,
+          "recall": 0.3722,
+          "f1": 0.5382
+        },
+        "route": {
+          "tp": 28,
+          "gold": 180,
+          "pred": 30,
+          "precision": 0.9333,
+          "recall": 0.1556,
+          "f1": 0.2667
+        },
+        "time": {
+          "tp": 29,
+          "gold": 102,
+          "pred": 29,
+          "precision": 1.0,
+          "recall": 0.2843,
+          "f1": 0.4427
+        },
+        "procedure": {
+          "tp": 0,
+          "gold": 0,
+          "pred": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      }
+    },
+    "record_exact_match": {
+      "count": 183,
+      "denominator": 480,
+      "rate": 0.3812
+    },
+    "dangerous_error": {
+      "count": 2,
+      "denominator": 240,
+      "rate": 0.0083
+    },
+    "dangerous_error_lenient": {
+      "count": 2,
+      "denominator": 240,
+      "rate": 0.0083
+    },
+    "context_error": {
+      "count": 62,
+      "denominator": 240,
+      "rate": 0.2583
+    },
+    "anomaly_flagged": {
+      "count": 5,
+      "denominator": 9,
+      "rate": 0.5556
+    },
+    "source_quote_coverage": {
+      "count": 776,
+      "denominator": 776,
+      "rate": 1.0
+    }
+  },
+  "groups": {
+    "accent:gb": {
+      "entity_f1": 0.6405,
+      "record_exact_match": 0.4792,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 6,
+        "rate": 0.0
+      }
+    },
+    "accent:in": {
+      "entity_f1": 0.5618,
+      "record_exact_match": 0.2773,
+      "dangerous_error": {
+        "count": 2,
+        "denominator": 213,
+        "rate": 0.0094
+      }
+    },
+    "accent:us": {
+      "entity_f1": 0.7162,
+      "record_exact_match": 0.6396,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 21,
+        "rate": 0.0
+      }
+    },
+    "snr:10": {
+      "entity_f1": 0.611,
+      "record_exact_match": 0.4,
+      "dangerous_error": {
+        "count": 1,
+        "denominator": 80,
+        "rate": 0.0125
+      }
+    },
+    "snr:20": {
+      "entity_f1": 0.6362,
+      "record_exact_match": 0.4,
+      "dangerous_error": {
+        "count": 1,
+        "denominator": 80,
+        "rate": 0.0125
+      }
+    },
+    "snr:5": {
+      "entity_f1": 0.5496,
+      "record_exact_match": 0.3438,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 80,
+        "rate": 0.0
+      }
+    }
+  },
+  "latency_s": {
+    "n": 480,
+    "p50": 0.9218,
+    "p95": 2.0918,
+    "mean": 0.8864
+  },
+  "leakage": {
+    "test_families_in_train_or_dev": 0,
+    "test_patterns_in_final_test": 0
+  },
+  "asr": {
+    "wer": 0.696,
+    "drug_term_recall": 0.5958,
+    "wer_by_accent": {
+      "us": 0.5126,
+      "in": 0.7649,
+      "gb": 0.5844
+    }
+  },
+  "noise_curve": {
+    "20": 0.6362,
+    "10": 0.611,
+    "5": 0.5496
+  }
+}

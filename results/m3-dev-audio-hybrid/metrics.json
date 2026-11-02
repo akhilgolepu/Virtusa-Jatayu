@@ -1,0 +1,157 @@
+{
+  "config": {
+    "split": "dev",
+    "mode": "audio",
+    "extractor": "hybrid",
+    "tag": "m3-dev-audio-hybrid",
+    "n_utterances": 480,
+    "n_clips": 480,
+    "split_sha256": null,
+    "commit_at_start": "cb16546-dirty",
+    "started": "2026-11-02T19:16:40.679763+05:30",
+    "created": "2026-11-02T19:25:49.035134+05:30",
+    "source_label": "synthetic speech (Piper)",
+    "asr_model": "faster-whisper-small.en",
+    "llm_model": "Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
+  },
+  "metrics": {
+    "entity": {
+      "micro": {
+        "tp": 893,
+        "gold": 1884,
+        "pred": 971,
+        "precision": 0.9197,
+        "recall": 0.474,
+        "f1": 0.6256
+      },
+      "per_field": {
+        "drug": {
+          "tp": 292,
+          "gold": 460,
+          "pred": 298,
+          "precision": 0.9799,
+          "recall": 0.6348,
+          "f1": 0.7704
+        },
+        "dose_value": {
+          "tp": 190,
+          "gold": 380,
+          "pred": 227,
+          "precision": 0.837,
+          "recall": 0.5,
+          "f1": 0.626
+        },
+        "dose_unit": {
+          "tp": 177,
+          "gold": 380,
+          "pred": 187,
+          "precision": 0.9465,
+          "recall": 0.4658,
+          "f1": 0.6243
+        },
+        "route": {
+          "tp": 127,
+          "gold": 360,
+          "pred": 142,
+          "precision": 0.8944,
+          "recall": 0.3528,
+          "f1": 0.506
+        },
+        "time": {
+          "tp": 71,
+          "gold": 244,
+          "pred": 81,
+          "precision": 0.8765,
+          "recall": 0.291,
+          "f1": 0.4369
+        },
+        "procedure": {
+          "tp": 36,
+          "gold": 60,
+          "pred": 36,
+          "precision": 1.0,
+          "recall": 0.6,
+          "f1": 0.75
+        }
+      }
+    },
+    "record_exact_match": {
+      "count": 152,
+      "denominator": 520,
+      "rate": 0.2923
+    },
+    "dangerous_error": {
+      "count": 4,
+      "denominator": 440,
+      "rate": 0.0091
+    },
+    "dangerous_error_lenient": {
+      "count": 4,
+      "denominator": 440,
+      "rate": 0.0091
+    },
+    "context_error": {
+      "count": 21,
+      "denominator": 80,
+      "rate": 0.2625
+    },
+    "anomaly_flagged": {
+      "count": 14,
+      "denominator": 21,
+      "rate": 0.6667
+    },
+    "source_quote_coverage": {
+      "count": 927,
+      "denominator": 927,
+      "rate": 1.0
+    }
+  },
+  "groups": {
+    "accent:gb": {
+      "entity_f1": 0.7506,
+      "record_exact_match": 0.4028,
+      "dangerous_error": {
+        "count": 1,
+        "denominator": 58,
+        "rate": 0.0172
+      }
+    },
+    "accent:in": {
+      "entity_f1": 0.5488,
+      "record_exact_match": 0.2163,
+      "dangerous_error": {
+        "count": 1,
+        "denominator": 246,
+        "rate": 0.0041
+      }
+    },
+    "accent:us": {
+      "entity_f1": 0.6932,
+      "record_exact_match": 0.3735,
+      "dangerous_error": {
+        "count": 2,
+        "denominator": 136,
+        "rate": 0.0147
+      }
+    }
+  },
+  "latency_s": {
+    "n": 480,
+    "p50": 0.9419,
+    "p95": 2.1671,
+    "mean": 1.1248
+  },
+  "leakage": {
+    "test_families_in_train_or_dev": 0,
+    "test_patterns_in_final_test": 0
+  },
+  "asr": {
+    "wer": 0.6313,
+    "drug_term_recall": 0.5913,
+    "wer_by_accent": {
+      "us": 0.5445,
+      "in": 0.7035,
+      "gb": 0.5535
+    }
+  }
+}

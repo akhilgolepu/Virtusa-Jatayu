@@ -1,2 +1,24 @@
 m3-dev-text-rules: entity F1 1.000 · exact 1.000 · dangerous 0/440 → /home/akhil/VirtusaJatayu/results/m3-dev-text-rules
 STOPPED by evaluator round 2 (step 3: regenerate first)
+=== evaluator round 2: dev reruns on regenerated data, 2026-11-02T18:53:44+05:30
+m3-dev-text-rules: entity F1 1.000 · exact 1.000 · dangerous 0/440 → /home/akhil/VirtusaJatayu/results/m3-dev-text-rules
+m3-dev-text-hybrid: entity F1 0.988 · exact 0.927 · dangerous 5/440 → /home/akhil/VirtusaJatayu/results/m3-dev-text-hybrid
+m3-dev-text-llm: entity F1 0.897 · exact 0.771 · dangerous 3/440 → /home/akhil/VirtusaJatayu/results/m3-dev-text-llm
+hybrid falling back to rules: LLM call failed: Expecting value: line 1 column 930 (char 929)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 917 (char 916)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 1385 (char 1384)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 1385 (char 1384)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 1385 (char 1384)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 917 (char 916)
+hybrid falling back to rules: LLM call failed: Unterminated string starting at: line 1 column 918 (char 917)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 917 (char 916)
+hybrid falling back to rules: LLM call failed: Expecting ',' delimiter: line 1 column 927 (char 926)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 917 (char 916)
+m3-dev-audio-hybrid: entity F1 0.626 · exact 0.292 · dangerous 4/440 → /home/akhil/VirtusaJatayu/results/m3-dev-audio-hybrid
+hybrid falling back to rules: LLM call failed: Expecting value: line 1 column 915 (char 914)
+hybrid falling back to rules: LLM call failed: Expecting value: line 1 column 926 (char 925)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 917 (char 916)
+hybrid falling back to rules: LLM call failed: Expecting property name enclosed in double quotes: line 1 column 917 (char 916)
+hybrid falling back to rules: LLM call failed: Unterminated string starting at: line 1 column 1086 (char 1085)
+m3-dev-noise-hybrid: entity F1 0.600 · exact 0.381 · dangerous 2/240 → /home/akhil/VirtusaJatayu/results/m3-dev-noise-hybrid
+exit=0
