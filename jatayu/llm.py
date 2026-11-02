@@ -61,7 +61,12 @@ class LlmRunner:
                     messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
                     response_format={"type": "json_object", "schema": schema}, temperature=0.0,
                     max_tokens=max_tokens)
-                return json.loads(out["choices"][0]["message"]["content"])
+                choice = out["choices"][0]
+                if choice.get("finish_reason") == "length":
+                    raise LlmError(f"output truncated at max_tokens={max_tokens} (not valid JSON)")
+                return json.loads(choice["message"]["content"])
+            except LlmError:
+                raise
             except Exception as exc:
                 raise LlmError(f"LLM call failed: {exc}") from exc
 

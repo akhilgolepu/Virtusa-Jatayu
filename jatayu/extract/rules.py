@@ -16,10 +16,14 @@ CONTEXT_WINDOW = 4  # tokens before a drug name searched for negation / measurem
 NEGATION_CUES = {"not", "no", "didn't", "never", "without", "allergic", "allergy", "allergies",
                  "held", "withheld", "refused", "declined", "contraindicated"}
 HOME_MED_CUES = {"takes", "taking", "daily", "regularly", "prescribed", "home"}
+# Lab and monitor words added in evaluator round 3 (dev context errors were all "serum magnesium 0.7"): a reading's
+# qualifier, never something said about a dose given.
 MEASUREMENT_CUES = {"blood", "bgl", "bsl", "sugar", "level", "levels", "reading", "sats", "sat", "saturation",
-                    "saturations", "spo2"}
+                    "saturations", "spo2", "serum", "plasma", "ionised", "ionized", "measured", "checked"}
 LOW_CONFIDENCE = 0.95
 SHARED_TIME_CONFIDENCE = 0.7
+RANGE_JOINERS = {"to", "-", "or"}  # "2 to 4 mg", "2-4 mg", "2 or 4 mg": a range, not a dose given
+REPEAT_CUES = {"another", "again", "repeat", "repeated"}  # "then another 2 mg": a second dose of the same drug
 
 
 @dataclass
@@ -148,13 +152,38 @@ class RulesExtractor:
 
         entries: list[Entry] = []
         for anchor, (s, e) in zip(anchors, self._segments(nt, anchors, mention_at, time_at)):
-            seg_mentions = [m for m in mentions if s <= m.i < e]
-            time_field, flags = self._time(nt, times, s, e, capture_time)
-            if anchor.kind == "drug":
-                entries.append(self._medication(nt, anchor, seg_mentions, consumed, s, e, time_field, flags))
-            else:
-                entries.append(self._procedure(nt, anchor, s, e, time_field, flags))
+            parts = [(s, e)]
+            cue = self._repeat_cue(nt, anchor, s, e, consumed) if anchor.kind == "drug" else None
+            if cue is not None:
+                parts = [(s, cue), (cue, e)]
+            for n, (ps, pe) in enumerate(parts):
+                seg_mentions = [m for m in mentions if ps <= m.i < pe]
+                time_field, flags = self._time(nt, times, ps, pe, capture_time)
+                if anchor.kind != "drug":
+                    entries.append(self._procedure(nt, anchor, ps, pe, time_field, flags))
+                    continue
+                entry = self._medication(nt, anchor, seg_mentions, consumed, ps, pe, time_field, flags)
+                if n == 1:
+                    first = entries[-1]
+                    entry.flags += [f for f in first.flags if f.code in ("possible_not_given", "possible_measurement")]
+                    entry.flags.append(Flag(code="repeat_dose_inferred", field="drug", severity="medium",
+                                            message=f"A second {anchor.canon} dose was read from "
+                                                    f"'{nt.tokens[cue].text}'; check it was given."))
+                entries.append(entry)
         return entries
+
+    @staticmethod
+    def _repeat_cue(nt, anchor, s, e, consumed) -> int | None:
+        """'morphine 4 mg IV then another 2 mg': the cue index, if a dose was already said before it and another
+        number follows it. The second dose becomes its own entry (flagged) instead of being dropped."""
+        toks = nt.tokens
+        for c in range(anchor.j, e):
+            if toks[c].text in REPEAT_CUES:
+                before = any(toks[k].kind == "number" and k not in consumed for k in range(s, c))
+                after = any(toks[k].kind == "number" and k not in consumed for k in range(c + 1, min(e, c + 4)))
+                if before and after:
+                    return c
+        return None
 
     def _f(self, nt: NormalisedText, value, i: int, j: int, confidence: float = 1.0) -> Field:
         span = nt.raw_span(i, j)
@@ -169,7 +198,10 @@ class RulesExtractor:
         if len(times) == 1:
             t = times[0]
             return Field[datetime](value=t.value, span=t.span, confidence=SHARED_TIME_CONFIDENCE, source="rules",
-                                   raw=nt.raw[t.span[0]:t.span[1]]), []
+                                   raw=nt.raw[t.span[0]:t.span[1]]), \
+                [Flag(code="time_borrowed", field="time", severity="medium",
+                      message=f"Time '{nt.raw[t.span[0]:t.span[1]]}' was said in another part of the sentence; "
+                              "check it applies here.")]
         return (Field[datetime](value=capture_time, span=None, confidence=1.0, source="rules"),
                 [Flag(code="time_not_stated", field="time", severity="low",
                       message="No time stated; using capture time.")])
@@ -182,6 +214,9 @@ class RulesExtractor:
         corrected = any(nums[0] < k < nums[-1] and toks[k].text in CORRECTIONS for k in range(s, e)) if nums else False
         with_unit = [k for k in nums if k + 1 in unit_at]
         ambiguous = False
+        stated_range = next(((a, b) for a, b in zip(nums, nums[1:]) if 0 < b - a <= 3 and all(
+            toks[k].text in RANGE_JOINERS or (toks[k].text == "and" and a > 0 and toks[a - 1].text == "between")
+            for k in range(a + 1, b))), None)
         if corrected:
             pick = nums[-1]
         elif with_unit:
@@ -215,6 +250,11 @@ class RulesExtractor:
             route = Field.missing("rules")
             flags.append(Flag(code="field_missing", field="route", severity="medium",
                               message=f"No route stated for {anchor.canon}."))
+        if stated_range:
+            lo, hi = (toks[k].text for k in stated_range)
+            flags.append(Flag(code="dose_range_stated", field="dose_value", severity="high",
+                              message=f"A range ({lo} to {hi}) was said for {anchor.canon}, not one dose; enter the "
+                                      "dose actually given."))
         if ambiguous:
             flags.append(Flag(code="ambiguous_dose", field="dose_value", severity="high",
                               message=f"Several numbers near {anchor.canon} and none has a unit; check the dose."))

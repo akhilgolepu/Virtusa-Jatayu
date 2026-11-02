@@ -112,7 +112,7 @@ def test_not_given_contexts_are_flagged(lexicon):
 
 
 def test_measurements_are_flagged_not_silent(lexicon):
-    for raw in ("blood glucose 3.2 mmol", "O2 sats 88"):
+    for raw in ("blood glucose 3.2 mmol", "O2 sats 88", "serum magnesium 0.7", "ionised calcium 1.1"):
         [e] = ext(lexicon, raw)
         assert any(f.code == "possible_measurement" and f.severity == "high" for f in e.flags), raw
     [d] = ext(lexicon, "gave dextrose 25 g IV")
@@ -131,3 +131,24 @@ def test_raw_name_and_time_source(lexicon):
     assert e.time_source == "spoken" and e.model_dump()["time_source"] == "spoken"
     [f] = ext(lexicon, "aspirin 300 mg PO")
     assert f.time_source == "device_clock"
+
+
+def test_dose_range_is_flagged_not_silently_resolved(lexicon):
+    for raw in ("morphine 2 to 4 mg IV", "fentanyl 50-100 mcg IV", "between 2 and 4 mg morphine IV"):
+        [e] = ext(lexicon, raw)
+        assert any(f.code == "dose_range_stated" and f.severity == "high" for f in e.flags), raw
+    [e] = ext(lexicon, "morphine 4 mg IV at 10 20")
+    assert not any(f.code == "dose_range_stated" for f in e.flags)
+
+
+def test_then_another_gives_a_second_flagged_entry(lexicon):
+    a, b = ext(lexicon, "morphine 4 mg IV at 10 30 then another 2 mg IV at 10 40")
+    assert (a.drug.value, a.dose_value.value) == ("morphine", 4.0) and not any(f.code == "repeat_dose_inferred" for f in a.flags)
+    assert (b.drug.value, b.dose_value.value, b.route.value) == ("morphine", 2.0, "IV")
+    assert any(f.code == "repeat_dose_inferred" for f in b.flags)
+
+
+def test_time_from_another_clause_is_flagged(lexicon):
+    a, b = ext(lexicon, "at 10 40 aspirin 300 mg PO and ondansetron 4 mg IV")
+    assert not any(f.code == "time_borrowed" for f in a.flags)
+    assert b.time.value.strftime("%H:%M") == "10:40" and any(f.code == "time_borrowed" for f in b.flags)

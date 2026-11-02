@@ -37,7 +37,12 @@ def schema_for(cands: list[Candidate]) -> dict:
         if ids:
             props[name] = {"enum": [*ids, None]}
     item = {"type": "object", "properties": props, "required": []}
-    return {"type": "object", "properties": {"entries": {"type": "array", "items": item}}, "required": ["entries"]}
+    # At most one entry per drug/procedure candidate (an entry reusing an anchor is dropped anyway). Without this cap
+    # the model can repeat one entry until max_tokens and the JSON is cut off: all 15 hybrid fallbacks in the round-2
+    # dev speech runs were this loop (evaluator round 3, item 6).
+    anchors = sum(c.kind in ("drug", "procedure") for c in cands)
+    entries = {"type": "array", "items": item, "maxItems": max(anchors, 1)}
+    return {"type": "object", "properties": {"entries": entries}, "required": ["entries"]}
 
 
 def _describe(c: Candidate) -> str:
@@ -71,8 +76,14 @@ class HybridExtractor:
     @staticmethod
     def _keep_omitted(linked: list[Entry], rules_entries: list[Entry]) -> tuple[list[Entry], list[str]]:
         """A drug or procedure the rules layer found but the LLM left out is kept (from rules) and flagged, so the
-        LLM can never silently drop an administration."""
-        covered = {(getattr(e, "drug", None) or getattr(e, "procedure", None)).span for e in linked}
+        LLM can never silently drop an administration. Where the rules layer read a repeat dose ("then another
+        2 mg") both of its entries stand: the LLM can link a drug name only once."""
+        anchor_of = lambda e: (getattr(e, "drug", None) or getattr(e, "procedure", None)).span  # noqa: E731
+        repeated = {anchor_of(r) for r in rules_entries if any(f.code == "repeat_dose_inferred" for f in r.flags)}
+        if repeated:
+            linked = [e for e in linked if anchor_of(e) not in repeated]
+            linked += [r for r in rules_entries if anchor_of(r) in repeated]
+        covered = {anchor_of(e) for e in linked}
         omitted = []
         for r in rules_entries:
             anchor = getattr(r, "drug", None) or getattr(r, "procedure", None)
@@ -108,7 +119,7 @@ class HybridExtractor:
             anchor = fields.get("drug" if kind == "medication" else "procedure")
             if anchor is None:
                 continue  # an entry without its drug/procedure (or one reusing it) is not an entry
-            extra = self._rules_flags(anchor, rules_entries)
+            extra = self._rules_flags(anchor, rules_entries, fields.get("time"))
             match = by_id[item["drug"]].confidence if kind == "medication" else 1.0  # lexicon match, not LLM certainty
             if match < 0.95:
                 extra.append(Flag(code="low_confidence", field="drug", severity="medium",
@@ -119,11 +130,17 @@ class HybridExtractor:
         return entries
 
     @staticmethod
-    def _rules_flags(anchor: Field, rules_entries: list[Entry]) -> list[Flag]:
+    def _rules_flags(anchor: Field, rules_entries: list[Entry], time: Field | None = None) -> list[Flag]:
         """Context cues the rules layer saw around the same drug span ("allergic to", "blood glucose") are kept even
-        if the LLM called the entry 'given'."""
+        if the LLM called the entry 'given'. A time the LLM linked from outside the drug's own clause is flagged."""
         for r in rules_entries:
             r_anchor = getattr(r, "drug", None) or getattr(r, "procedure", None)
             if r_anchor is not None and r_anchor.span == anchor.span:
-                return [f for f in r.flags if f.code in CONTEXT_CODES]
+                out = [f for f in r.flags if f.code in CONTEXT_CODES | {"dose_range_stated"}]
+                own = None if any(f.code in ("time_borrowed", "time_not_stated") for f in r.flags) else r.time.span
+                if time is not None and time.span != own:
+                    out.append(Flag(code="time_borrowed", field="time", severity="medium",
+                                    message=f"Time '{time.raw}' was said in another part of the sentence; check it "
+                                            "applies here."))
+                return out
         return []

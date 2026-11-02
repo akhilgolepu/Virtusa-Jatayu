@@ -101,6 +101,26 @@ def test_schema_keeps_output_short(lexicon):
     assert "kind" not in item["properties"] and item.get("required", []) == []
 
 
+def test_schema_caps_entries_at_one_per_anchor(lexicon):
+    """A repeat loop ran to max_tokens and cut the JSON off (all 15 round-2 fallbacks); the array is now bounded."""
+    from jatayu.extract.hybrid import schema_for
+    ex = RulesExtractor(lexicon)
+    assert schema_for(ex.candidates("started chest compressions at 10 28", CAP))["properties"]["entries"]["maxItems"] == 1
+    assert schema_for(ex.candidates("aspirin 300 mg PO then ondansetron 4 mg IV", CAP))["properties"]["entries"]["maxItems"] == 2
+
+
+def test_truncated_llm_output_is_an_llm_error(monkeypatch):
+    from jatayu.llm import LlmError, LlmRunner
+
+    class Fake:
+        def create_chat_completion(self, **kw):
+            return {"choices": [{"finish_reason": "length", "message": {"content": '{"entries": [{"drug": 1}, {'}}]}
+    r = LlmRunner("x")
+    monkeypatch.setattr(r, "_load", lambda: Fake())
+    with pytest.raises(LlmError, match="truncated"):
+        r.complete_json("s", "u", {})
+
+
 def test_schema_only_offers_right_kind_ids(lexicon):
     seen = {}
 
@@ -149,3 +169,26 @@ def test_drugs_the_llm_leaves_out_are_kept_from_rules(lexicon):
 def test_hybrid_carries_raw_words(lexicon):
     [e] = hybrid(lexicon, StubRunner({"entries": [{"drug": 1, "dose": 2, "unit": 3, "route": 4}]})).extract("Emeset 4 mg IV", CAP)
     assert (e.drug.raw, e.drug.value, e.dose_unit.raw) == ("Emeset", "ondansetron", "mg")
+
+
+def test_time_linked_from_another_clause_is_flagged(lexicon):
+    raw = "at 10 40 aspirin 300 mg PO and ondansetron 4 mg IV"
+    # candidates: 1 time, 2 aspirin, 3 300, 4 mg, 5 PO, 6 ondansetron, 7 4, 8 mg, 9 IV
+    runner = StubRunner({"entries": [_e(drug=2, dose=3, unit=4, route=5, time=1), _e(drug=6, dose=7, unit=8, route=9, time=1)]})
+    a, b = hybrid(lexicon, runner).extract(raw, CAP)
+    assert not any(f.code == "time_borrowed" for f in a.flags)
+    assert any(f.code == "time_borrowed" for f in b.flags)
+
+
+def test_rules_repeat_dose_survives_single_link(lexicon):
+    raw = "morphine 4 mg IV then another 2 mg IV"
+    runner = StubRunner({"entries": [_e(drug=1, dose=2, unit=3, route=4)]})
+    entries = hybrid(lexicon, runner).extract(raw, CAP)
+    assert [(e.drug.value, e.dose_value.value) for e in entries] == [("morphine", 4.0), ("morphine", 2.0)]
+    assert any(f.code == "repeat_dose_inferred" for f in entries[1].flags)
+
+
+def test_dose_range_flag_carried_into_hybrid(lexicon):
+    runner = StubRunner({"entries": [_e(drug=1, dose=3, unit=4, route=5)]})
+    [e] = hybrid(lexicon, runner).extract("morphine 2 to 4 mg IV", CAP)
+    assert any(f.code == "dose_range_stated" for f in e.flags)
