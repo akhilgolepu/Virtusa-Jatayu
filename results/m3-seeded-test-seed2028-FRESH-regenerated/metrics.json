@@ -1,0 +1,195 @@
+{
+  "split": "test",
+  "variant": "standard",
+  "n": 200,
+  "seed": 2028,
+  "pool_size": 193,
+  "catch_rate": {
+    "count": 198,
+    "denominator": 200,
+    "rate": 0.99,
+    "ci95": [
+      0.9643,
+      0.9973
+    ]
+  },
+  "catch_rate_new_flag": {
+    "count": 198,
+    "denominator": 200,
+    "rate": 0.99,
+    "ci95": [
+      0.9643,
+      0.9973
+    ]
+  },
+  "base_already_flagged": {
+    "count": 0,
+    "denominator": 200,
+    "rate": 0.0,
+    "ci95": [
+      0.0,
+      0.0188
+    ]
+  },
+  "false_flag_rate": {
+    "count": 0,
+    "denominator": 200,
+    "rate": 0.0,
+    "ci95": [
+      0.0,
+      0.0188
+    ]
+  },
+  "by_corruption": {
+    "dose_x10": {
+      "count": 49,
+      "denominator": 50,
+      "rate": 0.98,
+      "ci95": [
+        0.895,
+        0.9965
+      ]
+    },
+    "dose_div10": {
+      "count": 49,
+      "denominator": 50,
+      "rate": 0.98,
+      "ci95": [
+        0.895,
+        0.9965
+      ]
+    },
+    "mg_mcg_swap": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    },
+    "wrong_route": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    }
+  },
+  "by_corruption_new_flag": {
+    "dose_x10": {
+      "count": 49,
+      "denominator": 50,
+      "rate": 0.98,
+      "ci95": [
+        0.895,
+        0.9965
+      ]
+    },
+    "dose_div10": {
+      "count": 49,
+      "denominator": 50,
+      "rate": 0.98,
+      "ci95": [
+        0.895,
+        0.9965
+      ]
+    },
+    "mg_mcg_swap": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    },
+    "wrong_route": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    }
+  },
+  "by_range_class": {
+    "cited": {
+      "count": 179,
+      "denominator": 180,
+      "rate": 0.9944,
+      "ci95": [
+        0.9692,
+        0.999
+      ]
+    },
+    "illustrative": {
+      "count": 19,
+      "denominator": 20,
+      "rate": 0.95,
+      "ci95": [
+        0.7639,
+        0.9911
+      ]
+    }
+  },
+  "by_range_class_new_flag": {
+    "cited": {
+      "count": 179,
+      "denominator": 180,
+      "rate": 0.9944,
+      "ci95": [
+        0.9692,
+        0.999
+      ]
+    },
+    "illustrative": {
+      "count": 19,
+      "denominator": 20,
+      "rate": 0.95,
+      "ci95": [
+        0.7639,
+        0.9911
+      ]
+    }
+  },
+  "not_counted_as_catch": [
+    "no_reference_range",
+    "weight_based_dose"
+  ],
+  "target": 0.95,
+  "commit_at_start": "2cbb9a7",
+  "created": "2026-11-02T18:50:01.901869+05:30",
+  "miss_breakdown": [
+    {
+      "corruption": "dose_x10",
+      "range_class": "illustrative",
+      "outcome": "no flag",
+      "count": 1
+    },
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "no flag",
+      "count": 1
+    }
+  ],
+  "miss_breakdown_new_flag": [
+    {
+      "corruption": "dose_x10",
+      "range_class": "illustrative",
+      "outcome": "no flag",
+      "count": 1
+    },
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "no flag",
+      "count": 1
+    }
+  ],
+  "false_flags_by_rule": []
+}

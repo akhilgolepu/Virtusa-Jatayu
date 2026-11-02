@@ -1,0 +1,255 @@
+{
+  "split": "test",
+  "variant": "harder",
+  "n": 200,
+  "seed": 2029,
+  "pool_size": 193,
+  "catch_rate": {
+    "count": 156,
+    "denominator": 200,
+    "rate": 0.78,
+    "ci95": [
+      0.7176,
+      0.8318
+    ]
+  },
+  "catch_rate_new_flag": {
+    "count": 156,
+    "denominator": 200,
+    "rate": 0.78,
+    "ci95": [
+      0.7176,
+      0.8318
+    ]
+  },
+  "base_already_flagged": {
+    "count": 0,
+    "denominator": 200,
+    "rate": 0.0,
+    "ci95": [
+      0.0,
+      0.0188
+    ]
+  },
+  "false_flag_rate": {
+    "count": 0,
+    "denominator": 200,
+    "rate": 0.0,
+    "ci95": [
+      0.0,
+      0.0188
+    ]
+  },
+  "by_corruption": {
+    "dose_x2": {
+      "count": 34,
+      "denominator": 50,
+      "rate": 0.68,
+      "ci95": [
+        0.5419,
+        0.7924
+      ]
+    },
+    "dose_x5": {
+      "count": 44,
+      "denominator": 50,
+      "rate": 0.88,
+      "ci95": [
+        0.7619,
+        0.9438
+      ]
+    },
+    "digit_slip": {
+      "count": 28,
+      "denominator": 50,
+      "rate": 0.56,
+      "ci95": [
+        0.4231,
+        0.6884
+      ]
+    },
+    "mg_to_g": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    }
+  },
+  "by_corruption_new_flag": {
+    "dose_x2": {
+      "count": 34,
+      "denominator": 50,
+      "rate": 0.68,
+      "ci95": [
+        0.5419,
+        0.7924
+      ]
+    },
+    "dose_x5": {
+      "count": 44,
+      "denominator": 50,
+      "rate": 0.88,
+      "ci95": [
+        0.7619,
+        0.9438
+      ]
+    },
+    "digit_slip": {
+      "count": 28,
+      "denominator": 50,
+      "rate": 0.56,
+      "ci95": [
+        0.4231,
+        0.6884
+      ]
+    },
+    "mg_to_g": {
+      "count": 50,
+      "denominator": 50,
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
+    }
+  },
+  "by_range_class": {
+    "cited": {
+      "count": 152,
+      "denominator": 186,
+      "rate": 0.8172,
+      "ci95": [
+        0.7554,
+        0.8661
+      ]
+    },
+    "illustrative": {
+      "count": 4,
+      "denominator": 14,
+      "rate": 0.2857,
+      "ci95": [
+        0.1172,
+        0.5465
+      ]
+    }
+  },
+  "by_range_class_new_flag": {
+    "cited": {
+      "count": 152,
+      "denominator": 186,
+      "rate": 0.8172,
+      "ci95": [
+        0.7554,
+        0.8661
+      ]
+    },
+    "illustrative": {
+      "count": 4,
+      "denominator": 14,
+      "rate": 0.2857,
+      "ci95": [
+        0.1172,
+        0.5465
+      ]
+    }
+  },
+  "not_counted_as_catch": [
+    "no_reference_range",
+    "weight_based_dose"
+  ],
+  "target": null,
+  "commit_at_start": "2cbb9a7-dirty",
+  "created": "2026-11-02T18:50:02.267541+05:30",
+  "miss_breakdown": [
+    {
+      "corruption": "dose_x2",
+      "range_class": "cited",
+      "outcome": "no flag",
+      "count": 13
+    },
+    {
+      "corruption": "digit_slip",
+      "range_class": "cited",
+      "outcome": "no flag",
+      "count": 12
+    },
+    {
+      "corruption": "digit_slip",
+      "range_class": "illustrative",
+      "outcome": "no flag",
+      "count": 5
+    },
+    {
+      "corruption": "digit_slip",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 5
+    },
+    {
+      "corruption": "dose_x5",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 4
+    },
+    {
+      "corruption": "dose_x2",
+      "range_class": "illustrative",
+      "outcome": "no flag",
+      "count": 3
+    },
+    {
+      "corruption": "dose_x5",
+      "range_class": "illustrative",
+      "outcome": "no flag",
+      "count": 2
+    }
+  ],
+  "miss_breakdown_new_flag": [
+    {
+      "corruption": "dose_x2",
+      "range_class": "cited",
+      "outcome": "no flag",
+      "count": 13
+    },
+    {
+      "corruption": "digit_slip",
+      "range_class": "cited",
+      "outcome": "no flag",
+      "count": 12
+    },
+    {
+      "corruption": "digit_slip",
+      "range_class": "illustrative",
+      "outcome": "no flag",
+      "count": 5
+    },
+    {
+      "corruption": "digit_slip",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 5
+    },
+    {
+      "corruption": "dose_x5",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 4
+    },
+    {
+      "corruption": "dose_x2",
+      "range_class": "illustrative",
+      "outcome": "no flag",
+      "count": 3
+    },
+    {
+      "corruption": "dose_x5",
+      "range_class": "illustrative",
+      "outcome": "no flag",
+      "count": 2
+    }
+  ],
+  "false_flags_by_rule": []
+}
