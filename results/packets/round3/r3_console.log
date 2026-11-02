@@ -1,0 +1,9 @@
+r3-dev-audio-hybrid: entity F1 0.633 · exact 0.310 · dangerous 3/440 → /home/akhil/VirtusaJatayu/results/r3-dev-audio-hybrid
+r3-dev-audio-llm: entity F1 0.526 · exact 0.165 · dangerous 0/440 → /home/akhil/VirtusaJatayu/results/r3-dev-audio-llm
+r3-dev-noise-paired-hybrid: entity F1 0.609 · exact 0.406 · dangerous 3/240 → /home/akhil/VirtusaJatayu/results/r3-dev-noise-paired-hybrid
+r3-dev-text-hybrid: entity F1 0.988 · exact 0.927 · dangerous 5/440 → /home/akhil/VirtusaJatayu/results/r3-dev-text-hybrid
+r3-dev-text-llm: entity F1 0.897 · exact 0.771 · dangerous 3/440 → /home/akhil/VirtusaJatayu/results/r3-dev-text-llm
+r3-offtemplate-llm: entity F1 0.862 · exact 0.647 · dangerous 1/42 → /home/akhil/VirtusaJatayu/results/r3-offtemplate-llm
+r3-offtemplate-hybrid: entity F1 0.938 · exact 0.686 · dangerous 2/42 → /home/akhil/VirtusaJatayu/results/r3-offtemplate-hybrid
+ALL_DONE
+exit=0

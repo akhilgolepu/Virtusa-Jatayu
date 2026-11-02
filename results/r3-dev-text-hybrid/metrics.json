@@ -1,0 +1,294 @@
+{
+  "config": {
+    "split": "dev",
+    "mode": "text",
+    "extractor": "hybrid",
+    "tag": "r3-dev-text-hybrid",
+    "n_utterances": 480,
+    "n_clips": 480,
+    "split_sha256": null,
+    "commit_at_start": "c0ff23e",
+    "started": "2026-11-03T00:52:04.582764+05:30",
+    "created": "2026-11-03T00:58:52.087398+05:30",
+    "source_label": "template-generated; extractor and generator share a lexicon; not a headline number",
+    "asr_model": null,
+    "llm_model": "Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
+  },
+  "metrics": {
+    "entity": {
+      "micro": {
+        "tp": 1846,
+        "gold": 1884,
+        "pred": 1853,
+        "precision": 0.9962,
+        "recall": 0.9798,
+        "f1": 0.988
+      },
+      "per_field": {
+        "drug": {
+          "tp": 460,
+          "gold": 460,
+          "pred": 460,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "dose_value": {
+          "tp": 373,
+          "gold": 380,
+          "pred": 380,
+          "precision": 0.9816,
+          "recall": 0.9816,
+          "f1": 0.9816
+        },
+        "dose_unit": {
+          "tp": 380,
+          "gold": 380,
+          "pred": 380,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "route": {
+          "tp": 360,
+          "gold": 360,
+          "pred": 360,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "time": {
+          "tp": 213,
+          "gold": 244,
+          "pred": 213,
+          "precision": 1.0,
+          "recall": 0.873,
+          "f1": 0.9322
+        },
+        "procedure": {
+          "tp": 60,
+          "gold": 60,
+          "pred": 60,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      }
+    },
+    "record_exact_match": {
+      "count": 482,
+      "denominator": 520,
+      "rate": 0.9269
+    },
+    "dangerous_error": {
+      "count": 5,
+      "denominator": 440,
+      "rate": 0.0114
+    },
+    "dangerous_error_lenient": {
+      "count": 5,
+      "denominator": 440,
+      "rate": 0.0114
+    },
+    "context_error": {
+      "count": 0,
+      "denominator": 80,
+      "rate": 0.0
+    },
+    "administration_status_error": {
+      "count": 0,
+      "denominator": 40,
+      "rate": 0.0
+    },
+    "anomaly_flagged": {
+      "count": 21,
+      "denominator": 21,
+      "rate": 1.0
+    },
+    "source_quote_coverage": {
+      "count": 1680,
+      "denominator": 1680,
+      "rate": 1.0
+    }
+  },
+  "groups": {
+    "category:context_measurement": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:context_negation": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 40,
+        "rate": 0.0
+      }
+    },
+    "category:hinglish": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 60,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:med_basic": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 40,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:med_correction": {
+      "entity_f1": 0.9724,
+      "record_exact_match": 0.8833,
+      "dangerous_error": {
+        "count": 5,
+        "denominator": 60,
+        "rate": 0.0833
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:med_incomplete": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 40,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:med_messy": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 60,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:med_multi": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 80,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:procedure": {
+      "entity_f1": 0.7947,
+      "record_exact_match": 0.4833,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 60,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:time_clock": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 40,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "lang:en": {
+      "entity_f1": 0.9862,
+      "record_exact_match": 0.9174,
+      "dangerous_error": {
+        "count": 5,
+        "denominator": 380,
+        "rate": 0.0132
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 40,
+        "rate": 0.0
+      }
+    },
+    "lang:hinglish": {
+      "entity_f1": 1.0,
+      "record_exact_match": 1.0,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 60,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    }
+  },
+  "latency_s": {
+    "n": 480,
+    "p50": 0.8442,
+    "p95": 1.7885,
+    "mean": 0.8487
+  },
+  "leakage": {
+    "test_families_in_train_or_dev": 0,
+    "test_patterns_in_final_test": 0
+  }
+}

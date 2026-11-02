@@ -1,0 +1,181 @@
+{
+  "config": {
+    "split": "dev",
+    "mode": "audio",
+    "extractor": "hybrid",
+    "tag": "r3-dev-audio-hybrid",
+    "n_utterances": 480,
+    "n_clips": 480,
+    "split_sha256": null,
+    "commit_at_start": "c0ff23e",
+    "started": "2026-11-02T21:33:49.740906+05:30",
+    "created": "2026-11-02T21:39:39.071379+05:30",
+    "source_label": "synthetic speech (Piper)",
+    "asr_model": "faster-whisper-small.en",
+    "llm_model": "Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
+  },
+  "metrics": {
+    "entity": {
+      "micro": {
+        "tp": 908,
+        "gold": 1884,
+        "pred": 985,
+        "precision": 0.9218,
+        "recall": 0.482,
+        "f1": 0.633
+      },
+      "per_field": {
+        "drug": {
+          "tp": 291,
+          "gold": 460,
+          "pred": 298,
+          "precision": 0.9765,
+          "recall": 0.6326,
+          "f1": 0.7678
+        },
+        "dose_value": {
+          "tp": 187,
+          "gold": 380,
+          "pred": 223,
+          "precision": 0.8386,
+          "recall": 0.4921,
+          "f1": 0.6202
+        },
+        "dose_unit": {
+          "tp": 175,
+          "gold": 380,
+          "pred": 185,
+          "precision": 0.9459,
+          "recall": 0.4605,
+          "f1": 0.6195
+        },
+        "route": {
+          "tp": 145,
+          "gold": 360,
+          "pred": 158,
+          "precision": 0.9177,
+          "recall": 0.4028,
+          "f1": 0.5598
+        },
+        "time": {
+          "tp": 74,
+          "gold": 244,
+          "pred": 85,
+          "precision": 0.8706,
+          "recall": 0.3033,
+          "f1": 0.4498
+        },
+        "procedure": {
+          "tp": 36,
+          "gold": 60,
+          "pred": 36,
+          "precision": 1.0,
+          "recall": 0.6,
+          "f1": 0.75
+        }
+      }
+    },
+    "record_exact_match": {
+      "count": 161,
+      "denominator": 520,
+      "rate": 0.3096
+    },
+    "dangerous_error": {
+      "count": 3,
+      "denominator": 440,
+      "rate": 0.0068
+    },
+    "dangerous_error_lenient": {
+      "count": 3,
+      "denominator": 440,
+      "rate": 0.0068
+    },
+    "context_error": {
+      "count": 10,
+      "denominator": 80,
+      "rate": 0.125
+    },
+    "administration_status_error": {
+      "count": 4,
+      "denominator": 40,
+      "rate": 0.1
+    },
+    "anomaly_flagged": {
+      "count": 16,
+      "denominator": 21,
+      "rate": 0.7619
+    },
+    "source_quote_coverage": {
+      "count": 937,
+      "denominator": 937,
+      "rate": 1.0
+    }
+  },
+  "groups": {
+    "accent:gb": {
+      "entity_f1": 0.7945,
+      "record_exact_match": 0.4444,
+      "dangerous_error": {
+        "count": 1,
+        "denominator": 58,
+        "rate": 0.0172
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 5,
+        "rate": 0.0
+      }
+    },
+    "accent:in": {
+      "entity_f1": 0.5233,
+      "record_exact_match": 0.2199,
+      "dangerous_error": {
+        "count": 1,
+        "denominator": 246,
+        "rate": 0.0041
+      },
+      "administration_status_error": {
+        "count": 3,
+        "denominator": 20,
+        "rate": 0.15
+      }
+    },
+    "accent:us": {
+      "entity_f1": 0.7294,
+      "record_exact_match": 0.4036,
+      "dangerous_error": {
+        "count": 1,
+        "denominator": 136,
+        "rate": 0.0074
+      },
+      "administration_status_error": {
+        "count": 1,
+        "denominator": 15,
+        "rate": 0.0667
+      }
+    }
+  },
+  "latency_s": {
+    "n": 480,
+    "p50": 0.7336,
+    "p95": 1.3142,
+    "mean": 0.7272
+  },
+  "leakage": {
+    "test_families_in_train_or_dev": 0,
+    "test_patterns_in_final_test": 0
+  },
+  "asr": {
+    "wer": 0.4015,
+    "wer_definition": "reference and hypothesis normalised the same way (eval/asr_text.py)",
+    "wer_raw": 0.6337,
+    "drug_term_recall": 0.5739,
+    "drug_term_recall_den": 460,
+    "drug_term_recall_surface": 0.587,
+    "wer_by_accent": {
+      "us": 0.2595,
+      "in": 0.5221,
+      "gb": 0.26
+    }
+  }
+}
