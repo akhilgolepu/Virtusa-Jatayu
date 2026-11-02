@@ -63,3 +63,19 @@ Wilson intervals treat 200 as independent, so they are somewhat narrow.
 The step-4 gold-dose audit (`results/m4dev-gold-dose-audit-AFTER-weight-range/`) also read test and final_test gold
 labels with the step-4 validator before step 5 (aggregate counts only, identical to the POST audit). Logged; the
 validator was not changed afterwards.
+
+## Dev reruns on the regenerated data (run once each; `results/m3-dev-*`, commit `2f485c1`)
+
+Dev only. Text = template-generated, extractor and generator share a lexicon, not a headline number. Speech =
+synthetic (Piper). Dangerous errors: strict (headline) / lenient, over given gold records.
+
+| Run | Entity F1 | Exact | Dangerous strict / lenient | Context errors | WER |
+|---|---|---|---|---|---|
+| text, rules | 1.000 | 1.000 | 0/440 / 0/440 | 20/80 | — |
+| text, hybrid | 0.988 | 0.927 | 5/440 / 5/440 | 20/80 | — |
+| text, LLM only | 0.897 | 0.771 | 3/440 / 3/440 | 37/80 | — |
+| speech, hybrid | 0.626 | 0.292 | 4/440 / 4/440 | 21/80 | 0.631 |
+| noisy speech, hybrid (160 utt × 3 SNR) | 0.600 | 0.381 | 2/240 / 2/240 | 62/240 | 0.696 |
+
+Noise curve (entity F1): 20 dB 0.636 · 10 dB 0.611 · 5 dB 0.550. Hybrid fell back to rules on LLM JSON failures 10
+times (speech) and 5 times (noise) out of 480 clips each.
