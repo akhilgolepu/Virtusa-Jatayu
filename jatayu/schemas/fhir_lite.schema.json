@@ -55,7 +55,8 @@
       "required": ["resourceType", "status", "medicationCodeableConcept", "effectiveDateTime", "extension"],
       "properties": {
         "resourceType": {"const": "MedicationAdministration"},
-        "status": {"enum": ["in-progress", "completed", "entered-in-error"]},
+        "status": {"enum": ["in-progress", "completed", "not-done", "entered-in-error"]},
+        "statusReason": {"type": "array", "items": {"type": "object", "required": ["text"], "properties": {"text": {"type": "string"}}}},
         "medicationCodeableConcept": {"$ref": "#/$defs/codeableConcept"},
         "effectiveDateTime": {"type": "string", "format": "date-time"},
         "dosage": {
@@ -80,7 +81,8 @@
       "required": ["resourceType", "status", "code", "performedDateTime", "extension"],
       "properties": {
         "resourceType": {"const": "Procedure"},
-        "status": {"enum": ["in-progress", "completed", "entered-in-error"]},
+        "status": {"enum": ["in-progress", "completed", "not-done", "entered-in-error"]},
+        "statusReason": {"type": "array", "items": {"type": "object", "required": ["text"], "properties": {"text": {"type": "string"}}}},
         "code": {"$ref": "#/$defs/codeableConcept"},
         "performedDateTime": {"type": "string", "format": "date-time"},
         "note": {"type": "array", "items": {"type": "object", "required": ["text"], "properties": {"text": {"type": "string"}}}},

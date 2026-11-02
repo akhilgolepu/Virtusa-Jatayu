@@ -58,6 +58,11 @@ def _entry_row(n: int, entry, status: str) -> list:
     flags = "<br/>".join(f'<font color="#da291c">&#9650;</font> {f.code}' if f.severity == "high" else f"&#9651; {f.code}"
                          for f in entry.flags) or "—"
     status_text = f"<b>{status.upper()}</b>"
+    codes = {f.code for f in entry.flags}
+    if status != "rejected" and codes & {"possible_not_given", "possible_measurement"}:
+        # never shown as an administration (see output/fhir.py NOT_DONE)
+        what = "NOT GIVEN" if "possible_not_given" in codes else "READING"
+        status_text = f'<font color="#da291c"><b>{what}</b></font><br/>{status}'
     return [Paragraph(f"{n:02d}", MONO), Paragraph(_t(entry.time.value), MONO), Paragraph(item, BODY),
             Paragraph(dose, BODY), Paragraph(route, BODY), Paragraph(status_text, BODY), Paragraph(flags, BODY)]
 

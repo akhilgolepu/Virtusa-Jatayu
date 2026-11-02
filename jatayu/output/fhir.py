@@ -13,6 +13,19 @@ from jatayu.models import Entry, Field, MedicationEntry, ProcedureEntry, Utteran
 
 ATC = "http://www.whocc.no/atc"
 SNOMED = "http://snomed.info/sct"
+# An entry the utterance says was NOT given (negation, allergy, refusal, home medication) or that is a reading is
+# never written as an administration, whatever its review status: FHIR status "not-done" plus the reason. Acknowledging
+# the flag at confirm time records that the medic saw it; to record a real administration they reject and re-dictate.
+NOT_DONE = {"possible_not_given": "Not given: the utterance states a negation, allergy, refusal or regular medication.",
+            "possible_measurement": "A reading, not an administration."}
+
+
+def _status(e: Entry, status: str) -> tuple[str, str | None]:
+    if status != "entered-in-error":
+        for f in e.flags:
+            if f.code in NOT_DONE:
+                return "not-done", NOT_DONE[f.code]
+    return status, None
 
 
 def _canonical(obj) -> str:
@@ -71,7 +84,11 @@ def _procedure(e: ProcedureEntry, lexicon: Lexicon, status: str = "in-progress",
 
 def _resource(e: Entry, lexicon: Lexicon, status: str = "in-progress", utterance_id: str | None = None) -> dict:
     build = _medication if isinstance(e, MedicationEntry) else _procedure
-    return build(e, lexicon, status, utterance_id)
+    status, reason = _status(e, status)
+    res = build(e, lexicon, status, utterance_id)
+    if reason:
+        res["statusReason"] = [{"text": reason}]
+    return res
 
 
 def to_bundle(utterance: Utterance, entries: list[Entry], lexicon: Lexicon) -> dict:
