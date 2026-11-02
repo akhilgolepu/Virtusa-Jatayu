@@ -1,7 +1,17 @@
 {
-  "created": "2026-11-01T22:14:04.577571+05:30",
+  "created": "2026-11-03T01:17:58.462282+05:30",
+  "commit": "760ebd2",
   "host": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
   "python": "3.12.13",
+  "cuda": {
+    "driver_cuda": "13.5",
+    "torch_cuda_runtime": "13.0",
+    "llama_cpp_cuda_runtime": "13.0.96",
+    "llama_cpp_python": "0.3.36",
+    "ctranslate2": "4.8.4",
+    "ctranslate2_cublas": "12.9.3.13",
+    "ctranslate2_cuda_devices": 1
+  },
   "all_pass": true,
   "checks": {
     "gpu": {
@@ -9,9 +19,9 @@
       "detail": "NVIDIA GeForce RTX 5060 driver 621.01",
       "name": "NVIDIA GeForce RTX 5060",
       "driver": "621.01",
-      "cuda": "unknown",
+      "cuda": "13.5",
       "vram_total_mib": 8151,
-      "vram_used_mib": 2340,
+      "vram_used_mib": 1254,
       "torch": "2.10.0+cu130",
       "torch_cuda": "13.0"
     },
@@ -20,31 +30,35 @@
       "detail": "Gave 0.3 mg of adrenaline IM two minutes ago.",
       "device": "cuda",
       "model": "faster-whisper-small.en",
-      "load_plus_first_s": 2.495,
-      "latency_s": 0.285,
+      "load_plus_first_s": 1.833,
+      "latency_s": 0.244,
       "audio_s": 3.76
     },
     "llm": {
       "pass": true,
       "detail": "3 entries",
       "model": "Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
-      "load_s": 0.91,
-      "gen_s": 4.46,
+      "load_s": 0.7,
+      "gen_s": 3.67,
       "tokens": 121,
-      "tokens_per_s": 27.1,
-      "peak_vram_mib": 5763,
-      "vram_added_mib": 3141
+      "tokens_per_s": 33.0,
+      "peak_vram_mib": 4663,
+      "vram_added_mib": 3303
     },
     "tts": {
       "pass": true,
-      "detail": "5.7 s of speech",
+      "detail": "6.0 s of speech",
       "voice": "en_US-lessac-medium.onnx",
-      "synth_s": 1.7
+      "synth_s": 1.59
     },
     "offline": {
       "pass": true,
       "sockets_blocked": true,
-      "detail": "ASR and TTS re-run with outbound sockets blocked"
+      "asr": true,
+      "llm": true,
+      "llm_entries": "3 entries",
+      "tts": true,
+      "detail": "ASR, LLM smoke test and TTS re-run with outbound sockets blocked"
     }
   }
 }

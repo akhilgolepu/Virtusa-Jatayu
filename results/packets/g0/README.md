@@ -5,26 +5,30 @@ Product: **Scribe108** (decision-support demo, not a clinical device). Branch `f
 | | |
 |---|---|
 | Milestone | G0 |
-| Commit that produced `setup_check.json` | `5f8e231` (`scripts/setup_check.py`, run 2026-11-01 22:14 IST; committed with the result) |
+| Commit that produced `setup_check.json` | `760ebd2` (re-run 2026-11-03 for evaluator round 3; first run `5f8e231` on 2026-11-01) |
 | Packet assembled at | see `git log -1 -- results/packets/g0` |
 
 ## Files
 
 | File | What |
 |---|---|
-| `setup_check.json` | Written by `python -m scripts.setup_check` (also `python -m f2r.cli setup-check`). **all_pass: true** — gpu, asr, llm, tts, offline |
-| `nvidia-smi.txt` | Full `nvidia-smi` + query. Captured while a dev evaluation was using the GPU, so "memory used" is not idle |
+| `setup_check.json` | Written by `python -m scripts.setup_check` (also `python -m f2r.cli setup-check`). **all_pass: true** — gpu, asr, llm, tts, offline. Records `commit` and a `cuda` block (round 3) |
+| `nvidia-smi.txt` | Full `nvidia-smi` + query, captured 2026-11-03 right after the setup check (GPU otherwise idle) |
 | `requirements.lock` | 86 pinned packages (dependency walk from requirements.txt; `python -m scripts.make_lock`) |
 | `DECISIONS.md` | Full decisions log. Speech backend + language model entries with measured latencies are the rows dated 2026-10-31 (faster-whisper small.en on cuda int8_float16) and 2026-11-01 (Qwen3-4B-Instruct-2507 Q4_K_M via llama.cpp CUDA 13.0 sm_120; both models resident) |
 
-## Measured numbers (all from `setup_check.json`)
+## Measured numbers (all from `setup_check.json`, commit `760ebd2`, 2026-11-03)
 
 - GPU: RTX 5060, driver 621.01, torch CUDA available.
-- ASR: faster-whisper `small.en`, **device cuda**, warm latency **0.285 s** for a 3.8 s clip (median of 3).
-- LLM: Qwen3-4B-Instruct-2507 Q4_K_M, constrained JSON extraction, **27.1 tokens/s**, peak VRAM **5,763 MiB**
+- CUDA (round 3): driver supports CUDA **13.5** (nvidia-smi "CUDA UMD Version"; round 1 recorded "unknown" because the
+  parser looked for "CUDA Version:"). Runtimes actually loaded: torch **13.0**; llama-cpp-python 0.3.36 on the
+  nvidia-cuda-runtime **13.0.96** wheel; CTranslate2 4.8.4 on cuBLAS **12.9.3.13** (CUDA 12, side by side); 1 CUDA device.
+- ASR: faster-whisper `small.en`, **device cuda**, warm latency **0.244 s** for a 3.8 s clip (median of 3).
+- LLM: Qwen3-4B-Instruct-2507 Q4_K_M, constrained JSON extraction, **33.0 tokens/s**, peak VRAM **4,663 MiB**
   (includes the Windows desktop's share of the 8 GB card).
 - TTS: Piper `en_US-lessac-medium`, read-back synthesised.
-- Offline: ASR and TTS re-run with every outbound socket blocked; a test connection to 1.1.1.1 was refused.
+- Offline (round 3): ASR, **the LLM smoke test** and TTS re-run with every outbound socket blocked (all three pass,
+  LLM returned 3 entries); a test connection to 1.1.1.1 was refused.
 
 ## TODO — waiting on the human
 

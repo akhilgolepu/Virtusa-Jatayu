@@ -1,3 +1,11 @@
+# commit: 760ebd2
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.1.1, pluggy-1.7.0 -- /home/akhil/miniconda3/envs/anpr/bin/python
+rootdir: /home/akhil/VirtusaJatayu
+configfile: pyproject.toml
+plugins: hydra-core-1.3.2, cov-7.1.0, anyio-4.13.0
+collecting ... collected 14 items
+
 tests/test_audit_tamper.py::test_mutation_is_detected[delete_middle_row] PASSED [  7%]
 tests/test_audit_tamper.py::test_mutation_is_detected[edit_audio_hash] PASSED [ 14%]
 tests/test_audit_tamper.py::test_mutation_is_detected[edit_event_type] PASSED [ 21%]
@@ -12,4 +20,5 @@ tests/test_audit_tamper.py::test_swapped_entry_hashes_are_detected PASSED [ 78%]
 tests/test_audit_tamper.py::test_consistently_rehashed_row_breaks_the_next_link PASSED [ 85%]
 tests/test_audit_tamper.py::test_tail_deletion_is_NOT_detectable_by_the_chain_alone PASSED [ 92%]
 tests/test_audit_tamper.py::test_tamper_type_count_meets_the_milestone PASSED [100%]
-============================== 14 passed in 1.23s ==============================
+
+============================== 14 passed in 1.07s ==============================

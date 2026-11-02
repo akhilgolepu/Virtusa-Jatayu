@@ -1,8 +1,8 @@
 {
   "utterance": {
-    "id": "016122da33ad4d528fcca6cd179001fd",
-    "incident_id": "a151ed73d4dc43a8a869319619f68d89",
-    "capture_time": "2026-11-01T23:20:14.200966+05:30",
+    "id": "d5efa400e0e6426db9ee4f20e7684318",
+    "incident_id": "478b7e8a2748413da0dd95bd1ce040c5",
+    "capture_time": "2026-11-03T01:18:19.358014+05:30",
     "raw_transcript": "gave 0.3 mg adrenaline IM",
     "audio_sha256": null,
     "audio_path": null
@@ -10,7 +10,7 @@
   "entries": [
     {
       "kind": "medication",
-      "id": "fb598a4251e9425792335672aa7996c0",
+      "id": "1e7b0392d6924c7fa2680d1787d61d83",
       "drug": {
         "value": "epinephrine",
         "span": [
@@ -52,7 +52,7 @@
         "raw": "IM"
       },
       "time": {
-        "value": "2026-11-01T23:20:14.200966+05:30",
+        "value": "2026-11-03T01:18:19.358014+05:30",
         "span": null,
         "confidence": 1.0,
         "source": "rules",

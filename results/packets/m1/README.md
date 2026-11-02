@@ -1,23 +1,24 @@
 # Evidence packet — M1 (skeleton end to end)
 
 Product: **Scribe108** (decision-support demo, not a clinical device). Branch `f2r-evidence`.
-Commit: see `commit.txt` (the commit the samples and verify output were produced on). `pytest_output.txt` and
-`worst_failures.json` were refreshed at `c68ae8d` (evaluator round 2); the samples involve no per-kg-only drug, so the
-round-2 validator change does not alter them.
+Commit: **`760ebd2`** for everything in this folder (evaluator round 3, item 9): `commit.txt`, the ten samples,
+`verify_before_after_tamper.txt`, `tamper_suite_pytest.txt`, `worst_failures.json` and `pytest_output.txt` were all
+rebuilt in one go by `bash scripts/m1_packet.sh` on a clean tree at that commit (each text file names the commit in its
+first line). Tag `m1-pass` points at `760ebd2`.
 
 ## Files
 
 | File | What |
 |---|---|
 | `commit.txt` | Commit hash for this packet |
-| `pytest_output.txt` | Full `python -m pytest -v -rs` output (text): **292 passed, 0 skipped, nothing deselected** (GPU free, so the model tests ran), at commit `c68ae8d` (evaluator round 2) |
+| `pytest_output.txt` | Full `python -m pytest -v -rs` output (text) at `760ebd2`: **343 passed, 13 xfailed, 0 skipped, 0 failed, nothing deselected** (GPU free, so the model tests ran). The 13 xfails are the known off-template failures, each with its reason (`eval/offtemplate_dev.yaml`) |
 | `record.schema.json` | JSON Schema of a record (pydantic, generated from `jatayu/models.py`) |
 | `models.py` | The schema source: `entry id`, `kind`, `drug`/`procedure` (normalised `value` + `raw` transcript words), `dose_value`, `dose_unit`, `route`, `time` + `time_source` (spoken / device_clock / user), per-field `span`, `confidence`, `source`, `flags` |
 | `fhir_lite.schema.json` | Output bundle schema |
 | `sample_01.json` … `sample_10.json` | Ten `python -m f2r.cli add "<sentence>" --extractor rules` outputs (all appended to one incident, so the history checks fire — e.g. sample 02 repeats sample 01's adrenaline and gets `repeat_too_soon`) |
 | `verify_before_after_tamper.txt` | `f2r verify` → ok (exit 0); `scripts/tamper.py` changes fentanyl 150 → 1500 mcg in row 5; `f2r verify` → broken at seq 5, "payload hash mismatch" (exit 1) |
 | `tamper_suite_pytest.txt` | `pytest -v tests/test_audit_tamper.py` — 14 passed |
-| `worst_failures.json` | Five worst typed-text failures (input, output, expected), outputs re-run at `c68ae8d` — see below |
+| `worst_failures.json` | The M1 five worst typed-text failures (input, output, expected), outputs re-run at `760ebd2` — see below |
 
 The ten sample sentences: "gave 0.3 mg adrenaline IM" · "gave point three milligrams of adrenaline IM two mins
 ago" · "pushed 4 mg ondansetron IV" · "aspirin 300 mg PO at 10 40" · "fentanyl one hundred and fifty micrograms IV just
@@ -45,22 +46,20 @@ Each is a separate test in `tests/test_audit_tamper.py`; `verify()` must fail **
 a valid, shorter chain. A bare hash chain cannot detect it; it needs server receipts (Stage 3 S3). Claim wording:
 "100 % of tested tamper types", never "100 % of tampered entries".
 
-## Five worst failures (typed text, rules extractor)
+## Five worst failures (typed text, rules extractor), re-run at `760ebd2`
 
-On the dev text set the rules extractor now makes **0 errors** (`results/m3-dev-text-rules`), but that set is
-template-generated and shares a lexicon with the extractor — not a headline number. These five are real, still-open
-typed-text failures (current output, from `worst_failures.json`):
+These were the five worst typed-text failures at M1. Round 3 fixed three of them so that they are no longer silent;
+all five are also in the off-template dev set (`eval/offtemplate_dev.yaml`, `ot-m1-01`…`05`).
 
-| Input | Output | Expected |
-|---|---|---|
-| morphine 2 to 4 mg IV | morphine **4 mg** IV, no range flag | the range, or a flag that a range was spoken |
-| ketamine 1 mg per kg IV | ketamine **1 mg** IV, `dose_below_range` (medium; below the DERIVED 90-260 mg range since round 2) | 1 mg/kg, recorded as per-kg |
-| adrenaline 1 mg IV, then another 1 mg two minutes later | **one** epinephrine 1 mg IV | two administrations |
-| adrenaline 1 mg IV at 10:40 and amiodarone 300 mg IV | amiodarone gets 10:40 borrowed from the adrenaline clause, **no flag** | amiodarone time not stated (flagged) |
-| gave 4 mg ondansetron 10 mg metoclopramide IV | ondansetron 4 mg (route missing, flagged); metoclopramide **dose missing** (flagged) | ondansetron 4 mg IV; metoclopramide 10 mg IV |
+| Input | Output now | Expected | Status |
+|---|---|---|---|
+| morphine 2 to 4 mg IV | morphine 4 mg IV + **`dose_range_stated` (high)** | the range, or a flag | flagged (was silent) |
+| ketamine 1 mg per kg IV | ketamine 1 mg IV, `dose_below_range` | 1 mg/kg, recorded as per-kg | open (xfail): per-kg units not modelled |
+| adrenaline 1 mg IV, then another 1 mg two minutes later | **two** epinephrine 1 mg entries; the second flagged `repeat_dose_inferred` (route not said → `field_missing`) | two administrations | fixed (was one entry) |
+| adrenaline 1 mg IV at 10:40 and amiodarone 300 mg IV | amiodarone 10:40 + **`time_borrowed` (medium)** | amiodarone time not stated (flagged) | flagged (was silent) |
+| gave 4 mg ondansetron 10 mg metoclopramide IV | ondansetron 4 mg (route missing, flagged); metoclopramide dose missing (flagged) | ondansetron 4 mg IV; metoclopramide 10 mg IV | open (xfail), flagged |
 
-Silent: rows 1, 3 and 4. Flagged: row 2 (as below range — the per-kg meaning is still lost) and row 5. (Round 1 of
-this README wrongly said the last two were flagged; row 4 has no flag.) Outputs re-run at `c68ae8d`; only row 2 changed.
+No row is silent any more. The "2 minutes later" time of the repeat dose is not parsed (`time_not_stated`).
 
 ## Changed beyond the brief
 

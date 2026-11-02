@@ -1,8 +1,8 @@
 {
   "utterance": {
-    "id": "fda70022fad4460d83eae30e180b8a26",
-    "incident_id": "a151ed73d4dc43a8a869319619f68d89",
-    "capture_time": "2026-11-01T23:20:17.763713+05:30",
+    "id": "18f450789a1f4054a630e1b371aea715",
+    "incident_id": "478b7e8a2748413da0dd95bd1ce040c5",
+    "capture_time": "2026-11-03T01:18:22.388188+05:30",
     "raw_transcript": "ondansetron 4, no sorry, 2 mg IV",
     "audio_sha256": null,
     "audio_path": null
@@ -10,7 +10,7 @@
   "entries": [
     {
       "kind": "medication",
-      "id": "e97a2fbff11643b483503afe99cb30d2",
+      "id": "9ebc630f5813435e96943396d3ac074d",
       "drug": {
         "value": "ondansetron",
         "span": [
@@ -52,7 +52,7 @@
         "raw": "IV"
       },
       "time": {
-        "value": "2026-11-01T23:20:17.763713+05:30",
+        "value": "2026-11-03T01:18:22.388188+05:30",
         "span": null,
         "confidence": 1.0,
         "source": "rules",
@@ -75,7 +75,7 @@
           "code": "repeat_too_soon",
           "field": "time",
           "severity": "high",
-          "message": "ondansetron repeated after 3 s; the published minimum interval is 21600 s."
+          "message": "ondansetron repeated after 2 s; the published minimum interval is 21600 s."
         }
       ],
       "time_source": "device_clock"

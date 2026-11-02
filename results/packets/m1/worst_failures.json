@@ -10,7 +10,8 @@
         "route": "IV",
         "time_source": "device_clock",
         "flags": [
-          "time_not_stated"
+          "time_not_stated",
+          "dose_range_stated"
         ]
       }
     ],
@@ -47,6 +48,18 @@
         "flags": [
           "time_not_stated"
         ]
+      },
+      {
+        "drug": "epinephrine",
+        "dose": 1.0,
+        "unit": "mg",
+        "route": null,
+        "time_source": "device_clock",
+        "flags": [
+          "time_not_stated",
+          "field_missing",
+          "repeat_dose_inferred"
+        ]
       }
     ],
     "expected": "2 x epinephrine 1 mg IV"
@@ -69,7 +82,9 @@
         "unit": "mg",
         "route": "IV",
         "time_source": "spoken",
-        "flags": []
+        "flags": [
+          "time_borrowed"
+        ]
       }
     ],
     "expected": "amiodarone time = not stated (flagged)"
