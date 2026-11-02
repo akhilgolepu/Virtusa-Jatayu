@@ -4,54 +4,31 @@
 
 | | Value |
 |---|---|
-| **Catch rate** | **189/200 (94.5%)** |
-| **False-flag rate** (uncorrupted originals flagged) | **16/200 (8.0%)** |
+| **Catch rate** | **189/200 (94.5%; 95% CI 90.4%-96.9%)** |
+| **False-flag rate** (uncorrupted originals flagged) | **16/200 (8.0%; 95% CI 5.0%-12.6%)** |
 
 | Corruption | Flagged |
 |---|---|
-| dose_x10 | 49/50 (98.0%) |
-| dose_div10 | 40/50 (80.0%) |
-| mg_mcg_swap | 50/50 (100.0%) |
-| wrong_route | 50/50 (100.0%) |
+| dose_x10 | 49/50 (98.0%; 95% CI 89.5%-99.7%) |
+| dose_div10 | 40/50 (80.0%; 95% CI 67.0%-88.8%) |
+| mg_mcg_swap | 50/50 (100.0%; 95% CI 92.9%-100.0%) |
+| wrong_route | 50/50 (100.0%; 95% CI 92.9%-100.0%) |
 
 | Range class (original drug + route) | Flagged |
 |---|---|
-| cited | 175/186 (94.1%) |
-| illustrative | 14/14 (100.0%) |
+| cited | 175/186 (94.1%; 95% CI 89.7%-96.7%) |
+| illustrative | 14/14 (100.0%; 95% CI 78.5%-100.0%) |
 
-## Residual misses (first 15)
+## Residual misses (aggregate)
 
-| Corruption | Range class | Corrupted record | Flags |
+| Corruption | Range class | Outcome | Count |
 |---|---|---|---|
-| dose_x10 | cited | normal saline 2500 ml IV (was 250 ml) | weight_based_dose |
-| dose_div10 | cited | ringer lactate 50 ml IV (was 500 ml) | weight_based_dose |
-| dose_div10 | cited | ringer lactate 100 ml IV (was 1000 ml) | weight_based_dose |
-| dose_div10 | cited | normal saline 25 ml IV (was 250 ml) | weight_based_dose |
-| dose_div10 | cited | ringer lactate 100 ml IV (was 1000 ml) | weight_based_dose |
-| dose_div10 | cited | ringer lactate 50 ml IV (was 500 ml) | weight_based_dose |
-| dose_div10 | cited | normal saline 100 ml IV (was 1000 ml) | weight_based_dose |
-| dose_div10 | cited | normal saline 25 ml IV (was 250 ml) | weight_based_dose |
-| dose_div10 | cited | normal saline 50 ml IV (was 500 ml) | weight_based_dose |
-| dose_div10 | cited | ringer lactate 100 ml IV (was 1000 ml) | weight_based_dose |
-| dose_div10 | cited | ringer lactate 50 ml IV (was 500 ml) | weight_based_dose |
+| dose_div10 | cited | only non-catching: weight_based_dose | 10 |
+| dose_x10 | cited | only non-catching: weight_based_dose | 1 |
 
-## False flags on uncorrupted originals
+## False flags by rule (aggregate)
 
-| Record | Rule fired | Why | Range class |
-|---|---|---|---|
-| glucagon 0.5 mg IM | dose_below_range | 0.5 mg is below the published adult dose. Source: Hypoglycemia p.85. | cited |
-| ketorolac 60 mg IM | dose_out_of_range | 60 mg is outside the published adult dose range. Source: Pain Management p.94. | cited |
-| glucagon 0.5 mg IM | dose_below_range | 0.5 mg is below the published adult dose. Source: Hypoglycemia p.85. | cited |
-| ketorolac 30 mg IV | dose_out_of_range | 30 mg is outside the published adult dose range. Source: Pain Management p.94. | cited |
-| glucagon 0.5 mg IM | dose_below_range | 0.5 mg is below the published adult dose. Source: Hypoglycemia p.85. | cited |
-| glucagon 0.5 mg IM | dose_below_range | 0.5 mg is below the published adult dose. Source: Hypoglycemia p.85. | cited |
-| glucagon 0.5 mg IM | dose_below_range | 0.5 mg is below the published adult dose. Source: Hypoglycemia p.85. | cited |
-| ketorolac 60 mg IM | dose_out_of_range | 60 mg is outside the published adult dose range. Source: Pain Management p.94. | cited |
-| ipratropium 250 mcg NEB | dose_below_range | 250 mcg is below the published adult dose. Source: Respiratory Distress pp.191-192. | cited |
-| ketorolac 60 mg IM | dose_out_of_range | 60 mg is outside the published adult dose range. Source: Pain Management p.94. | cited |
-| hydrocortisone 200 mg IV | dose_out_of_range | 200 mg is outside the published adult dose range. Source: Shock p.109. | cited |
-| ketorolac 30 mg IV | dose_out_of_range | 30 mg is outside the published adult dose range. Source: Pain Management p.94. | cited |
-| hydrocortisone 200 mg IV | dose_out_of_range | 200 mg is outside the published adult dose range. Source: Shock p.109. | cited |
-| glucagon 0.5 mg IM | dose_below_range | 0.5 mg is below the published adult dose. Source: Hypoglycemia p.85. | cited |
-| glucagon 0.5 mg IM | dose_below_range | 0.5 mg is below the published adult dose. Source: Hypoglycemia p.85. | cited |
-| ketorolac 60 mg IM | dose_out_of_range | 60 mg is outside the published adult dose range. Source: Pain Management p.94. | cited |
+| Rule fired | Range class | Count |
+|---|---|---|
+| dose_below_range | cited | 8 |
+| dose_out_of_range | cited | 8 |

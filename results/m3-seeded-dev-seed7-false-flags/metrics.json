@@ -7,45 +7,77 @@
   "catch_rate": {
     "count": 197,
     "denominator": 200,
-    "rate": 0.985
+    "rate": 0.985,
+    "ci95": [
+      0.9568,
+      0.9949
+    ]
   },
   "false_flag_rate": {
     "count": 19,
     "denominator": 200,
-    "rate": 0.095
+    "rate": 0.095,
+    "ci95": [
+      0.0617,
+      0.1436
+    ]
   },
   "by_corruption": {
     "dose_x10": {
       "count": 50,
       "denominator": 50,
-      "rate": 1.0
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
     },
     "dose_div10": {
       "count": 47,
       "denominator": 50,
-      "rate": 0.94
+      "rate": 0.94,
+      "ci95": [
+        0.8378,
+        0.9794
+      ]
     },
     "mg_mcg_swap": {
       "count": 50,
       "denominator": 50,
-      "rate": 1.0
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
     },
     "wrong_route": {
       "count": 50,
       "denominator": 50,
-      "rate": 1.0
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
     }
   },
   "by_range_class": {
     "cited": {
       "count": 176,
       "denominator": 179,
-      "rate": 0.9832
+      "rate": 0.9832,
+      "ci95": [
+        0.9519,
+        0.9943
+      ]
     },
     "illustrative": {
       "count": 21,
       "denominator": 21,
-      "rate": 1.0
+      "rate": 1.0,
+      "ci95": [
+        0.8454,
+        1.0
+      ]
     }
   },
   "not_counted_as_catch": [
@@ -53,5 +85,31 @@
   ],
   "target": 0.95,
   "commit_at_start": "bce5504-dirty",
-  "created": "2026-11-01T23:18:39.131763+05:30"
+  "created": "2026-11-01T23:18:39.131763+05:30",
+  "miss_breakdown": [
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "no flag",
+      "count": 2
+    },
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 1
+    }
+  ],
+  "false_flags_by_rule": [
+    {
+      "rule": "dose_out_of_range",
+      "range_class": "cited",
+      "count": 10
+    },
+    {
+      "rule": "dose_below_range",
+      "range_class": "cited",
+      "count": 9
+    }
+  ]
 }

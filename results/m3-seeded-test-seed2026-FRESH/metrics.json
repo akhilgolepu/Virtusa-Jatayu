@@ -7,45 +7,77 @@
   "catch_rate": {
     "count": 189,
     "denominator": 200,
-    "rate": 0.945
+    "rate": 0.945,
+    "ci95": [
+      0.9042,
+      0.969
+    ]
   },
   "false_flag_rate": {
     "count": 16,
     "denominator": 200,
-    "rate": 0.08
+    "rate": 0.08,
+    "ci95": [
+      0.0498,
+      0.126
+    ]
   },
   "by_corruption": {
     "dose_x10": {
       "count": 49,
       "denominator": 50,
-      "rate": 0.98
+      "rate": 0.98,
+      "ci95": [
+        0.895,
+        0.9965
+      ]
     },
     "dose_div10": {
       "count": 40,
       "denominator": 50,
-      "rate": 0.8
+      "rate": 0.8,
+      "ci95": [
+        0.6696,
+        0.8876
+      ]
     },
     "mg_mcg_swap": {
       "count": 50,
       "denominator": 50,
-      "rate": 1.0
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
     },
     "wrong_route": {
       "count": 50,
       "denominator": 50,
-      "rate": 1.0
+      "rate": 1.0,
+      "ci95": [
+        0.9286,
+        1.0
+      ]
     }
   },
   "by_range_class": {
     "cited": {
       "count": 175,
       "denominator": 186,
-      "rate": 0.9409
+      "rate": 0.9409,
+      "ci95": [
+        0.8972,
+        0.9667
+      ]
     },
     "illustrative": {
       "count": 14,
       "denominator": 14,
-      "rate": 1.0
+      "rate": 1.0,
+      "ci95": [
+        0.7847,
+        1.0
+      ]
     }
   },
   "not_counted_as_catch": [
@@ -53,5 +85,31 @@
   ],
   "target": 0.95,
   "commit_at_start": "bce5504-dirty",
-  "created": "2026-11-01T23:18:39.403831+05:30"
+  "created": "2026-11-01T23:18:39.403831+05:30",
+  "miss_breakdown": [
+    {
+      "corruption": "dose_div10",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 10
+    },
+    {
+      "corruption": "dose_x10",
+      "range_class": "cited",
+      "outcome": "only non-catching: weight_based_dose",
+      "count": 1
+    }
+  ],
+  "false_flags_by_rule": [
+    {
+      "rule": "dose_below_range",
+      "range_class": "cited",
+      "count": 8
+    },
+    {
+      "rule": "dose_out_of_range",
+      "range_class": "cited",
+      "count": 8
+    }
+  ]
 }
