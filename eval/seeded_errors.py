@@ -21,6 +21,7 @@ from pathlib import Path
 
 from datagen.splits import load_split
 from eval.runlog import log_run
+from eval.stats import wilson
 from jatayu import config
 from jatayu.lexicon import Lexicon
 from jatayu.models import Field, MedicationEntry
@@ -80,7 +81,81 @@ def _records(root: Path, split: str) -> list[dict]:
 
 
 def _rate(n: int, d: int) -> dict:
-    return {"count": n, "denominator": d, "rate": round(n / d, 4) if d else 0.0}
+    return {"count": n, "denominator": d, "rate": round(n / d, 4) if d else 0.0, "ci95": list(wilson(n, d))}
+
+
+def _outcome(flags: list[str]) -> str:
+    return "no flag" if not flags else "only non-catching: " + ", ".join(flags)
+
+
+def aggregate_misses(misses: list[dict]) -> list[dict]:
+    counts: dict[tuple, int] = defaultdict(int)
+    for x in misses:
+        counts[(x["corruption"], x["range_class"], _outcome(x["flags"]))] += 1
+    return [{"corruption": c, "range_class": r, "outcome": o, "count": n}
+            for (c, r, o), n in sorted(counts.items(), key=lambda kv: -kv[1])]
+
+
+def aggregate_false_flags(false_flags: list[dict]) -> list[dict]:
+    counts: dict[tuple, int] = defaultdict(int)
+    for x in false_flags:
+        counts[(", ".join(x["rules"]), x["range_class"])] += 1
+    return [{"rule": r, "range_class": c, "count": n} for (r, c), n in sorted(counts.items(), key=lambda kv: -kv[1])]
+
+
+def _pct(r: dict) -> str:
+    lo, hi = r["ci95"]
+    return f"{r['count']}/{r['denominator']} ({r['rate']:.1%}; 95% CI {lo:.1%}-{hi:.1%})"
+
+
+def finalize(out: Path, m: dict, misses: list[dict], false_flags: list[dict]) -> None:
+    """Write metrics.json + report.md. Record-level files and tables are written for dev only: a test-split run
+    reports aggregates, so no individual test record is exposed."""
+    for key in ("catch_rate", "false_flag_rate"):
+        m[key] = _rate(m[key]["count"], m[key]["denominator"])
+    m["by_corruption"] = {k: _rate(v["count"], v["denominator"]) for k, v in m["by_corruption"].items()}
+    m["by_range_class"] = {k: _rate(v["count"], v["denominator"]) for k, v in m["by_range_class"].items()}
+    m["miss_breakdown"] = aggregate_misses(misses)
+    m["false_flags_by_rule"] = aggregate_false_flags(false_flags)
+    record_level = m["split"] != "test"
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "metrics.json").write_text(json.dumps(m, indent=2) + "\n")
+    for name, rows in (("errors.jsonl", misses), ("false_flags.jsonl", false_flags)):
+        path = out / name
+        if record_level:
+            path.write_text("".join(json.dumps(x) + "\n" for x in rows))
+        elif path.exists():
+            path.unlink()
+    lines = [f"# Seeded-error test — {m['variant']}", "",
+             f"{m['n']} corrupted **{m['split']}** records (seed {m['seed']}, pool {m['pool_size']}); commit at start "
+             f"`{m.get('commit_at_start')}`. 'no_reference_range' (not range-checked) is not counted as a catch.", "",
+             "| | Value |", "|---|---|",
+             f"| **Catch rate** | **{_pct(m['catch_rate'])}** |",
+             f"| **False-flag rate** (uncorrupted originals flagged) | **{_pct(m['false_flag_rate'])}** |", "",
+             "| Corruption | Flagged |", "|---|---|"]
+    lines += [f"| {k} | {_pct(v)} |" for k, v in m["by_corruption"].items()]
+    lines += ["", "| Range class (original drug + route) | Flagged |", "|---|---|"]
+    lines += [f"| {k} | {_pct(v)} |" for k, v in m["by_range_class"].items()]
+    lines += ["", "## Residual misses (aggregate)", "", "| Corruption | Range class | Outcome | Count |", "|---|---|---|---|"]
+    lines += [f"| {r['corruption']} | {r['range_class']} | {r['outcome']} | {r['count']} |" for r in m["miss_breakdown"]]
+    lines += ["", "## False flags by rule (aggregate)", "", "| Rule fired | Range class | Count |", "|---|---|---|"]
+    lines += [f"| {r['rule']} | {r['range_class']} | {r['count']} |" for r in m["false_flags_by_rule"]]
+    if record_level:
+        lines += ["", "## Residual misses (dev records, first 15)", "", "| Corruption | Corrupted record | Flags |", "|---|---|---|"]
+        lines += [f"| {x['corruption']} | {x['corrupted']['drug']} {x['corrupted']['dose_value']:g} "
+                  f"{x['corrupted']['dose_unit']} {x['corrupted']['route']} (from {x['original']['dose_value']:g} "
+                  f"{x['original']['dose_unit']}) | {', '.join(x['flags']) or 'none'} |" for x in misses[:15]]
+        lines += ["", "## False flags (dev records)", "", "| Record | Rule fired | Why |", "|---|---|---|"]
+        lines += [f"| {x['record']['drug']} {x['record']['dose_value']:g} {x['record']['dose_unit']} "
+                  f"{x['record']['route']} | {', '.join(x['rules'])} | {' '.join(x['why'])} |" for x in false_flags]
+    (out / "report.md").write_text("\n".join(lines) + "\n")
+
+
+def rerender(out: Path) -> None:
+    """Rebuild metrics/report from a finished run's own files (no re-evaluation, no run-log entry)."""
+    m = json.loads((out / "metrics.json").read_text())
+    read = lambda n: [json.loads(l) for l in (out / n).read_text().splitlines() if l] if (out / n).exists() else []  # noqa: E731
+    finalize(out, m, read("errors.jsonl"), read("false_flags.jsonl"))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -92,7 +167,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--tag", default="m3-seeded")
     ap.add_argument("--root", type=Path, default=config.DATA_DIR)
     ap.add_argument("--out", type=Path, default=config.ROOT / "results")
+    ap.add_argument("--rerender", type=Path, help="rebuild an existing run folder's report from its files; no re-run")
     args = ap.parse_args(argv)
+    if args.rerender:
+        rerender(args.rerender)
+        return 0
     start = log_run(args.out, runner="eval.seeded_errors", split=args.split, tag=args.tag, variant=args.variant,
                     seed=args.seed, n=args.n)
     lex = Lexicon.load()
@@ -132,32 +211,8 @@ def main(argv: list[str] | None = None) -> int:
          "by_range_class": {k: _rate(*v) for k, v in sorted(by_class.items())},
          "not_counted_as_catch": ["no_reference_range"], "target": 0.95 if args.variant == "standard" else None,
          "commit_at_start": start["commit"], "created": datetime.now().astimezone().isoformat()}
+    finalize(args.out / args.tag, m, misses, false_flags)
     out = args.out / args.tag
-    out.mkdir(parents=True, exist_ok=True)
-    (out / "metrics.json").write_text(json.dumps(m, indent=2) + "\n")
-    (out / "errors.jsonl").write_text("".join(json.dumps(x) + "\n" for x in misses))
-    (out / "false_flags.jsonl").write_text("".join(json.dumps(x) + "\n" for x in false_flags))
-    lines = [f"# Seeded-error test — {args.variant}", "",
-             f"{args.n} corrupted **{args.split}** records (seed {args.seed}, pool {len(pool)}); commit at start "
-             f"`{start['commit']}`. 'no_reference_range' (not range-checked) is not counted as a catch.", "",
-             "| | Value |", "|---|---|",
-             f"| **Catch rate** | **{caught}/{args.n} ({m['catch_rate']['rate']:.1%})** |",
-             f"| **False-flag rate** (uncorrupted originals flagged) | **{len(false_flags)}/{base_n} "
-             f"({m['false_flag_rate']['rate']:.1%})** |", "",
-             "| Corruption | Flagged |", "|---|---|"]
-    lines += [f"| {k} | {v['count']}/{v['denominator']} ({v['rate']:.1%}) |" for k, v in m["by_corruption"].items()]
-    lines += ["", "| Range class (original drug + route) | Flagged |", "|---|---|"]
-    lines += [f"| {k} | {v['count']}/{v['denominator']} ({v['rate']:.1%}) |" for k, v in m["by_range_class"].items()]
-    lines += ["", "## Residual misses (first 15)", "", "| Corruption | Range class | Corrupted record | Flags |",
-              "|---|---|---|---|"]
-    lines += [f"| {x['corruption']} | {x['range_class']} | {x['corrupted']['drug']} {x['corrupted']['dose_value']:g} "
-              f"{x['corrupted']['dose_unit']} {x['corrupted']['route']} (was {x['original']['dose_value']:g} "
-              f"{x['original']['dose_unit']}) | {', '.join(x['flags']) or 'none'} |" for x in misses[:15]]
-    lines += ["", "## False flags on uncorrupted originals", "", "| Record | Rule fired | Why | Range class |",
-              "|---|---|---|---|"]
-    lines += [f"| {x['record']['drug']} {x['record']['dose_value']:g} {x['record']['dose_unit']} {x['record']['route']} | "
-              f"{', '.join(x['rules'])} | {' '.join(x['why'])} | {x['range_class']} |" for x in false_flags]
-    (out / "report.md").write_text("\n".join(lines) + "\n")
     print(f"seeded {args.variant} on {args.split}: {caught}/{args.n} flagged ({m['catch_rate']['rate']:.1%}); "
           f"false flags {len(false_flags)}/{base_n} → {out}")
     return 0
