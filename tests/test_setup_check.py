@@ -17,5 +17,6 @@ def test_setup_check_writes_every_item(tmp_path):
         assert "pass" in c and "detail" in c, name
     assert data["checks"]["asr"]["latency_s"] > 0 and data["checks"]["llm"]["tokens"] > 0
     assert data["checks"]["llm"]["peak_vram_mib"] > 0
-    assert data["checks"]["offline"]["sockets_blocked"] is True
+    assert data["checks"]["offline"]["sockets_blocked"] is True and "llm" in data["checks"]["offline"]
+    assert data["cuda"]["driver_cuda"] != "unknown" and data["cuda"]["torch_cuda_runtime"]
     assert code == (0 if data["all_pass"] else 1)

@@ -9,6 +9,7 @@ import argparse
 import io
 import json
 import platform
+import re
 import socket
 import subprocess
 import sys
@@ -27,9 +28,29 @@ def _nvidia_smi() -> dict:
     out = subprocess.run(["nvidia-smi", f"--query-gpu={q}", "--format=csv,noheader,nounits"],
                          capture_output=True, text=True, timeout=20)
     name, driver, total, used = [x.strip() for x in out.stdout.strip().split(",")]
-    cuda = subprocess.run(["nvidia-smi"], capture_output=True, text=True).stdout
-    cuda_ver = cuda.split("CUDA Version:")[1].split()[0] if "CUDA Version:" in cuda else "unknown"
-    return {"name": name, "driver": driver, "cuda": cuda_ver, "vram_total_mib": int(total), "vram_used_mib": int(used)}
+    head = subprocess.run(["nvidia-smi"], capture_output=True, text=True).stdout
+    m = re.search(r"CUDA (?:UMD )?Version:\s*([\d.]+)", head)  # newer drivers print "CUDA UMD Version"
+    return {"name": name, "driver": driver, "cuda": m.group(1) if m else "unknown", "vram_total_mib": int(total),
+            "vram_used_mib": int(used)}
+
+
+def cuda_versions() -> dict:
+    """Driver CUDA (highest version the driver supports) and the runtime each model stack actually loads."""
+    from importlib.metadata import PackageNotFoundError, version
+
+    def v(pkg: str) -> str:
+        try:
+            return version(pkg)
+        except PackageNotFoundError:
+            return "not installed"
+
+    import ctranslate2
+    import torch
+
+    return {"driver_cuda": _nvidia_smi()["cuda"], "torch_cuda_runtime": torch.version.cuda,
+            "llama_cpp_cuda_runtime": v("nvidia-cuda-runtime"), "llama_cpp_python": v("llama_cpp_python"),
+            "ctranslate2": v("ctranslate2"), "ctranslate2_cublas": v("nvidia-cublas-cu12"),
+            "ctranslate2_cuda_devices": ctranslate2.get_cuda_device_count()}
 
 
 def _vram_used() -> int:
@@ -102,7 +123,8 @@ def check_tts() -> dict:
 
 
 def check_offline() -> dict:
-    """Re-run ASR + TTS with every non-local socket blocked: nothing may need the internet at run time."""
+    """Re-run ASR, the LLM smoke test and TTS with every non-local socket blocked: nothing may need the internet at
+    run time."""
     real = socket.socket.connect
 
     def guard(self, addr):
@@ -112,7 +134,7 @@ def check_offline() -> dict:
 
     socket.socket.connect = guard
     try:
-        asr, tts = check_asr(), check_tts()
+        asr, llm, tts = check_asr(), check_llm(), check_tts()
         try:
             socket.create_connection(("1.1.1.1", 443), timeout=2)
             blocked = False
@@ -120,8 +142,9 @@ def check_offline() -> dict:
             blocked = True
     finally:
         socket.socket.connect = real
-    return {"pass": asr["pass"] and tts["pass"] and blocked, "sockets_blocked": blocked,
-            "detail": "ASR and TTS re-run with outbound sockets blocked"}
+    return {"pass": asr["pass"] and llm["pass"] and tts["pass"] and blocked, "sockets_blocked": blocked,
+            "asr": asr["pass"], "llm": llm["pass"], "llm_entries": llm["detail"], "tts": tts["pass"],
+            "detail": "ASR, LLM smoke test and TTS re-run with outbound sockets blocked"}
 
 
 CHECKS = {"gpu": check_gpu, "asr": check_asr, "llm": check_llm, "tts": check_tts, "offline": check_offline}
@@ -138,8 +161,15 @@ def main(argv: list[str] | None = None) -> int:
         except Exception as exc:  # a crash is a FAIL with its reason, never a missing key
             results[name] = {"pass": False, "detail": f"{type(exc).__name__}: {exc}"}
         print(f"{'PASS' if results[name]['pass'] else 'FAIL'}  {name:8s} {results[name]['detail']}")
-    data = {"created": datetime.now().astimezone().isoformat(), "host": platform.platform(),
-            "python": sys.version.split()[0], "all_pass": all(c["pass"] for c in results.values()), "checks": results}
+    try:
+        cuda = cuda_versions()
+    except Exception as exc:
+        cuda = {"error": f"{type(exc).__name__}: {exc}"}
+    from eval.runlog import commit
+
+    data = {"created": datetime.now().astimezone().isoformat(), "commit": commit(), "host": platform.platform(),
+            "python": sys.version.split()[0], "cuda": cuda, "all_pass": all(c["pass"] for c in results.values()),
+            "checks": results}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {args.out}")
