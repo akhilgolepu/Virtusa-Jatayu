@@ -1,0 +1,238 @@
+{
+  "config": {
+    "split": "offtemplate_dev",
+    "mode": "text",
+    "extractor": "rules",
+    "tag": "r3-offtemplate-rules",
+    "n_utterances": 40,
+    "n_clips": 40,
+    "split_sha256": null,
+    "commit_at_start": "f0ae275",
+    "started": "2026-11-02T21:32:22.087352+05:30",
+    "created": "2026-11-02T21:32:22.249494+05:30",
+    "source_label": "hand-written off-template dev sentences (eval/offtemplate_dev.yaml); dev only",
+    "asr_model": null,
+    "llm_model": null
+  },
+  "metrics": {
+    "entity": {
+      "micro": {
+        "tp": 158,
+        "gold": 169,
+        "pred": 171,
+        "precision": 0.924,
+        "recall": 0.9349,
+        "f1": 0.9294
+      },
+      "per_field": {
+        "drug": {
+          "tp": 49,
+          "gold": 49,
+          "pred": 49,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "dose_value": {
+          "tp": 32,
+          "gold": 34,
+          "pred": 38,
+          "precision": 0.8421,
+          "recall": 0.9412,
+          "f1": 0.8889
+        },
+        "dose_unit": {
+          "tp": 37,
+          "gold": 39,
+          "pred": 38,
+          "precision": 0.9737,
+          "recall": 0.9487,
+          "f1": 0.961
+        },
+        "route": {
+          "tp": 32,
+          "gold": 37,
+          "pred": 34,
+          "precision": 0.9412,
+          "recall": 0.8649,
+          "f1": 0.9014
+        },
+        "time": {
+          "tp": 6,
+          "gold": 8,
+          "pred": 10,
+          "precision": 0.6,
+          "recall": 0.75,
+          "f1": 0.6667
+        },
+        "procedure": {
+          "tp": 2,
+          "gold": 2,
+          "pred": 2,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      }
+    },
+    "record_exact_match": {
+      "count": 33,
+      "denominator": 51,
+      "rate": 0.6471
+    },
+    "dangerous_error": {
+      "count": 2,
+      "denominator": 42,
+      "rate": 0.0476
+    },
+    "dangerous_error_lenient": {
+      "count": 2,
+      "denominator": 42,
+      "rate": 0.0476
+    },
+    "context_error": {
+      "count": 3,
+      "denominator": 9,
+      "rate": 0.3333
+    },
+    "administration_status_error": {
+      "count": 3,
+      "denominator": 9,
+      "rate": 0.3333
+    },
+    "anomaly_flagged": {
+      "count": 0,
+      "denominator": 0,
+      "rate": 0.0
+    },
+    "source_quote_coverage": {
+      "count": 161,
+      "denominator": 161,
+      "rate": 1.0
+    }
+  },
+  "groups": {
+    "category:context_negation": {
+      "entity_f1": 0.9565,
+      "record_exact_match": 0.8889,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 1,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 2,
+        "denominator": 8,
+        "rate": 0.25
+      }
+    },
+    "category:hinglish": {
+      "entity_f1": 0.9,
+      "record_exact_match": 0.5,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 5,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 1,
+        "denominator": 1,
+        "rate": 1.0
+      }
+    },
+    "category:med_correction": {
+      "entity_f1": 0.9,
+      "record_exact_match": 0.6,
+      "dangerous_error": {
+        "count": 2,
+        "denominator": 5,
+        "rate": 0.4
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:med_messy": {
+      "entity_f1": 0.8947,
+      "record_exact_match": 0.3636,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 11,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:med_multi": {
+      "entity_f1": 0.967,
+      "record_exact_match": 0.8333,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 12,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "category:time_clock": {
+      "entity_f1": 0.9429,
+      "record_exact_match": 0.625,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 8,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 0,
+        "rate": 0.0
+      }
+    },
+    "lang:en": {
+      "entity_f1": 0.9333,
+      "record_exact_match": 0.6667,
+      "dangerous_error": {
+        "count": 2,
+        "denominator": 37,
+        "rate": 0.0541
+      },
+      "administration_status_error": {
+        "count": 2,
+        "denominator": 8,
+        "rate": 0.25
+      }
+    },
+    "lang:hinglish": {
+      "entity_f1": 0.9,
+      "record_exact_match": 0.5,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 5,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 1,
+        "denominator": 1,
+        "rate": 1.0
+      }
+    }
+  },
+  "latency_s": {
+    "n": 40,
+    "p50": 0.0001,
+    "p95": 0.0003,
+    "mean": 0.0001
+  },
+  "leakage": {
+    "test_families_in_train_or_dev": 0,
+    "test_patterns_in_final_test": 0
+  }
+}

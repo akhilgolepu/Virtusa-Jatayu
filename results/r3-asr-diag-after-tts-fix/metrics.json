@@ -1,0 +1,320 @@
+{
+  "tag": "r3-asr-diag-after-tts-fix",
+  "n_clips": 100,
+  "seed": 3,
+  "commit": "4351849",
+  "baseline": {
+    "model": "small.en",
+    "beam": 5,
+    "vad": true,
+    "prompt": true
+  },
+  "resample": {
+    "file_format": {
+      "16000 Hz, 1 ch, 16 bit": 100
+    },
+    "decoded_to_whisper": {
+      "1-D float32": 100
+    },
+    "sample_rate_given_to_whisper": 16000,
+    "clips_with_duration_mismatch_over_10ms": 0
+  },
+  "rows": {
+    "baseline": {
+      "config": {
+        "model": "small.en",
+        "beam": 5,
+        "vad": true,
+        "prompt": true
+      },
+      "wer_raw": 0.6026,
+      "wer_normalised": 0.3656,
+      "drug_term_recall": 0.6477,
+      "drug_term_recall_den": 88,
+      "drug_term_recall_surface": 0.6705,
+      "entity_f1_rules": 0.7035,
+      "per_field_f1_rules": {
+        "drug": 0.8212,
+        "dose_value": 0.6829,
+        "dose_unit": 0.7069,
+        "route": 0.6346,
+        "time": 0.5676,
+        "procedure": 0.7586
+      },
+      "wer_normalised_by_voice": {
+        "alan": 0.1,
+        "amy": 0.2,
+        "kusal": 0.2051,
+        "l2arctic-ASI": 0.6809,
+        "l2arctic-RRBI": 0.4423,
+        "l2arctic-SVBI": 0.6897,
+        "l2arctic-TNI": 0.5156,
+        "lessac": 0.1667,
+        "libritts_r-0": 0.4,
+        "ryan": 0.2143,
+        "southern_female": 0.2586,
+        "vctk-p248": 0.431,
+        "vctk-p251": 0.3188,
+        "vctk-p376": 0.3519
+      },
+      "latency_mean_s": 0.243
+    },
+    "vad off": {
+      "config": {
+        "model": "small.en",
+        "beam": 5,
+        "vad": false,
+        "prompt": true
+      },
+      "wer_raw": 0.6041,
+      "wer_normalised": 0.3656,
+      "drug_term_recall": 0.6477,
+      "drug_term_recall_den": 88,
+      "drug_term_recall_surface": 0.6705,
+      "entity_f1_rules": 0.7013,
+      "per_field_f1_rules": {
+        "drug": 0.8212,
+        "dose_value": 0.6829,
+        "dose_unit": 0.7069,
+        "route": 0.6214,
+        "time": 0.5676,
+        "procedure": 0.7586
+      },
+      "wer_normalised_by_voice": {
+        "alan": 0.1,
+        "amy": 0.2,
+        "kusal": 0.2051,
+        "l2arctic-ASI": 0.6809,
+        "l2arctic-RRBI": 0.4423,
+        "l2arctic-SVBI": 0.6897,
+        "l2arctic-TNI": 0.5156,
+        "lessac": 0.1667,
+        "libritts_r-0": 0.4,
+        "ryan": 0.2143,
+        "southern_female": 0.2586,
+        "vctk-p248": 0.431,
+        "vctk-p251": 0.3188,
+        "vctk-p376": 0.3519
+      },
+      "latency_mean_s": 0.234
+    },
+    "prompt off": {
+      "config": {
+        "model": "small.en",
+        "beam": 5,
+        "vad": true,
+        "prompt": false
+      },
+      "wer_raw": 0.6774,
+      "wer_normalised": 0.4916,
+      "drug_term_recall": 0.3295,
+      "drug_term_recall_den": 88,
+      "drug_term_recall_surface": 0.375,
+      "entity_f1_rules": 0.4743,
+      "per_field_f1_rules": {
+        "drug": 0.5246,
+        "dose_value": 0.451,
+        "dose_unit": 0.4167,
+        "route": 0.4091,
+        "time": 0.4412,
+        "procedure": 0.8
+      },
+      "wer_normalised_by_voice": {
+        "alan": 0.12,
+        "amy": 0.2857,
+        "kusal": 0.3846,
+        "l2arctic-ASI": 0.7447,
+        "l2arctic-RRBI": 0.5962,
+        "l2arctic-SVBI": 0.8276,
+        "l2arctic-TNI": 0.875,
+        "lessac": 0.2222,
+        "libritts_r-0": 0.54,
+        "ryan": 0.2857,
+        "southern_female": 0.2931,
+        "vctk-p248": 0.5,
+        "vctk-p251": 0.5072,
+        "vctk-p376": 0.4259
+      },
+      "latency_mean_s": 0.204
+    },
+    "beam 1": {
+      "config": {
+        "model": "small.en",
+        "beam": 1,
+        "vad": true,
+        "prompt": true
+      },
+      "wer_raw": 0.5982,
+      "wer_normalised": 0.3656,
+      "drug_term_recall": 0.6591,
+      "drug_term_recall_den": 88,
+      "drug_term_recall_surface": 0.6705,
+      "entity_f1_rules": 0.6901,
+      "per_field_f1_rules": {
+        "drug": 0.8289,
+        "dose_value": 0.656,
+        "dose_unit": 0.6842,
+        "route": 0.5882,
+        "time": 0.5867,
+        "procedure": 0.7586
+      },
+      "wer_normalised_by_voice": {
+        "alan": 0.12,
+        "amy": 0.2,
+        "kusal": 0.2051,
+        "l2arctic-ASI": 0.617,
+        "l2arctic-RRBI": 0.4038,
+        "l2arctic-SVBI": 0.6552,
+        "l2arctic-TNI": 0.5781,
+        "lessac": 0.2222,
+        "libritts_r-0": 0.4,
+        "ryan": 0.1786,
+        "southern_female": 0.2586,
+        "vctk-p248": 0.431,
+        "vctk-p251": 0.3188,
+        "vctk-p376": 0.3704
+      },
+      "latency_mean_s": 0.207
+    },
+    "beam 10": {
+      "config": {
+        "model": "small.en",
+        "beam": 10,
+        "vad": true,
+        "prompt": true
+      },
+      "wer_raw": 0.6056,
+      "wer_normalised": 0.3794,
+      "drug_term_recall": 0.6364,
+      "drug_term_recall_den": 88,
+      "drug_term_recall_surface": 0.6591,
+      "entity_f1_rules": 0.697,
+      "per_field_f1_rules": {
+        "drug": 0.8212,
+        "dose_value": 0.6557,
+        "dose_unit": 0.6842,
+        "route": 0.6346,
+        "time": 0.5946,
+        "procedure": 0.7586
+      },
+      "wer_normalised_by_voice": {
+        "alan": 0.1,
+        "amy": 0.2,
+        "kusal": 0.2051,
+        "l2arctic-ASI": 0.6809,
+        "l2arctic-RRBI": 0.4423,
+        "l2arctic-SVBI": 0.7586,
+        "l2arctic-TNI": 0.5312,
+        "lessac": 0.1667,
+        "libritts_r-0": 0.44,
+        "ryan": 0.2143,
+        "southern_female": 0.2586,
+        "vctk-p248": 0.4483,
+        "vctk-p251": 0.3913,
+        "vctk-p376": 0.3148
+      },
+      "latency_mean_s": 0.35
+    },
+    "medium.en": {
+      "config": {
+        "model": "medium.en",
+        "beam": 5,
+        "vad": true,
+        "prompt": true
+      },
+      "wer_raw": 0.585,
+      "wer_normalised": 0.3533,
+      "drug_term_recall": 0.6591,
+      "drug_term_recall_den": 88,
+      "drug_term_recall_surface": 0.625,
+      "entity_f1_rules": 0.6931,
+      "per_field_f1_rules": {
+        "drug": 0.7771,
+        "dose_value": 0.7087,
+        "dose_unit": 0.6549,
+        "route": 0.6275,
+        "time": 0.5974,
+        "procedure": 0.8
+      },
+      "wer_normalised_by_voice": {
+        "alan": 0.1,
+        "amy": 0.1714,
+        "kusal": 0.2308,
+        "l2arctic-ASI": 0.6596,
+        "l2arctic-RRBI": 0.4038,
+        "l2arctic-SVBI": 0.6897,
+        "l2arctic-TNI": 0.5,
+        "lessac": 0.2222,
+        "libritts_r-0": 0.32,
+        "ryan": 0.2143,
+        "southern_female": 0.1552,
+        "vctk-p248": 0.4828,
+        "vctk-p251": 0.3623,
+        "vctk-p376": 0.3333
+      },
+      "latency_mean_s": 0.362
+    }
+  },
+  "pairs": [
+    {
+      "utt_id": "mb07-0-007",
+      "voice": "vctk-p251",
+      "reference": "Calpol, six hundred fifty milligram, io, 10 mins ago",
+      "transcript": "Calpol, 650 mg, IO, 10 minutes ago."
+    },
+    {
+      "utt_id": "mc01-0-014",
+      "voice": "vctk-p248",
+      "reference": "pentazocine 50, I mean, 40 mgs intramuscular",
+      "transcript": "Pentazocine 50, I mean 40 mgs intramuscular."
+    },
+    {
+      "utt_id": "cn04-1-017",
+      "voice": "l2arctic-ASI",
+      "reference": "on home narcan 0.5 milligramme",
+      "transcript": "on whole north end 0.5 milligram."
+    },
+    {
+      "utt_id": "tc01-1-003",
+      "voice": "southern_female",
+      "reference": "epinephrine 5 milligram nebulization at 9:47",
+      "transcript": "epinephrine 5mg nebulisation at 947."
+    },
+    {
+      "utt_id": "mi02-0-015",
+      "voice": "vctk-p251",
+      "reference": "gave naloxone intramuscular",
+      "transcript": "Gave naloxone intramuscular."
+    },
+    {
+      "utt_id": "mm02-2-003",
+      "voice": "kusal",
+      "reference": "um 300 milligrammes uh amiodarone iv push",
+      "transcript": "IM 300 milligrams, amiodarone, IV push."
+    },
+    {
+      "utt_id": "hi01-0-009",
+      "voice": "l2arctic-TNI",
+      "reference": "ketorolac fifteen milligrams into the vein diya",
+      "transcript": "Ketorolac, 15 milligrams into the venti here."
+    },
+    {
+      "utt_id": "cn04-0-019",
+      "voice": "vctk-p251",
+      "reference": "patient takes normal saline two thousand five hundred ml daily",
+      "transcript": "Patient takes normal saline, 2500 ml daily."
+    },
+    {
+      "utt_id": "cn04-0-007",
+      "voice": "l2arctic-RRBI",
+      "reference": "patient takes adenocard 10 milligram daily",
+      "transcript": "Patient takes adenocortin, milligram daily."
+    },
+    {
+      "utt_id": "cm05-0-010",
+      "voice": "l2arctic-SVBI",
+      "reference": "Magnesium level 0.6",
+      "transcript": "magnesium level 0.6."
+    }
+  ]
+}
