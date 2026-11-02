@@ -1,0 +1,2 @@
+{"record": {"drug": "naloxone", "dose_value": 0.6, "dose_unit": "mg", "route": "IN", "utt": "mx07-0-010"}, "rules": ["dose_below_range"], "why": ["0.6 mg is below the published adult dose. Source: Opioid Poisoning/Overdose p.304."], "range_class": "cited"}
+{"record": {"drug": "dextrose", "dose_value": 4.0, "dose_unit": "g", "route": "IV", "utt": "hi01-0-011"}, "rules": ["dose_below_range"], "why": ["4 g is below the published adult dose. Source: Hypoglycemia p.85; Hypoglycemia pp.85-86."], "range_class": "cited"}

@@ -1,0 +1,622 @@
+{
+  "tag": "m4dev-gold-dose-audit-AFTER-weight-range",
+  "commit_at_start": "cbb435c-dirty",
+  "created": "2026-11-02T18:49:36.149855+05:30",
+  "weight_kg": [
+    45.0,
+    130.0
+  ],
+  "splits": {
+    "dev": {
+      "total": {
+        "gold_doses": 359,
+        "outside_range": 0,
+        "validator_flagged": 7,
+        "validator:dose_below_range": 6,
+        "out_of_range_case": 21,
+        "validator:possible_mg_mcg_confusion": 1
+      },
+      "per_drug": {
+        "adenosine": {
+          "gold_doses": 12,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "amiodarone": {
+          "gold_doses": 12,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "aspirin": {
+          "gold_doses": 6,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "atropine": {
+          "out_of_range_case": 1,
+          "gold_doses": 7,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "calcium chloride": {
+          "gold_doses": 9,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 2
+        },
+        "dexamethasone": {
+          "gold_doses": 8,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 2
+        },
+        "dextrose": {
+          "gold_doses": 13,
+          "outside_range": 0,
+          "validator:dose_below_range": 4,
+          "validator_flagged": 4
+        },
+        "diazepam": {
+          "gold_doses": 8,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "diphenhydramine": {
+          "out_of_range_case": 2,
+          "gold_doses": 10,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "epinephrine": {
+          "gold_doses": 10,
+          "outside_range": 0,
+          "validator_flagged": 2,
+          "validator:dose_below_range": 1,
+          "validator:possible_mg_mcg_confusion": 1,
+          "out_of_range_case": 1
+        },
+        "fentanyl": {
+          "gold_doses": 14,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "furosemide": {
+          "gold_doses": 10,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "glucagon": {
+          "gold_doses": 5,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "hydrocortisone": {
+          "gold_doses": 16,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ipratropium": {
+          "gold_doses": 7,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ketamine": {
+          "gold_doses": 9,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ketorolac": {
+          "gold_doses": 12,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "lorazepam": {
+          "gold_doses": 8,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "magnesium sulfate": {
+          "gold_doses": 12,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 2
+        },
+        "methylprednisolone": {
+          "gold_doses": 12,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "metoclopramide": {
+          "out_of_range_case": 1,
+          "gold_doses": 7,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "midazolam": {
+          "gold_doses": 10,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "morphine": {
+          "gold_doses": 10,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "naloxone": {
+          "gold_doses": 9,
+          "outside_range": 0,
+          "validator_flagged": 1,
+          "validator:dose_below_range": 1,
+          "out_of_range_case": 1
+        },
+        "nitroglycerin": {
+          "gold_doses": 9,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "norepinephrine": {
+          "gold_doses": 8,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "normal saline": {
+          "gold_doses": 10,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ondansetron": {
+          "gold_doses": 14,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "oxygen": {
+          "gold_doses": 11,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "paracetamol": {
+          "gold_doses": 14,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "pentazocine": {
+          "gold_doses": 10,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "pheniramine": {
+          "gold_doses": 12,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ringer lactate": {
+          "gold_doses": 8,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "salbutamol": {
+          "gold_doses": 10,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "sodium bicarbonate": {
+          "gold_doses": 7,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "tranexamic acid": {
+          "gold_doses": 10,
+          "outside_range": 0,
+          "validator_flagged": 0
+        }
+      }
+    },
+    "test": {
+      "total": {
+        "gold_doses": 291,
+        "outside_range": 0,
+        "validator_flagged": 1,
+        "out_of_range_case": 9,
+        "validator:dose_below_range": 1
+      },
+      "per_drug": {
+        "adenosine": {
+          "out_of_range_case": 2,
+          "gold_doses": 7,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "amiodarone": {
+          "gold_doses": 9,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "aspirin": {
+          "gold_doses": 6,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "atropine": {
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "calcium chloride": {
+          "out_of_range_case": 1,
+          "gold_doses": 6,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "dexamethasone": {
+          "gold_doses": 6,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "dextrose": {
+          "gold_doses": 7,
+          "outside_range": 0,
+          "validator_flagged": 1,
+          "validator:dose_below_range": 1
+        },
+        "diazepam": {
+          "gold_doses": 6,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "diphenhydramine": {
+          "gold_doses": 5,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "epinephrine": {
+          "gold_doses": 5,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "fentanyl": {
+          "gold_doses": 12,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "furosemide": {
+          "gold_doses": 5,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "glucagon": {
+          "gold_doses": 10,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "hydrocortisone": {
+          "gold_doses": 5,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ipratropium": {
+          "gold_doses": 8,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ketamine": {
+          "gold_doses": 9,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ketorolac": {
+          "gold_doses": 9,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "lorazepam": {
+          "gold_doses": 6,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "magnesium sulfate": {
+          "gold_doses": 3,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "methylprednisolone": {
+          "gold_doses": 10,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "metoclopramide": {
+          "gold_doses": 3,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "midazolam": {
+          "gold_doses": 12,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "morphine": {
+          "gold_doses": 12,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "naloxone": {
+          "gold_doses": 9,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "nitroglycerin": {
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "norepinephrine": {
+          "gold_doses": 13,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "normal saline": {
+          "out_of_range_case": 2,
+          "gold_doses": 21,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ondansetron": {
+          "gold_doses": 5,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "oxygen": {
+          "gold_doses": 6,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "paracetamol": {
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "pentazocine": {
+          "gold_doses": 10,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "pheniramine": {
+          "gold_doses": 8,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ringer lactate": {
+          "gold_doses": 31,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "salbutamol": {
+          "gold_doses": 5,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "sodium bicarbonate": {
+          "gold_doses": 3,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "tranexamic acid": {
+          "gold_doses": 7,
+          "outside_range": 0,
+          "validator_flagged": 0
+        }
+      }
+    },
+    "final_test": {
+      "total": {
+        "gold_doses": 168,
+        "outside_range": 0,
+        "validator_flagged": 2,
+        "out_of_range_case": 12,
+        "validator:dose_below_range": 2
+      },
+      "per_drug": {
+        "adenosine": {
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "amiodarone": {
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "aspirin": {
+          "gold_doses": 6,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "atropine": {
+          "gold_doses": 3,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "calcium chloride": {
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "dexamethasone": {
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "dextrose": {
+          "gold_doses": 2,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "diazepam": {
+          "out_of_range_case": 2
+        },
+        "diphenhydramine": {
+          "gold_doses": 3,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "epinephrine": {
+          "gold_doses": 5,
+          "outside_range": 0,
+          "validator_flagged": 2,
+          "validator:dose_below_range": 2
+        },
+        "fentanyl": {
+          "out_of_range_case": 2,
+          "gold_doses": 5,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "furosemide": {
+          "gold_doses": 3,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "glucagon": {
+          "gold_doses": 3,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "hydrocortisone": {
+          "gold_doses": 1,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ipratropium": {
+          "gold_doses": 2,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ketamine": {
+          "gold_doses": 3,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ketorolac": {
+          "gold_doses": 16,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "lorazepam": {
+          "gold_doses": 3,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "magnesium sulfate": {
+          "gold_doses": 6,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "methylprednisolone": {
+          "gold_doses": 3,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "metoclopramide": {
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "midazolam": {
+          "gold_doses": 2,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "morphine": {
+          "gold_doses": 9,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "naloxone": {
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "nitroglycerin": {
+          "gold_doses": 2,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "norepinephrine": {
+          "gold_doses": 2,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "normal saline": {
+          "gold_doses": 15,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ondansetron": {
+          "gold_doses": 1,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "oxygen": {
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "paracetamol": {
+          "gold_doses": 8,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "pentazocine": {
+          "out_of_range_case": 1,
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "pheniramine": {
+          "gold_doses": 8,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "ringer lactate": {
+          "gold_doses": 12,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "salbutamol": {
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        },
+        "sodium bicarbonate": {
+          "gold_doses": 5,
+          "outside_range": 0,
+          "validator_flagged": 0,
+          "out_of_range_case": 1
+        },
+        "tranexamic acid": {
+          "gold_doses": 4,
+          "outside_range": 0,
+          "validator_flagged": 0
+        }
+      }
+    }
+  }
+}

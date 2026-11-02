@@ -8,7 +8,7 @@ from jatayu.lexicon import DoseRange, Lexicon
 from jatayu.models import Entry, Flag, MedicationEntry
 
 DUPLICATE_WINDOW_S = 120
-MAX_PLAUSIBLE_WEIGHT_KG = 200  # an uncapped mg/kg dose implying a heavier patient is treated as out of range
+MAX_PLAUSIBLE_WEIGHT_KG = 200  # fallback only, when the lexicon has no cited weight range
 CONTEXT_CODES = {"possible_not_given", "possible_measurement"}
 VALIDATOR_CODES = {"no_reference_range", "dose_out_of_range", "dose_below_range", "possible_mg_mcg_confusion", "unit_not_allowed",
                    "route_not_allowed", "duplicate_dose", "repeat_too_soon", "weight_based_dose"}
@@ -75,6 +75,23 @@ def _range_flags(e: MedicationEntry, lexicon: Lexicon) -> list[Flag]:
     if any(_fits(v, r) for r, v in checkable):
         return []
     uncapped = [(r, v) for r, v in comparable if r.max is None and r.per_kg is not None]
+    w = lexicon.weight_kg
+    if uncapped and w is not None:
+        # A per-kg row with no adult cap: DERIVED sanity range = cited per-kg dose x cited plausible adult weight.
+        r, v = uncapped[0]
+        derived = f"{r.per_kg * w.min:g}-{r.per_kg * w.max:g} {r.unit} = {r.per_kg:g} {r.unit}/kg x {w.min:g}-{w.max:g} kg"
+        if any(r.per_kg * w.min <= v <= r.per_kg * w.max for r, v in uncapped):
+            return [Flag(code="weight_based_dose", field="dose_value", severity="low",
+                         message=f"Weight-based dose ({r.per_kg:g} {r.unit}/kg, no adult cap); inside the DERIVED "
+                                 f"adult range {derived} — check against weight. Source: {r.source}.")]
+        lows = [(_lo(r), v) for r, v in checkable] + [(r.per_kg * w.min, v) for r, v in uncapped]
+        if all(lo is not None and v < lo for lo, v in lows):
+            return [Flag(code="dose_below_range", field="dose_value", severity="medium",
+                         message=f"{value:g} {unit} is below the DERIVED adult range {derived} (weights: CDC NHANES "
+                                 f"percentiles). Source: {r.source}.")]
+        return [Flag(code="dose_out_of_range", field="dose_value", severity="high",
+                     message=f"{value:g} {unit} is outside the DERIVED adult range {derived} (weights: CDC NHANES "
+                             f"percentiles) and every capped row. Source: {r.source}.")]
     if uncapped and any(v / r.per_kg <= MAX_PLAUSIBLE_WEIGHT_KG for r, v in uncapped):
         r = uncapped[0][0]
         return [Flag(code="weight_based_dose", field="dose_value", severity="low",

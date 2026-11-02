@@ -47,7 +47,18 @@ def test_below_range_is_medium(lexicon):
 
 def test_uncapped_weight_based_dose(lexicon):
     assert codes(validate(med("ketamine", 150, "mg", "IV"), lexicon)) == ["weight_based_dose"]
-    assert "dose_out_of_range" in codes(validate(med("ketamine", 1000, "mg", "IV"), lexicon))  # implies >200 kg
+    assert "dose_out_of_range" in codes(validate(med("ketamine", 1000, "mg", "IV"), lexicon))
+
+
+def test_weight_derived_sanity_range_for_uncapped_per_kg_rows(lexicon):
+    # normal saline IV: 20 mL/kg uncapped -> DERIVED adult range 900-2600 mL (x 45-130 kg); the capped rows still apply
+    assert codes(validate(med("normal saline", 2500, "ml", "IV"), lexicon)) == ["weight_based_dose"]
+    below = validate(med("normal saline", 100, "ml", "IV"), lexicon)
+    assert codes(below) == ["dose_below_range"] and "DERIVED" in below[0].message and "45-130 kg" in below[0].message
+    assert codes(validate(med("normal saline", 10000, "ml", "IV"), lexicon)) == ["dose_out_of_range"]
+    # ketamine IV 2 mg/kg uncapped -> 90-260 mg: 300 mg was "weight_based" under the old 200 kg rule, now out of range
+    assert codes(validate(med("ketamine", 300, "mg", "IV"), lexicon)) == ["dose_out_of_range"]
+    assert codes(validate(med("normal saline", 1000, "ml", "IV"), lexicon)) == []  # a cited band still wins
 
 
 def test_no_cited_range_checks_route_and_unit_only(lexicon):
