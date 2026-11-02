@@ -4,6 +4,14 @@
 # (AHA 2025 via a secondary reproduction, or unverified); INDIA rows come from the National Formulary of
 # India 2011 and manufacturer labels. Generated from the deep-research report on 2026-11-01.
 # min null = no lower bound stated; max null = no cap; per_kg = per-kilogram dose (max is the adult cap).
+# Plausible adult weight, used to turn a cited per-kg dose into an absolute dose (generator, and the validator's
+# weight-derived sanity range). Both bounds are cited percentiles; the choice of percentile is ours.
+plausible_adult_weight_kg:
+  min: 45.0
+  max: 130.0
+  source: 'CDC NCHS, Anthropometric Reference Data for Children and Adults: United States, 2015-2018, Vital Health Stat
+    3(46), Jan 2021 — 5th percentile weight, non-Hispanic Asian women 20+, 45.8 kg (Table 3); 95th percentile weight, all
+    men 20+, 130.3 kg (Table 5); rounded outward'
 dose_ranges:
   adenosine:
   - route: IV

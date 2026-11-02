@@ -1,0 +1,8 @@
+# SUPERSEDED frozen-split hashes (2026-11-01 build, seed 1234). Replaced 2026-11-02 by evaluator round 2, step 3:
+# gold doses were drawn from datagen/doses.yaml, a table that disagreed with the validator's cited ranges
+# (48 of 288 test and 23 of 170 final_test gold doses outside range; results/m3-gold-dose-audit-PRE-regeneration).
+# No pipeline evaluation ever ran on these splits (results/run_log.jsonl); only validator-only seeded-error runs and
+# the gold-dose audit read test, and only the audit read final_test. The old files are kept, git-ignored, under
+# data/superseded-2026-11-01/ and still match these hashes.
+40a9f49e4559b1270509e99ac72364c1acf33843add8419572974ecabea01c26  test/test.jsonl
+acec1a5a9e7f1df8f164fd28038e5509532945a99bea2b82e9281e1e0219220a  final_test/final_test.jsonl

@@ -29,6 +29,13 @@ class DoseRange(BaseModel):
     illustrative: bool = False  # no public guideline range exists; plausible demo bound (plan M2 rule)
 
 
+class WeightRange(BaseModel):
+    """Plausible adult weight (kg), cited; turns a per-kg dose into an absolute dose."""
+    min: float
+    max: float
+    source: str
+
+
 class DrugInfo(BaseModel):
     name: str
     aliases: list[str]
@@ -46,8 +53,9 @@ class ProcedureInfo(BaseModel):
 
 class Lexicon:
     def __init__(self, drugs: dict[str, DrugInfo], procedures: dict[str, ProcedureInfo],
-                 units: dict[str, list[str]], routes: dict[str, list[str]]):
+                 units: dict[str, list[str]], routes: dict[str, list[str]], weight_kg: WeightRange | None = None):
         self._drugs = drugs
+        self.weight_kg = weight_kg
         self._procedures = procedures
         self._units = units
         self._routes = routes
@@ -66,7 +74,8 @@ class Lexicon:
             ranges.setdefault(k, []).extend(v)
         drugs = {n: DrugInfo(name=n, dose_ranges=ranges.get(n, []), **v) for n, v in read("drugs.yaml")["drugs"].items()}
         procs = {n: ProcedureInfo(name=n, **v) for n, v in read("procedures.yaml")["procedures"].items()}
-        return cls(drugs, procs, read("units.yaml")["units"], read("routes.yaml")["routes"])
+        weight = WeightRange(**doc["plausible_adult_weight_kg"]) if doc.get("plausible_adult_weight_kg") else None
+        return cls(drugs, procs, read("units.yaml")["units"], read("routes.yaml")["routes"], weight)
 
     def drug_names(self) -> list[str]:
         return list(self._drugs)

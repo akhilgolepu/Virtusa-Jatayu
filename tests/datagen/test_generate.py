@@ -1,6 +1,7 @@
 import pytest
 
-from datagen.generate import generate, load_doses
+from datagen.doses import dose_specs, in_cited_range
+from datagen.generate import generate
 from jatayu.lexicon import Lexicon
 from jatayu.normalise.text import normalise
 
@@ -65,13 +66,44 @@ def test_anomaly_rate():
     assert 0.03 <= rate <= 0.08, rate
 
 
-def test_dose_table_consistent_with_lexicon():
+def test_dose_specs_come_from_the_lexicon():
     lex = Lexicon.load()
-    doses = load_doses()
-    assert set(doses) == set(lex.drug_names())
-    for drug, specs in doses.items():
+    for drug in lex.drug_names():
+        specs = dose_specs(lex, drug)
+        assert specs, drug
         for s in specs:
             assert s["route"] in lex.drug(drug).routes and s["unit"] in lex.drug(drug).units, (drug, s)
+            assert all(in_cited_range(lex, drug, s["route"], s["unit"], v) for v in s["values"]), (drug, s)
+
+
+def test_every_gold_dose_is_inside_its_cited_range():
+    """One source of truth: every generated gold dose lies inside the lexicon range for its drug (and route, when one
+    is spoken), except entries deliberately labelled out_of_range_case, which must lie outside it."""
+    lex = Lexicon.load()
+    checked = 0
+    for u in generate(seed=1234, per_pattern=20):
+        for e in u.entries:
+            if e.kind != "medication" or e.dose_value is None or e.context == "measurement":
+                continue
+            unit = e.dose_unit.value if e.dose_unit else None
+            if unit is None:
+                continue
+            route = e.route.value if e.route else None
+            inside = in_cited_range(lex, e.drug.value, route, unit, e.dose_value.value)
+            if e.anomaly:
+                assert "out_of_range_case" in u.tags and not inside, (u.id, e.drug.value, e.dose_value.value)
+            else:
+                assert inside, (u.id, e.drug.value, e.dose_value.value, unit, route)
+            checked += 1
+    assert checked > 2000
+
+
+def test_illustrative_rows_only_where_no_cited_row_exists():
+    lex = Lexicon.load()
+    for drug in lex.drug_names():
+        for s in dose_specs(lex, drug):
+            rows = lex.dose_ranges(drug, s["route"])
+            assert (s["range_class"] == "illustrative") == (not any(not r.illustrative for r in rows)), (drug, s)
 
 
 def test_measurement_entries_record_the_measured_value(utts):

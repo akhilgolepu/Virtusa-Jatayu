@@ -1,7 +1,7 @@
 # datagen — synthetic EMS utterances, speech and noise
 
 Everything here is seeded and reproducible. Outputs go to `data/` (git-ignored); only code and the
-template/dose YAML are committed.
+template YAML are committed.
 
 ## Rebuild from scratch (offline once models/ESC-50 are downloaded)
 
@@ -42,11 +42,15 @@ result measured on the old one.
   recorded as administrations. Scoring (spec §9): they are excluded from the dangerous-error denominator and
   scored as the context-error rate — emitted as an administration without a `possible_not_given` /
   `possible_measurement` flag = error; dropped entirely = correct.
-- **Anomalies**: 5% of given doses are deliberately implausible (`10x`, mg↔mcg swap) to measure the validator.
+- **Anomalies**: ~5% of given doses are deliberately out of range (`10x`, mg↔mcg swap), tagged `out_of_range_case`;
+  an anomaly is kept only if the result really is outside the drug's range on every route.
 - **Voices**: 14 Piper voice/speakers — US, GB, and 7 Indian-accented English speakers (L2-ARCTIC Hindi-L1
   ASI/RRBI/SVBI/TNI, VCTK p248/p251/p376). Test utterances get 3 voices, at least 2 Indian-accented. The Hindi
   Piper voices were dropped: 81-87% WER reading romanised Hinglish (threshold 60%).
 - **Noise**: ESC-50 siren, engine, car_horn, train, helicopter, rain, wind, crying_baby, coughing, breathing;
   folds 1-3 train, 4 dev, 5 test — no noise clip is shared across splits.
-- `doses.yaml` values are for generating text only. They are **not** clinical ranges; the validator's ranges
-  come from the NASEMSO National Model EMS Clinical Guidelines. Decision-support demo, not a clinical device.
+- **Gold doses come only from the lexicon's dose ranges** (`datagen/doses.py`; the same table the validator uses):
+  cited rows for the drug + route, or its ILLUSTRATIVE row where no cited row exists (tagged `range:illustrative`).
+  Per-kg rows use the cited adult weight range 45-130 kg (CDC NHANES 2015-2018). `tests/datagen/test_generate.py`
+  asserts every gold dose is inside its range, except deliberate `out_of_range_case` anomalies, which must be
+  outside it. Decision-support demo, not a clinical device.

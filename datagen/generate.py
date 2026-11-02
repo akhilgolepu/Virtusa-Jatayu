@@ -1,5 +1,6 @@
 """Seeded template expansion -> GoldUtterance list. Gold labels are correct by construction (spans recorded as
-surfaces are appended), and every surface is drawn from the same lexicon the extractor uses."""
+surfaces are appended), and every surface is drawn from the same lexicon the extractor uses. Gold doses come only from the lexicon's dose ranges
+(datagen/doses.py), the same table the validator checks against."""
 from __future__ import annotations
 
 import hashlib
@@ -11,6 +12,7 @@ from pathlib import Path
 import yaml
 
 from datagen.compose import Composer
+from datagen.doses import dose_specs, in_cited_range
 from datagen.numbers import surfaces as number_surfaces
 from datagen.numbers import to_words
 from datagen.schema import GoldUtterance
@@ -38,11 +40,6 @@ def load_templates() -> list[dict]:
     return yaml.safe_load((HERE / "templates.yaml").read_text("utf-8"))["families"]
 
 
-@lru_cache(maxsize=1)
-def load_doses() -> dict[str, list[dict]]:
-    return yaml.safe_load((HERE / "doses.yaml").read_text("utf-8"))
-
-
 def _rng(*parts) -> random.Random:
     digest = hashlib.sha256(":".join(map(str, parts)).encode()).digest()
     return random.Random(int.from_bytes(digest[:8], "big"))
@@ -60,18 +57,21 @@ class _Renderer:
 
     # ---- per-entry planning -------------------------------------------------------------
     def _plan_medication(self, segment: str) -> dict:
-        rng, doses = self.rng, load_doses()
-        drug = rng.choice(self.fam.get("drugs") or sorted(doses))
-        spec = rng.choice(doses[drug])
+        rng, lex = self.rng, self.lex
+        drug = rng.choice(self.fam.get("drugs") or sorted(d for d in lex.drug_names() if dose_specs(lex, d)))
+        spec = rng.choice(dose_specs(lex, drug))
         value, unit, anomaly = float(rng.choice(spec["values"])), spec["unit"], None
-        # An anomaly only makes sense when the dose is spoken; a unit swap only when the unit is spoken too.
+        # A deliberate out_of_range_case: only when the dose is spoken (a unit swap only when the unit is spoken
+        # too), and only if the result really is outside the drug's range on every route.
         if self.fam.get("context", "given") == "given" and "{dose}" in segment and rng.random() < ANOMALY_P:
             if unit in SWAP and "{unit}" in segment and rng.random() < 0.5:
-                anomaly, unit = "unit_swap", SWAP[unit]
+                kind, new_value, new_unit = "unit_swap", value, SWAP[unit]
             else:
-                anomaly, value = "10x", round(value * 10, 4)
+                kind, new_value, new_unit = "10x", round(value * 10, 4), unit
+            if not in_cited_range(lex, drug, None, new_unit, new_value):
+                anomaly, value, unit = kind, new_value, new_unit
         return {"kind": "medication", "drug": drug, "route": spec["route"], "unit": unit, "value": value,
-                "anomaly": anomaly, "spec_values": spec["values"]}
+                "anomaly": anomaly, "spec_values": spec["values"], "range_class": spec["range_class"]}
 
     def _plan_procedure(self) -> dict:
         return {"kind": "procedure", "proc": self.rng.choice(self.fam.get("procs") or self.lex.procedure_names())}
@@ -125,7 +125,9 @@ class _Renderer:
             c.field("dose_value", self._number_surface(p["value"]), p["value"])
             if p["anomaly"]:
                 c.entry.anomaly = p["anomaly"]
-                c.tags.append(f"anomaly:{p['anomaly']}")
+                c.tags += [f"anomaly:{p['anomaly']}", "out_of_range_case"]
+            if p["range_class"] == "illustrative":
+                c.tags.append("range:illustrative")
         elif name == "unit":
             options = [u for u in lex.unit_synonyms(p["unit"]) + [p["unit"]] if u not in UNSPOKEN_UNITS]
             c.field("dose_unit", rng.choice(options), p["unit"])
