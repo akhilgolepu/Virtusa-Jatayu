@@ -38,3 +38,6 @@ web/node_modules/
 docs/*.docx
 docs/imp_docs/
 jatayu.egg-info/
+
+# harness console logs (run_log.jsonl is the record; evaluator round 3)
+results/*.log

@@ -1,6 +1,15 @@
+import pytest
 import json
 import subprocess
 import sys
+
+
+@pytest.fixture(autouse=True)
+def _clean_tree(monkeypatch):
+    """The dirty-tree refusal is tested in test_runlog.py; here the harness runs on a temporary data root."""
+    from eval import runlog
+    monkeypatch.setattr(runlog, "dirty_paths", lambda: [])
+
 
 
 def test_seeded_errors_writes_rates(tmp_path):
