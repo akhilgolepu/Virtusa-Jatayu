@@ -29,3 +29,6 @@
 {"timestamp": "2026-11-02T19:02:04.008374+05:30", "commit": "cb16546-dirty", "runner": "eval.run", "split": "dev", "tag": "m3-dev-text-llm", "mode": "text", "extractor": "llm", "limit": 0}
 {"timestamp": "2026-11-02T19:16:40.679763+05:30", "commit": "cb16546-dirty", "runner": "eval.run", "split": "dev", "tag": "m3-dev-audio-hybrid", "mode": "audio", "extractor": "hybrid", "limit": 0}
 {"timestamp": "2026-11-02T19:25:49.390086+05:30", "commit": "cb16546-dirty", "runner": "eval.run", "split": "dev", "tag": "m3-dev-noise-hybrid", "mode": "noisy", "extractor": "hybrid", "limit": 160}
+{"timestamp": "2026-11-02T21:12:11.759761+05:30", "commit": "cb82312-dirty", "runner": "eval.asr_diag", "split": "dev", "tag": "r3-asr-diag", "n": 100, "seed": 3}
+{"timestamp": "2026-11-02T21:30:02.890634+05:30", "commit": "4351849", "dirty": false, "dirty_paths": [], "runner": "eval.asr_diag", "split": "dev", "tag": "r3-asr-diag-after-tts-fix", "n": 100, "seed": 3}
+{"timestamp": "2026-11-02T21:31:24.615151+05:30", "commit": "4351849-dirty", "dirty": true, "dirty_paths": ["eval/dangerous_breakdown.py"], "runner": "eval.dangerous_breakdown", "split": "dev", "tag": "r3-dangerous-breakdown-round2-runs", "runs": ["results/m3-dev-text-rules", "results/m3-dev-text-hybrid", "results/m3-dev-text-llm", "results/m3-dev-audio-hybrid", "results/m3-dev-noise-hybrid"]}
