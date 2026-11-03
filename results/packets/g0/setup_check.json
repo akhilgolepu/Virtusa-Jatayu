@@ -1,6 +1,6 @@
 {
-  "created": "2026-11-03T01:17:58.462282+05:30",
-  "commit": "760ebd2",
+  "created": "2026-11-03T13:17:53.647784+05:30",
+  "commit": "9bfa6c3",
   "host": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
   "python": "3.12.13",
   "cuda": {
@@ -21,7 +21,7 @@
       "driver": "621.01",
       "cuda": "13.5",
       "vram_total_mib": 8151,
-      "vram_used_mib": 1254,
+      "vram_used_mib": 2501,
       "torch": "2.10.0+cu130",
       "torch_cuda": "13.0"
     },
@@ -30,26 +30,26 @@
       "detail": "Gave 0.3 mg of adrenaline IM two minutes ago.",
       "device": "cuda",
       "model": "faster-whisper-small.en",
-      "load_plus_first_s": 1.833,
-      "latency_s": 0.244,
+      "load_plus_first_s": 2.03,
+      "latency_s": 0.243,
       "audio_s": 3.76
     },
     "llm": {
       "pass": true,
       "detail": "3 entries",
       "model": "Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
-      "load_s": 0.7,
-      "gen_s": 3.67,
+      "load_s": 1.14,
+      "gen_s": 3.99,
       "tokens": 121,
-      "tokens_per_s": 33.0,
-      "peak_vram_mib": 4663,
-      "vram_added_mib": 3303
+      "tokens_per_s": 30.3,
+      "peak_vram_mib": 5899,
+      "vram_added_mib": 3305
     },
     "tts": {
       "pass": true,
-      "detail": "6.0 s of speech",
+      "detail": "5.5 s of speech",
       "voice": "en_US-lessac-medium.onnx",
-      "synth_s": 1.59
+      "synth_s": 1.47
     },
     "offline": {
       "pass": true,

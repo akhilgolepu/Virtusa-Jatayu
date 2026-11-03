@@ -1,0 +1,19 @@
+{
+  "commit": "02e6fb0",
+  "gpu": "NVIDIA GeForce RTX 5060, 621.01",
+  "extractor": "rules",
+  "asr_model": "faster-whisper-small.en",
+  "audio_s": 10.0,
+  "speech_s": 8.75,
+  "runs": 30,
+  "warmup_s": 2.2079,
+  "p50_s": 0.387,
+  "p95_s": 0.422,
+  "mean_s": 0.387,
+  "min_s": 0.346,
+  "max_s": 0.4264,
+  "asr_p50_s": 0.337,
+  "entries_per_run": [
+    3
+  ]
+}

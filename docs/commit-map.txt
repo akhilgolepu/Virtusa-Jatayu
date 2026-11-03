@@ -1,0 +1,55 @@
+# Commit map (evaluator round 5, addendum A). On 2026-11-03 the commit MESSAGES of all 76 commits then on main and
+# f2r-evidence were rewritten to drop a co-author line (git filter-branch --msg-filter); every commit's TREE (the
+# code) is unchanged. Below: every hash referenced in results/**/run_log.jsonl, setup_check.json, results/*/metrics.json,
+# the packet READMEs and DECISIONS.md, with what it is now. Full 76-row map: results/commit_map_2026-11-03.txt.
+#
+# referenced  ->  current   status                     subject / where
+
+0f1b65e  ->  3214196   rewritten (same tree)      results(m3): seeded-error evidence — first run, tuned-on-dev, fresh te
+0f8f983  ->  7beb5d5   rewritten (same tree)      results(m3): seeded reports with 95% CIs and aggregate breakdowns; tes
+2cbb9a7  ->  69d1a38   rewritten (same tree)      validate: weight-derived sanity range for uncapped per-kg rows (per_kg
+4351849  ->  660ca13   rewritten (same tree)      g0: LLM smoke test inside the socket-blocked offline check; CUDA drive
+760ebd2  ->  9bfa6c3   rewritten (same tree)      results(r3): speech hybrid/rules/LLM on the same transcripts, paired n
+99e4126  ->  91fcfd1   rewritten (same tree)      results: G0 and M1 evidence packets; superseded dev runs kept with not
+a7c787a  ->  d0e7147   rewritten (same tree)      eval: strict dangerous-error rate (weight_based_dose is not a catch) +
+bce5504  ->  97fa1c6   rewritten (same tree)      chore: M3 eval script runs dev only (test held until the M3 code freez
+c0ff23e  ->  479a600   rewritten (same tree)      results(r3): ASR diagnosis after the TTS fix; dev text rules and off-t
+cb16546  ->  47d6aa4   rewritten (same tree)      packets: M1 pytest output (292 passed) and refreshed worst failures; r
+cb82312  ->  1b7c3fd   rewritten (same tree)      packets(round2): dev rerun table
+cbb435c  ->  2002447   rewritten (same tree)      datagen: gold doses only from the lexicon's ranges; regenerate dev/tes
+f0ae275  ->  83b49f5   rewritten (same tree)      eval: dangerous-error breakdown by field and by why no flag fired; ASR
+01fb0f9  ->  01fb0f9   current (after rewrite)    repro: run log records the dirty flag; test/final_test refused on a di
+02e6fb0  ->  02e6fb0   current (after rewrite)    e2e latency: 8.8 s dictation padded to 10 s
+0904591  ->  0904591   current (after rewrite)    scripts: end-to-end latency (10-second dictation, real HTTP server, de
+0cdc6e2  ->  0cdc6e2   current (after rewrite)    rules: context cues found inside hyphenated tokens and by sound for cu
+0e8cecd  ->  0e8cecd   current (after rewrite)    results(r4): v2 runs after the correction-pick fix, dangerous breakdow
+103b3b5  ->  103b3b5   current (after rewrite)    fhir/pdf: a not-given or measurement entry is never a completed admini
+1359226  ->  1359226   current (after rewrite)    eval: normalised WER + lexicon drug-term recall, ASR one-variable diag
+1b7c3fd  ->  1b7c3fd   current (after rewrite)    packets(round2): dev rerun table
+2002447  ->  2002447   current (after rewrite)    datagen: gold doses only from the lexicon's ranges; regenerate dev/tes
+212d5e3  ->  212d5e3   current (after rewrite)    asr: low_asr_confidence threshold p < 0.2, chosen on dev (max catch - 
+258d10a  ->  258d10a   current (after rewrite)    e2e latency: dictation must fit in 10 s (first run trimmed an 11.3 s d
+3214196  ->  3214196   current (after rewrite)    results(m3): seeded-error evidence — first run, tuned-on-dev, fresh te
+4279edd  ->  4279edd   current (after rewrite)    eval: negation/context breakdown on dev speech; wording draft per eval
+4662d9f  ->  4662d9f   current (after rewrite)    eval: ASR comparison records the decoding language, Whisper's unforced
+479a600  ->  479a600   current (after rewrite)    results(r3): ASR diagnosis after the TTS fix; dev text rules and off-t
+4b95fa2  ->  4b95fa2   current (after rewrite)    extract: a correction takes the number right after the marker; the hyb
+660ca13  ->  660ca13   current (after rewrite)    g0: LLM smoke test inside the socket-blocked offline check; CUDA drive
+66587ab  ->  66587ab   current (after rewrite)    e2e latency: shorter dictation (fits 10 s)
+69d1a38  ->  69d1a38   current (after rewrite)    validate: weight-derived sanity range for uncapped per-kg rows (per_kg
+6f375cf  ->  6f375cf   current (after rewrite)    extract: phonetic/fuzzy drug match always flagged low_confidence; self
+74d9b3e  ->  74d9b3e   current (after rewrite)    routes: written IN, i.n. and sub cut parsed; route cases per route in 
+81abb48  ->  81abb48   current (after rewrite)    packets: M1 rebuilt at one commit (760ebd2: commit.txt, samples, verif
+83b49f5  ->  83b49f5   current (after rewrite)    eval: dangerous-error breakdown by field and by why no flag fired; ASR
+8d2c5f3  ->  8d2c5f3   current (after rewrite)    extract: measurement lab cues, dose-range flag, 'then another' second 
+9b2c5c6  ->  9b2c5c6   current (after rewrite)    results(m3): step 5 seeded re-measure on regenerated test (seeds 2028 
+9bfa6c3  ->  9bfa6c3   current (after rewrite)    results(r3): speech hybrid/rules/LLM on the same transcripts, paired n
+a117f45  ->  a117f45   current (after rewrite)    eval: low_asr_confidence threshold selection on dev; results: ASR opti
+b1be174  ->  b1be174   current (after rewrite)    results(m3): dev reruns on regenerated data (rules, hybrid, llm text; 
+c39d8db  ->  c39d8db   current (after rewrite)    asr: prompt within the 223-token budget with prioritised aliases, opti
+c6b5563  ->  c6b5563   current (after rewrite)    feat(g0): setup_check writes results/g0/setup_check.json; requirements
+d0e7147  ->  d0e7147   current (after rewrite)    eval: strict dangerous-error rate (weight_based_dose is not a catch) +
+f64572b  ->  f64572b   current (after rewrite)    data: test/final_test audio re-rendered with the TTS spelling rule and
+
+# git rev-parse m1-pass^{commit} = 9bfa6c3731b7c94eec381baf4b352256e1e39c58  (old 760ebd2 -> 9bfa6c3)
+# counts: {'rewritten (same tree)': 13, 'current (after rewrite)': 32}
