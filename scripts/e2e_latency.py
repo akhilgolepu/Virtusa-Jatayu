@@ -27,8 +27,8 @@ import numpy as np
 from eval.runlog import log_run
 from jatayu import config
 
-DICTATION = ("At ten forty gave adrenaline zero point three milligrams I M. Then ondansetron four milligrams I V, "
-             "aspirin three hundred milligrams by mouth, and a twelve lead E C G.")
+DICTATION = ("At ten forty gave adrenaline zero point three milligrams I M, then ondansetron four milligrams I V, "
+             "and aspirin three hundred milligrams by mouth.")  # 8.8 s of Piper speech, padded to 10 s
 SECONDS = 10.0
 
 
