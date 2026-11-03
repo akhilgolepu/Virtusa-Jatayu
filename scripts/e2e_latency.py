@@ -28,7 +28,7 @@ from eval.runlog import log_run
 from jatayu import config
 
 DICTATION = ("At ten forty gave adrenaline zero point three milligrams I M. Then ondansetron four milligrams I V, "
-             "aspirin three hundred milligrams by mouth, and started a twelve lead E C G at ten forty two.")
+             "aspirin three hundred milligrams by mouth, and started a twelve lead E C G.")
 SECONDS = 10.0
 
 
@@ -40,6 +40,8 @@ def dictation_wav() -> tuple[bytes, float]:
     with wave.open(io.BytesIO(synthesize(voice_by_id("lessac"), DICTATION))) as w:
         pcm = np.frombuffer(w.readframes(w.getnframes()), dtype="<i2")
     speech_s = len(pcm) / 16000
+    if speech_s > SECONDS:
+        raise ValueError(f"dictation is {speech_s:.1f} s of speech; shorten it to fit {SECONDS:.0f} s")
     n = int(SECONDS * 16000)
     pcm = np.concatenate([pcm, np.zeros(max(0, n - len(pcm)), dtype="<i2")])[:n]
     buf = io.BytesIO()
