@@ -134,8 +134,8 @@ Tests: `tests/test_real_import.py`.
 
 ## Tests
 
-`python -m pytest -m "not models"`: 364 passed, 13 xfailed, 0 failed at `4b95fa2`. The full suite including the GPU
-model tests was not re-run this round; the last full run is M1's (343 passed at `9bfa6c3`).
+Full suite, nothing deselected, GPU model tests included, at `0e8cecd` (code identical to `4b95fa2`; later commits
+are results only): **388 passed, 13 xfailed, 0 skipped, 0 failed** — `pytest_output.txt`.
 
 ## Changed beyond the list
 
@@ -146,5 +146,5 @@ model tests was not re-run this round; the last full run is M1's (343 passed at 
 
 ## Files to attach
 
-The whole folder `results/packets/round4/`: this README, the report copies, `offtemplate_dev.yaml`,
-`frozen.sha256` and `run_log.jsonl`.
+The whole folder `results/packets/round4/`: this README, the report copies, `pytest_output.txt`,
+`offtemplate_dev.yaml`, `frozen.sha256` and `run_log.jsonl`.
