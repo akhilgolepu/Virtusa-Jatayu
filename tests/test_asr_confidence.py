@@ -27,3 +27,9 @@ def test_prompt_fits_the_whisper_budget(lexicon):
     prompt, dropped = fit_prompt("Head.", vocabulary_terms(lexicon, True), count, limit=60)
     assert count(prompt) <= 60 and dropped and prompt.startswith("Head. Drugs: epinephrine")
     assert vocabulary_terms(lexicon, False) == lexicon.drug_names()
+
+
+def test_drug_term_recall_is_alias_aware(lexicon):
+    from eval.asr_text import drugs_heard
+    assert drugs_heard("gave Narcan and Zofran, then Calpol 650", lexicon) == {"naloxone", "ondansetron", "paracetamol"}
+    assert drugs_heard("adrenaline 1 mg, mag sulph 2 g", lexicon) == {"epinephrine", "magnesium sulfate"}

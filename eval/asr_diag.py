@@ -125,6 +125,8 @@ def evaluate(root: Path, rows: list[dict], cfg: dict, lex, rules, by_id) -> tupl
     load_s = time.perf_counter() - t_load
     scorer = Scorer()
     by_group = defaultdict(lambda: {"err": 0, "words": 0, "hits": 0, "den": 0})
+    forced, detected = defaultdict(int), defaultdict(int)  # language used for decoding / Whisper's own detection
+    alias_hits = 0
     raw = [0, 0]
     norm = [0, 0]
     voice = defaultdict(lambda: [0, 0])
@@ -134,8 +136,12 @@ def evaluate(root: Path, rows: list[dict], cfg: dict, lex, rules, by_id) -> tupl
         u = by_id[r["utt_id"]]
         samples, _ = decode_to_16k((root / "audio" / "tts" / r["path"]).read_bytes())
         t0 = time.perf_counter()
-        hyp = asr.transcribe(samples).text
+        res = asr.transcribe(samples)
+        hyp = res.text
         lat.append(time.perf_counter() - t0)
+        forced[res.language] += 1
+        if cfg["model"] not in ("small.en", "medium.en"):  # .en models have no language head
+            detected[asr._model.detect_language(samples)[0]] += 1
         for acc, (a, b) in ((raw, (_norm_text(u.text), _norm_text(hyp))), (norm, (asr_norm(u.text, lex), asr_norm(hyp, lex)))):
             e, n = word_errors(a, b)
             acc[0] += e
@@ -157,6 +163,8 @@ def evaluate(root: Path, rows: list[dict], cfg: dict, lex, rules, by_id) -> tupl
                 drug["hits"] += g.drug.value in hyp_drugs
                 grp["den"] += 1
                 grp["hits"] += g.drug.value in hyp_drugs
+                # credited through a brand/alias only (the generic name itself is not in the transcript)
+                alias_hits += g.drug.value in hyp_drugs and g.drug.value not in asr_norm(hyp, lex)
         cap = datetime.fromisoformat(u.capture_time)
         scorer.add(u, validate_all(rules.extract(hyp, cap), lex, []))
         out.append({"utt_id": u.id, "voice": r["voice"], "reference": u.text, "transcript": hyp})
@@ -176,6 +184,9 @@ def evaluate(root: Path, rows: list[dict], cfg: dict, lex, rules, by_id) -> tupl
             "latency_mean_s": round(sum(lat) / len(lat), 3), "load_s": round(load_s, 2),
             "vram_before_mib": vram.before, "vram_peak_mib": vram.peak, "vram_added_mib": vram.peak - vram.before,
             "prompt_names_dropped": len(dropped),
+            "language_used": dict(forced), "language_detected_unforced": dict(detected),
+            "drug_hits_via_alias_only": alias_hits,
+            "drug_recall_after_matcher": m["entity"]["per_field"]["drug"]["recall"],
             "hotword_tokens": asr._count_tokens(asr.hotword_text) if cfg["hotwords"] else 0}, out
 
 
@@ -195,6 +206,13 @@ def report(o: dict) -> str:
         us, ind = g.get("US/GB", {}), g.get("Indian-accented (L2-ARCTIC/VCTK)", {})
         L.append(f"| {name} | {us.get('wer_normalised', 0):.3f} | {us.get('drug_term_recall', 0):.3f} (n={us.get('drug_den', 0)}) | "
                  f"{ind.get('wer_normalised', 0):.3f} | {ind.get('drug_term_recall', 0):.3f} (n={ind.get('drug_den', 0)}) |")
+    L += ["", "## Language and extraction-level drug recall", "",
+          "| Setting | language used for decoding | Whisper's own detection (not forced) | drug hits credited via a brand/alias | drug recall after the extractor's lexicon/phonetic matcher |",
+          "|---|---|---|---|---|"]
+    for name, r in o["rows"].items():
+        if "language_used" in r:
+            L.append(f"| {name} | {r['language_used']} | {r['language_detected_unforced'] or 'n/a (.en model)'} | "
+                     f"{r['drug_hits_via_alias_only']} | {r['drug_recall_after_matcher']:.3f} |")
     L += ["", "## Cost (ASR alone; VRAM from nvidia-smi, includes the Windows desktop's share)", "",
           "| Setting | load s | s/clip | VRAM before | VRAM peak | added | prompt names dropped | hotword tokens |",
           "|---|---|---|---|---|---|---|---|"]
