@@ -1,0 +1,43 @@
+{
+  "commit": "f64572b",
+  "n_clips": 480,
+  "transcripts": "results/r3-dev-audio-hybrid/transcripts.jsonl",
+  "rows": {
+    "off": {
+      "drug_precision": 0.9765,
+      "drug_recall": 0.6326,
+      "drug_f1": 0.7678,
+      "entity_f1": 0.6325
+    },
+    "80": {
+      "drug_precision": 0.888,
+      "drug_recall": 0.7239,
+      "drug_f1": 0.7976,
+      "entity_f1": 0.6802
+    },
+    "84": {
+      "drug_precision": 0.9695,
+      "drug_recall": 0.6913,
+      "drug_f1": 0.8071,
+      "entity_f1": 0.6705
+    },
+    "88": {
+      "drug_precision": 0.969,
+      "drug_recall": 0.6804,
+      "drug_f1": 0.7995,
+      "entity_f1": 0.6642
+    },
+    "92": {
+      "drug_precision": 0.9778,
+      "drug_recall": 0.6696,
+      "drug_f1": 0.7948,
+      "entity_f1": 0.6575
+    },
+    "96": {
+      "drug_precision": 0.9775,
+      "drug_recall": 0.6609,
+      "drug_f1": 0.7886,
+      "entity_f1": 0.6538
+    }
+  }
+}
