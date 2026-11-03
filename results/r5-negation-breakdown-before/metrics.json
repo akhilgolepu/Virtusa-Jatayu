@@ -1,0 +1,18 @@
+{
+  "commit": "4279edd",
+  "transcripts": "results/r4-dev-audio-rules-no-asr-flag/transcripts.jsonl",
+  "counts": {
+    "not_given": {
+      "records": 40,
+      "not recorded at all (drug not recognised; not an error in this metric)": 16,
+      "flagged correctly": 20,
+      "ERROR: ASR dropped or changed the cue word": 4
+    },
+    "measurement": {
+      "records": 40,
+      "flagged correctly": 31,
+      "ERROR: ASR dropped or changed the cue word": 6,
+      "not recorded at all (drug not recognised; not an error in this metric)": 3
+    }
+  }
+}

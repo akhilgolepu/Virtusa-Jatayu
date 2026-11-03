@@ -53,6 +53,19 @@ def phonetic_key(word: str) -> str:
     return re.sub(r"(.)\1+", r"\1", head + tail)
 
 
+def _cue_words(words: list[str]) -> set[str]:
+    """Words as context cues: hyphenated tokens also count by their parts ("on-home" -> home), and a word of 4+ letters
+    that SOUNDS like a cue of 5+ letters counts as that cue ("serm", "ceram" -> serum: ASR spellings on dev speech)."""
+    out = set()
+    for w in words:
+        parts = [w, *w.split("-")] if "-" in w else [w]
+        out.update(parts)
+        for part in parts:
+            if sum(c.isalpha() for c in part) >= 4:
+                out.update(_CUE_BY_SOUND.get(phonetic_key(part), ()))
+    return out
+
+
 @dataclass
 class Candidate:
     """A span the rules layer found in the raw transcript; the hybrid LLM may only link these."""
@@ -340,9 +353,9 @@ class RulesExtractor:
         """Words around a drug that suggest it was NOT administered now: negation, allergy, home medication,
         or a measurement ("blood glucose 3.2", "O2 sats 88"). Flag high; never silently drop or keep."""
         words = [t.text for t in nt.tokens]
-        before = set(words[max(s, anchor.i - CONTEXT_WINDOW):anchor.i])
-        after = set(words[anchor.j:min(e, anchor.j + 2)])
-        segment = set(words[s:e])
+        before = _cue_words(words[max(s, anchor.i - CONTEXT_WINDOW):anchor.i])
+        after = _cue_words(words[anchor.j:min(e, anchor.j + 2)])
+        segment = _cue_words(words[s:e])
         out = []
         if before & NEGATION_CUES or segment & HOME_MED_CUES:
             out.append(Flag(code="possible_not_given", field="drug", severity="high",
@@ -366,3 +379,9 @@ class RulesExtractor:
                               message=f"Context suggests {anchor.canon} was not done (negation, or an attempt that failed)."))
         return ProcedureEntry(procedure=self._f(nt, anchor.canon, anchor.i, anchor.j, anchor.confidence),
                               time=time_field, detail=detail, flags=flags)
+
+
+_CUE_BY_SOUND: dict[str, set[str]] = {}
+for _cue in NEGATION_CUES | HOME_MED_CUES | MEASUREMENT_CUES:
+    if len(_cue) >= 5 and _cue.isalpha() and len(phonetic_key(_cue)) >= 3:  # "without" -> "ft" would match "with"
+        _CUE_BY_SOUND.setdefault(phonetic_key(_cue), set()).add(_cue)

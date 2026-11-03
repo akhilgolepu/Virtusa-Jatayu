@@ -177,3 +177,13 @@ def test_lowercase_in_is_not_a_route(lexicon):
 def test_correction_takes_the_number_after_the_marker_not_a_later_one(lexicon):
     [e] = ext(lexicon, "administered pcm 800, sorry, 1000 mg intravenously 10 men ago")
     assert e.dose_value.value == 1000.0 and any(f.code == "self_correction" for f in e.flags)
+
+
+def test_context_cues_inside_hyphenated_or_misspelt_words(lexicon):
+    [e] = ext(lexicon, "on-home ringer lactate 500 milliliter")
+    assert any(f.code == "possible_not_given" for f in e.flags)
+    for raw in ("ceram magnesium 0.7", "Serm magnesium 0.7"):
+        [m] = ext(lexicon, raw)
+        assert any(f.code == "possible_measurement" for f in m.flags), raw
+    [g] = ext(lexicon, "sets up IV, morphine 5 mg IV")  # "sets" sounds like "sats" but sats has < 5 letters
+    assert not any(f.code == "possible_measurement" for f in g.flags)
