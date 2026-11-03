@@ -73,3 +73,4 @@
 {"timestamp": "2026-11-03T13:14:59.977423+05:30", "commit": "0cdc6e2", "dirty": false, "dirty_paths": [], "runner": "eval.run", "split": "dev", "tag": "r5-dev-text-rules", "mode": "text", "extractor": "rules", "limit": 0}
 {"timestamp": "2026-11-03T13:15:00.388404+05:30", "commit": "0cdc6e2", "dirty": false, "dirty_paths": [], "runner": "eval.run", "split": "offtemplate_dev", "tag": "r5-offtemplate-rules", "mode": "text", "extractor": "rules", "limit": 0}
 {"timestamp": "2026-11-03T13:15:42.220881+05:30", "commit": "0904591", "dirty": false, "dirty_paths": [], "runner": "scripts.e2e_latency", "split": "none (synthetic dictation)", "tag": "r5-e2e-latency", "runs": 30, "extractor": "rules"}
+{"timestamp": "2026-11-03T13:16:15.807925+05:30", "commit": "258d10a", "dirty": false, "dirty_paths": [], "runner": "scripts.e2e_latency", "split": "none (synthetic dictation)", "tag": "r5-e2e-latency", "runs": 30, "extractor": "rules"}

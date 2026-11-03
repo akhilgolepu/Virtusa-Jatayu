@@ -28,7 +28,7 @@ from eval.runlog import log_run
 from jatayu import config
 
 DICTATION = ("At ten forty gave adrenaline zero point three milligrams I M. Then ondansetron four milligrams I V, "
-             "aspirin three hundred milligrams by mouth, and started a twelve lead E C G.")
+             "aspirin three hundred milligrams by mouth, and a twelve lead E C G.")
 SECONDS = 10.0
 
 
