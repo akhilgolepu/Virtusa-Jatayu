@@ -5,10 +5,13 @@ only; round-2 items are in `results/packets/round2/`. Every number below was wri
 next to this README are copies of harness output. **Dev data only**: no pipeline run was made on test or final_test
 this round, and no test or final_test record is printed anywhere.
 
-Commits (local, unpushed): `104a0b7` (item 7) · `b56be0a` · `54f5e29` · `988e764` (item 10) · `4351849` (item 8) ·
-`f0ae275` · `c0ff23e` (dev runs start here) · `760ebd2` (final code; `m1-pass`) · `dc29f79` (packets).
-All round-3 dev runs started on a clean tree (`dirty: false` in `run_log.jsonl`), at `f0ae275` (text rules and
-off-template rules) or `c0ff23e` (everything else). The exception is the first ASR diagnosis (`cb82312-dirty`,
+History note (2026-11-03): commit messages were rewritten to drop a co-author line; code trees are unchanged.
+Old → new hashes: `results/commit_map_2026-11-03.txt`. Harness-written files keep the old hashes.
+
+Commits (local, unpushed): `01fb0f9` (item 7) · `1359226` · `8d2c5f3` · `103b3b5` (item 10) · `660ca13` (item 8) ·
+`83b49f5` · `479a600` (dev runs start here) · `9bfa6c3` (final code; `m1-pass`) · `81abb48` (packets).
+All round-3 dev runs started on a clean tree (`dirty: false` in `run_log.jsonl`), at `83b49f5` (text rules and
+off-template rules) or `479a600` (everything else). The exception is the first ASR diagnosis (`1b7c3fd-dirty`,
 explained in its NOTE).
 
 ## 1. Speech diagnosis
@@ -138,7 +141,7 @@ The cause is unconstrained array length. The model repeated one entry until `max
 
 ## 8. G0 fixes
 
-`results/packets/g0/` was re-run at `760ebd2`: **all_pass**.
+`results/packets/g0/` was re-run at `9bfa6c3`: **all_pass**.
 
 - **Offline check:** the socket-blocked check now covers ASR, **the LLM smoke test** (3 entries) and TTS.
 - **CUDA versions now recorded:**
@@ -150,14 +153,14 @@ The cause is unconstrained array length. The model repeated one entry until `max
 
 ## 9. M1 packet
 
-Everything in `results/packets/m1/` was rebuilt in one go at **`760ebd2`** by `bash scripts/m1_packet.sh` on a clean
+Everything in `results/packets/m1/` was rebuilt in one go at **`9bfa6c3`** by `bash scripts/m1_packet.sh` on a clean
 tree:
 
 - `commit.txt`, the 10 samples, verify before/after tamper and the tamper suite (14 passed);
 - the worst failures;
 - **full pytest: 343 passed, 13 xfailed, 0 skipped, 0 failed, nothing deselected** (GPU free; model tests ran).
 
-**Tag `m1-pass` → `760ebd2`** (local, not pushed).
+**Tag `m1-pass` → `9bfa6c3`** (local, not pushed).
 
 ## 10. FHIR safety
 
@@ -208,4 +211,4 @@ errors are negations said after the drug ("naloxone was not given", "morphine na
 
 - Real-recording WER.
 - A Wi-Fi-off run.
-- `gh auth login` and push. Nothing has been pushed; `0f1b65e` is kept local.
+- `gh auth login` and push. Nothing has been pushed; `3214196` is kept local.

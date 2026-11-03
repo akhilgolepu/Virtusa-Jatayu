@@ -4,8 +4,8 @@ Product: **Scribe108** (decision-support demo, not a clinical device). Every num
 the files next to this README are copies of the harness output (aggregate only for test). Test and final_test
 records are never printed or written.
 
-Commits: `a7c787a` (steps 1-2) · `cbb435c` (step 3) · `2cbb9a7` (step 4) · `c68ae8d` (step 5) · packets/reruns after.
-Local, unpushed; `0f1b65e` kept as is.
+Commits: `d0e7147` (steps 1-2) · `2002447` (step 3) · `69d1a38` (step 4) · `9b2c5c6` (step 5) · packets/reruns after.
+Local, unpushed; `3214196` kept as is.
 
 ## 1. Dangerous-error definition
 
@@ -22,7 +22,7 @@ frozen, each logged in `run_log.jsonl`:
 
 | Run (pre-regeneration data) | Existing | New-flag | Base already flagged |
 |---|---|---|---|
-| dev seed 7, first run (d05ea05 validator) | 163/200 (81.5%) | 159/200 (79.5%; 73.4-84.5) | 19/200 |
+| dev seed 7, first run (a422cea validator) | 163/200 (81.5%) | 159/200 (79.5%; 73.4-84.5) | 19/200 |
 | dev seed 7, tuned on this set | 197/200 (98.5%) | 193/200 (96.5%; 93.0-98.3) | 19/200 |
 | test seed 2026, fresh | 189/200 (94.5%) | 186/200 (93.0%; 88.6-95.8) | 16/200 |
 | test seed 2027, harder | 139/200 (69.5%) | 130/200 (65.0%; 58.2-71.3) | 15/200 |
@@ -44,7 +44,7 @@ Validator: DERIVED sanity range = cited per-kg dose × 45-130 kg (CDC NHANES 201
 with no cap (`jatayu/validate.py`, tests in `tests/test_validate.py`). Dev, new-flag definition: standard seed 11
 195 → 198/200, harder seed 12 168 → 171/200; false flags unchanged 4 and 2 (`m4dev-*.report.md`).
 
-## 5. Re-measure once (regenerated test, steps 1-4 frozen at `2cbb9a7`)
+## 5. Re-measure once (regenerated test, steps 1-4 frozen at `69d1a38`)
 
 | | Fresh (seed 2028) | Harder (seed 2029) |
 |---|---|---|
@@ -64,7 +64,7 @@ The step-4 gold-dose audit (`results/m4dev-gold-dose-audit-AFTER-weight-range/`)
 labels with the step-4 validator before step 5 (aggregate counts only, identical to the POST audit). Logged; the
 validator was not changed afterwards.
 
-## Dev reruns on the regenerated data (run once each; `results/m3-dev-*`, commit `2f485c1`)
+## Dev reruns on the regenerated data (run once each; `results/m3-dev-*`, commit `b1be174`)
 
 Dev only. Text = template-generated, extractor and generator share a lexicon, not a headline number. Speech =
 synthetic (Piper). Dangerous errors: strict (headline) / lenient, over given gold records.

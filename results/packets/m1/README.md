@@ -1,24 +1,24 @@
 # Evidence packet — M1 (skeleton end to end)
 
 Product: **Scribe108** (decision-support demo, not a clinical device). Branch `f2r-evidence`.
-Commit: **`760ebd2`** for everything in this folder (evaluator round 3, item 9): `commit.txt`, the ten samples,
+Commit: **`9bfa6c3`** for everything in this folder (evaluator round 3, item 9): `commit.txt`, the ten samples,
 `verify_before_after_tamper.txt`, `tamper_suite_pytest.txt`, `worst_failures.json` and `pytest_output.txt` were all
 rebuilt in one go by `bash scripts/m1_packet.sh` on a clean tree at that commit (each text file names the commit in its
-first line). Tag `m1-pass` points at `760ebd2`.
+first line). Tag `m1-pass` points at `9bfa6c3`.
 
 ## Files
 
 | File | What |
 |---|---|
 | `commit.txt` | Commit hash for this packet |
-| `pytest_output.txt` | Full `python -m pytest -v -rs` output (text) at `760ebd2`: **343 passed, 13 xfailed, 0 skipped, 0 failed, nothing deselected** (GPU free, so the model tests ran). The 13 xfails are the known off-template failures, each with its reason (`eval/offtemplate_dev.yaml`) |
+| `pytest_output.txt` | Full `python -m pytest -v -rs` output (text) at `9bfa6c3`: **343 passed, 13 xfailed, 0 skipped, 0 failed, nothing deselected** (GPU free, so the model tests ran). The 13 xfails are the known off-template failures, each with its reason (`eval/offtemplate_dev.yaml`) |
 | `record.schema.json` | JSON Schema of a record (pydantic, generated from `jatayu/models.py`) |
 | `models.py` | The schema source: `entry id`, `kind`, `drug`/`procedure` (normalised `value` + `raw` transcript words), `dose_value`, `dose_unit`, `route`, `time` + `time_source` (spoken / device_clock / user), per-field `span`, `confidence`, `source`, `flags` |
 | `fhir_lite.schema.json` | Output bundle schema |
 | `sample_01.json` … `sample_10.json` | Ten `python -m f2r.cli add "<sentence>" --extractor rules` outputs (all appended to one incident, so the history checks fire — e.g. sample 02 repeats sample 01's adrenaline and gets `repeat_too_soon`) |
 | `verify_before_after_tamper.txt` | `f2r verify` → ok (exit 0); `scripts/tamper.py` changes fentanyl 150 → 1500 mcg in row 5; `f2r verify` → broken at seq 5, "payload hash mismatch" (exit 1) |
 | `tamper_suite_pytest.txt` | `pytest -v tests/test_audit_tamper.py` — 14 passed |
-| `worst_failures.json` | The M1 five worst typed-text failures (input, output, expected), outputs re-run at `760ebd2` — see below |
+| `worst_failures.json` | The M1 five worst typed-text failures (input, output, expected), outputs re-run at `9bfa6c3` — see below |
 
 The ten sample sentences: "gave 0.3 mg adrenaline IM" · "gave point three milligrams of adrenaline IM two mins
 ago" · "pushed 4 mg ondansetron IV" · "aspirin 300 mg PO at 10 40" · "fentanyl one hundred and fifty micrograms IV just
@@ -46,7 +46,7 @@ Each is a separate test in `tests/test_audit_tamper.py`; `verify()` must fail **
 a valid, shorter chain. A bare hash chain cannot detect it; it needs server receipts (Stage 3 S3). Claim wording:
 "100 % of tested tamper types", never "100 % of tampered entries".
 
-## Five worst failures (typed text, rules extractor), re-run at `760ebd2`
+## Five worst failures (typed text, rules extractor), re-run at `9bfa6c3`
 
 These were the five worst typed-text failures at M1. Round 3 fixed three of them so that they are no longer silent;
 all five are also in the off-template dev set (`eval/offtemplate_dev.yaml`, `ot-m1-01`…`05`).

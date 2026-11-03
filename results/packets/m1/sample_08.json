@@ -1,8 +1,8 @@
 {
   "utterance": {
-    "id": "8bdfba2a584847d4a01170b3a254f726",
-    "incident_id": "478b7e8a2748413da0dd95bd1ce040c5",
-    "capture_time": "2026-11-03T01:18:21.711173+05:30",
+    "id": "f124f6f1ade440fe8f176a8be88715ca",
+    "incident_id": "9b992939f72b4dc48d0741be3b09a2a7",
+    "capture_time": "2026-11-03T10:15:24.197681+05:30",
     "raw_transcript": "patient allergic to morphine",
     "audio_sha256": null,
     "audio_path": null
@@ -10,7 +10,7 @@
   "entries": [
     {
       "kind": "medication",
-      "id": "81f5ed80b2a44be4b0a8d6dcd4cc4ee1",
+      "id": "12c770a522074d2ba92124b582ee3308",
       "drug": {
         "value": "morphine",
         "span": [
@@ -43,7 +43,7 @@
         "raw": null
       },
       "time": {
-        "value": "2026-11-03T01:18:21.711173+05:30",
+        "value": "2026-11-03T10:15:24.197681+05:30",
         "span": null,
         "confidence": 1.0,
         "source": "rules",

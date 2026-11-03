@@ -1,4 +1,4 @@
-# commit: 760ebd2
+# commit: 9bfa6c3
 $ python -m f2r.cli --db sample.sqlite verify    # before tamper
 {"ok": true, "checked": 10, "first_bad_seq": null, "reason": null}
 exit code: 0

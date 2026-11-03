@@ -5,7 +5,7 @@ Product: **Scribe108** (decision-support demo, not a clinical device). Branch `f
 | | |
 |---|---|
 | Milestone | G0 |
-| Commit that produced `setup_check.json` | `760ebd2` (re-run 2026-11-03 for evaluator round 3; first run `5f8e231` on 2026-11-01) |
+| Commit that produced `setup_check.json` | `9bfa6c3` (re-run 2026-11-03 for evaluator round 3; first run `c6b5563` on 2026-11-01) |
 | Packet assembled at | see `git log -1 -- results/packets/g0` |
 
 ## Files
@@ -17,7 +17,7 @@ Product: **Scribe108** (decision-support demo, not a clinical device). Branch `f
 | `requirements.lock` | 86 pinned packages (dependency walk from requirements.txt; `python -m scripts.make_lock`) |
 | `DECISIONS.md` | Full decisions log. Speech backend + language model entries with measured latencies are the rows dated 2026-10-31 (faster-whisper small.en on cuda int8_float16) and 2026-11-01 (Qwen3-4B-Instruct-2507 Q4_K_M via llama.cpp CUDA 13.0 sm_120; both models resident) |
 
-## Measured numbers (all from `setup_check.json`, commit `760ebd2`, 2026-11-03)
+## Measured numbers (all from `setup_check.json`, commit `9bfa6c3`, 2026-11-03)
 
 - GPU: RTX 5060, driver 621.01, torch CUDA available.
 - CUDA (round 3): driver supports CUDA **13.5** (nvidia-smi "CUDA UMD Version"; round 1 recorded "unknown" because the

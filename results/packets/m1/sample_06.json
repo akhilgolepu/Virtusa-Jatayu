@@ -1,8 +1,8 @@
 {
   "utterance": {
-    "id": "dd1d9bdfc2c44c26a914fd62d3161b46",
-    "incident_id": "478b7e8a2748413da0dd95bd1ce040c5",
-    "capture_time": "2026-11-03T01:18:21.053080+05:30",
+    "id": "92f30ed72e2449e89c1d98a772f58570",
+    "incident_id": "9b992939f72b4dc48d0741be3b09a2a7",
+    "capture_time": "2026-11-03T10:15:23.476727+05:30",
     "raw_transcript": "morphine 5 mg IV, pain score 8, no nausea",
     "audio_sha256": null,
     "audio_path": null
@@ -10,7 +10,7 @@
   "entries": [
     {
       "kind": "medication",
-      "id": "ef78afdab12c480abff5ba7aec4071db",
+      "id": "a390d3ee1d73430888c818ee0a0cd297",
       "drug": {
         "value": "morphine",
         "span": [
@@ -52,7 +52,7 @@
         "raw": "IV"
       },
       "time": {
-        "value": "2026-11-03T01:18:21.053080+05:30",
+        "value": "2026-11-03T10:15:23.476727+05:30",
         "span": null,
         "confidence": 1.0,
         "source": "rules",
