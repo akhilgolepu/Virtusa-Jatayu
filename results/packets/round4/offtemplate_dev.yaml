@@ -1,0 +1,260 @@
+# Off-template DEV set (evaluator round 3, item 11). Hand-written, dev-only: never used for a test number and never
+# fed back into the generator's templates. Five are the M1 worst failures; the rest were written to be unlike the
+# templates (negations after the drug, ranges, "then another", corrections, Hinglish, fillers, borrowed times).
+#
+# Gold follows the annotation policy of the synthetic set: a field is filled only if it was said (a route said once
+# for two drugs counts for the drug it is attached to); a range has no single gold dose.
+#   time: "-120" = 120 s before capture; "10:40" = clock time; omitted = not stated.
+#   ok_if_flagged: {field: flag_code} -> a wrong value in that field is acceptable when the record carries that flag
+#   (the pytest check; the harness scores the values as they are).
+#   xfail: why the current rules extractor fails the case (tests/test_offtemplate.py).
+capture_time: "2026-11-02T10:45:00+05:30"
+cases:
+  # ---- M1 worst failures ------------------------------------------------------------------------------------------
+  - id: ot-m1-01
+    group: range
+    text: morphine 2 to 4 mg IV
+    entries: [{drug: morphine, unit: mg, route: IV}]
+    ok_if_flagged: {dose_value: dose_range_stated}
+  - id: ot-m1-02
+    group: weight_based
+    text: ketamine 1 mg per kg IV
+    entries: [{drug: ketamine, route: IV}]
+    xfail: "'mg per kg' is not modelled: the 1 is read as an absolute 1 mg (flagged dose_below_range, not per-kg)"
+  - id: ot-m1-03
+    group: another
+    text: adrenaline 1 mg IV, then another 1 mg two minutes later
+    entries: [{drug: epinephrine, dose: 1, unit: mg, route: IV}, {drug: epinephrine, dose: 1, unit: mg}]
+  - id: ot-m1-04
+    group: borrowed_time
+    text: adrenaline 1 mg IV at 10:40 and amiodarone 300 mg IV
+    entries: [{drug: epinephrine, dose: 1, unit: mg, route: IV, time: "10:40"}, {drug: amiodarone, dose: 300, unit: mg, route: IV}]
+    ok_if_flagged: {time: time_borrowed}
+  - id: ot-m1-05
+    group: multi
+    text: gave 4 mg ondansetron 10 mg metoclopramide IV
+    entries: [{drug: ondansetron, dose: 4, unit: mg}, {drug: metoclopramide, dose: 10, unit: mg, route: IV}]
+    xfail: "a dose said BEFORE the second drug with no separator is attached to the first drug (whose unit-less 10 mg chain swallows it)"
+  # ---- negations -------------------------------------------------------------------------------------------------
+  - id: ot-neg-01
+    group: negation
+    text: patient allergic to morphine
+    entries: [{drug: morphine, context: not_given}]
+  - id: ot-neg-02
+    group: negation
+    text: no aspirin, patient already took it at home
+    entries: [{drug: aspirin, context: not_given}]
+  - id: ot-neg-03
+    group: negation
+    text: didn't give the ondansetron
+    entries: [{drug: ondansetron, context: not_given}]
+  - id: ot-neg-04
+    group: negation
+    text: patient refused the ketamine
+    entries: [{drug: ketamine, context: not_given}]
+  - id: ot-neg-05
+    group: negation
+    text: held the morphine because BP was low
+    entries: [{drug: morphine, context: not_given}]
+  - id: ot-neg-06
+    group: negation
+    text: we were going to give midazolam but the seizure stopped
+    entries: [{drug: midazolam, context: not_given}]
+    xfail: "intent that was abandoned ('going to give ... but') has no negation cue word"
+  - id: ot-neg-07
+    group: negation
+    text: naloxone was not given
+    entries: [{drug: naloxone, context: not_given}]
+    xfail: "negation cues are only searched BEFORE the drug name"
+  - id: ot-neg-08
+    group: negation
+    text: fentanyl 50 mcg IN given, no morphine
+    entries: [{drug: fentanyl, dose: 50, unit: mcg, route: IN}, {drug: morphine, context: not_given}]
+  # ---- ranges ----------------------------------------------------------------------------------------------------
+  - id: ot-rng-01
+    group: range
+    text: fentanyl 50 to 100 mcg IV
+    entries: [{drug: fentanyl, unit: mcg, route: IV}]
+    ok_if_flagged: {dose_value: dose_range_stated}
+  - id: ot-rng-02
+    group: range
+    text: midazolam 2-5 mg IM
+    entries: [{drug: midazolam, unit: mg, route: IM}]
+    ok_if_flagged: {dose_value: dose_range_stated}
+  - id: ot-rng-03
+    group: range
+    text: give 1 or 2 mg lorazepam IV
+    entries: [{drug: lorazepam, unit: mg, route: IV}]
+    ok_if_flagged: {dose_value: dose_range_stated}
+  - id: ot-rng-04
+    group: range
+    text: between 160 and 325 mg aspirin PO
+    entries: [{drug: aspirin, unit: mg, route: PO}]
+    ok_if_flagged: {dose_value: dose_range_stated}
+  # ---- then another ----------------------------------------------------------------------------------------------
+  - id: ot-ano-01
+    group: another
+    text: morphine 4 mg IV then another 2 mg
+    entries: [{drug: morphine, dose: 4, unit: mg, route: IV}, {drug: morphine, dose: 2, unit: mg}]
+  - id: ot-ano-02
+    group: another
+    text: amiodarone 300 mg IV, then another 150 mg IV
+    entries: [{drug: amiodarone, dose: 300, unit: mg, route: IV}, {drug: amiodarone, dose: 150, unit: mg, route: IV}]
+  - id: ot-ano-03
+    group: another
+    text: gave 0.5 mg atropine IV and repeated 0.5 mg IV
+    entries: [{drug: atropine, dose: 0.5, unit: mg, route: IV}, {drug: atropine, dose: 0.5, unit: mg, route: IV}]
+  - id: ot-ano-04
+    group: another
+    text: glucagon 1 mg IM, again 1 mg IM at 10 50
+    entries: [{drug: glucagon, dose: 1, unit: mg, route: IM}, {drug: glucagon, dose: 1, unit: mg, route: IM, time: "10:50"}]
+    ok_if_flagged: {time: time_borrowed}
+  # ---- corrections -----------------------------------------------------------------------------------------------
+  - id: ot-cor-01
+    group: correction
+    text: ondansetron 8, no, 4 mg IV
+    entries: [{drug: ondansetron, dose: 4, unit: mg, route: IV}]
+  - id: ot-cor-02
+    group: correction
+    text: morphine 5 mg IM, sorry, IV
+    entries: [{drug: morphine, dose: 5, unit: mg, route: IV}]
+    xfail: "route corrections are not handled (the first route is kept)"
+  - id: ot-cor-03
+    group: correction
+    text: gave 10 mg, I mean 5 mg diazepam PR
+    entries: [{drug: diazepam, dose: 5, unit: mg, route: PR}]
+  - id: ot-cor-04
+    group: correction
+    text: aspirin 300 mg, actually make that 325 mg PO
+    entries: [{drug: aspirin, dose: 325, unit: mg, route: PO}]
+  - id: ot-cor-05
+    group: correction
+    # first written with "IN", which is not parsed at all (see ot-neg-08), so it passed without testing a correction
+    text: midazolam 5 mg IV, scratch that, IM
+    entries: [{drug: midazolam, dose: 5, unit: mg, route: IM}]
+    xfail: "route corrections are not handled ('scratch that' is not a correction cue either)"
+  # ---- Hinglish --------------------------------------------------------------------------------------------------
+  - id: ot-hi-01
+    group: hinglish
+    text: patient ko 4 mg ondansetron IV de diya
+    entries: [{drug: ondansetron, dose: 4, unit: mg, route: IV}]
+  - id: ot-hi-02
+    group: hinglish
+    text: maine aspirin 300 mg muh se diya
+    entries: [{drug: aspirin, dose: 300, unit: mg, route: PO}]
+    xfail: "'muh se' (by mouth) is not a route synonym"
+  - id: ot-hi-03
+    group: hinglish
+    text: do minute pehle morphine 3 mg IV lagaya
+    entries: [{drug: morphine, dose: 3, unit: mg, route: IV, time: "-120"}]
+    xfail: "Hindi relative times ('do minute pehle') are not parsed"
+  - id: ot-hi-04
+    group: hinglish
+    text: adrenaline ek mg IM diya
+    entries: [{drug: epinephrine, dose: 1, unit: mg, route: IM}]
+    xfail: "Hindi number words ('ek') are not parsed"
+  - id: ot-hi-05
+    group: hinglish
+    text: salbutamol 5 mg neb chalu kiya
+    entries: [{drug: salbutamol, dose: 5, unit: mg, route: NEB}]
+  - id: ot-hi-06
+    group: hinglish
+    text: morphine nahi diya, patient allergic hai
+    entries: [{drug: morphine, context: not_given}]
+    xfail: "'nahi' and 'allergic' come AFTER the drug name"
+  # ---- fillers ---------------------------------------------------------------------------------------------------
+  - id: ot-fil-01
+    group: filler
+    text: uh so um gave like 0.4 mg of uh naloxone IV
+    entries: [{drug: naloxone, dose: 0.4, unit: mg, route: IV}]
+  - id: ot-fil-02
+    group: filler
+    text: okay so, aspirin, um, 300 milligrams, by mouth
+    entries: [{drug: aspirin, dose: 300, unit: mg, route: PO}]
+  - id: ot-fil-03
+    group: filler
+    text: er, you know, 4 mg zofran, er, IV push
+    entries: [{drug: ondansetron, dose: 4, unit: mg, route: IV}]
+  - id: ot-fil-04
+    group: filler
+    text: right, uh, 10 mg of, um, metoclopramide IM
+    entries: [{drug: metoclopramide, dose: 10, unit: mg, route: IM}]
+  - id: ot-fil-05
+    group: filler
+    text: so basically we did CPR, uh, at like 10 32
+    entries: [{kind: procedure, procedure: cpr, time: "10:32"}]
+    xfail: "'at like 10 32': the filler between 'at' and the clock time stops the time parser"
+  # ---- borrowed / shared times -----------------------------------------------------------------------------------
+  - id: ot-tim-01
+    group: borrowed_time
+    text: aspirin 300 mg PO at 10 15 and nitro 0.4 mg SL
+    entries: [{drug: aspirin, dose: 300, unit: mg, route: PO, time: "10:15"}, {drug: nitroglycerin, dose: 0.4, unit: mg, route: SL}]
+    ok_if_flagged: {time: time_borrowed}
+  - id: ot-tim-02
+    group: borrowed_time
+    text: two mins ago gave 50 mcg fentanyl IV and 4 mg ondansetron IV
+    entries: [{drug: fentanyl, dose: 50, unit: mcg, route: IV, time: "-120"}, {drug: ondansetron, dose: 4, unit: mg, route: IV, time: "-120"}]
+  - id: ot-tim-03
+    group: borrowed_time
+    text: 12 lead done at 10 20, then 324 mg aspirin chewed
+    entries: [{kind: procedure, procedure: 12-lead ecg, time: "10:20"}, {drug: aspirin, dose: 324, unit: mg, route: PO}]
+    ok_if_flagged: {time: time_borrowed}
+    xfail: "'chewed' is not a route synonym for PO"
+  # ---- routes (round 4, item 5): one abbreviated and one spelled/phrased form per route ------------------------
+  - id: ot-rt-in-1
+    group: route
+    text: gave naloxone 0.4 mg IN for the overdose
+    entries: [{drug: naloxone, dose: 0.4, unit: mg, route: IN}]
+  - id: ot-rt-in-2
+    group: route
+    text: fentanyl 75 mcg up the nose
+    entries: [{drug: fentanyl, dose: 75, unit: mcg, route: IN}]
+  - id: ot-rt-in-3
+    group: route
+    text: midazolam 5 mg nasally, patient still fitting
+    entries: [{drug: midazolam, dose: 5, unit: mg, route: IN}]
+  - id: ot-rt-io-1
+    group: route
+    text: tibial IO in, adrenaline 1 mg IO
+    entries: [{drug: epinephrine, dose: 1, unit: mg, route: IO}]
+  - id: ot-rt-io-2
+    group: route
+    text: amiodarone 300 mg intraosseously
+    entries: [{drug: amiodarone, dose: 300, unit: mg, route: IO}]
+  - id: ot-rt-sl-1
+    group: route
+    text: one GTN 0.4 mg SL for the chest pain
+    entries: [{drug: nitroglycerin, dose: 0.4, unit: mg, route: SL}]
+  - id: ot-rt-sl-2
+    group: route
+    text: lorazepam 2 mg sublingually
+    entries: [{drug: lorazepam, dose: 2, unit: mg, route: SL}]
+  - id: ot-rt-pr-1
+    group: route
+    text: diazepam 10 mg PR, still seizing
+    entries: [{drug: diazepam, dose: 10, unit: mg, route: PR}]
+  - id: ot-rt-pr-2
+    group: route
+    text: paracetamol 500 mg rectally for the fever
+    entries: [{drug: paracetamol, dose: 500, unit: mg, route: PR}]
+  - id: ot-rt-neb-1
+    group: route
+    text: salbutamol 5 mg neb running
+    entries: [{drug: salbutamol, dose: 5, unit: mg, route: NEB}]
+  - id: ot-rt-neb-2
+    group: route
+    text: ipratropium 500 mcg nebulised with the salbutamol 5 mg nebulised
+    entries: [{drug: ipratropium, dose: 500, unit: mcg, route: NEB}, {drug: salbutamol, dose: 5, unit: mg, route: NEB}]
+  - id: ot-rt-inh-1
+    group: route
+    text: salbutamol inhaler 4 puffs inhaled
+    entries: [{drug: salbutamol, dose: 4, unit: puffs, route: INH}]
+  - id: ot-rt-sc-1
+    group: route
+    text: morphine 5 mg SC into the abdomen
+    entries: [{drug: morphine, dose: 5, unit: mg, route: SC}]
+  - id: ot-rt-sc-2
+    group: route
+    text: glucagon 1 mg sub cut, no IV access
+    entries: [{drug: glucagon, dose: 1, unit: mg, route: SC}]
+    xfail: "'no IV access' is extracted as the procedure 'iv cannulation' (negation is not applied to procedures); the route itself is read"

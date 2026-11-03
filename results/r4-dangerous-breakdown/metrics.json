@@ -1,0 +1,110 @@
+{
+  "commit": "4b95fa2",
+  "runs": {
+    "r4-dev-text-rules-v2": {
+      "dangerous": {
+        "count": 0,
+        "denominator": 440,
+        "rate": 0.0
+      },
+      "listed": 0
+    },
+    "r4-dev-text-hybrid-v2": {
+      "dangerous": {
+        "count": 0,
+        "denominator": 440,
+        "rate": 0.0
+      },
+      "listed": 0
+    },
+    "r4-dev-audio-rules-v2": {
+      "dangerous": {
+        "count": 1,
+        "denominator": 440,
+        "rate": 0.0023
+      },
+      "listed": 1
+    },
+    "r4-dev-audio-hybrid-v2": {
+      "dangerous": {
+        "count": 1,
+        "denominator": 440,
+        "rate": 0.0023
+      },
+      "listed": 1
+    },
+    "r4-dev-audio-llm": {
+      "dangerous": {
+        "count": 0,
+        "denominator": 440,
+        "rate": 0.0
+      },
+      "listed": 0
+    }
+  },
+  "by_field": {
+    "dose_value": 2
+  },
+  "by_why_no_flag": {
+    "valid dose for the recorded drug and route (inside the cited range)": 2
+  },
+  "by_origin": {
+    "ASR": 2
+  },
+  "rows": [
+    {
+      "run": "r4-dev-audio-rules-v2",
+      "id": "mb07-0-013",
+      "input": "bicarbonate, fifty millimole, intravenous, 15 minutes ago",
+      "asr_text": "Bicarbonate, 15 millimole, intravenous, 15 minutes at all.",
+      "fields": [
+        "dose_value"
+      ],
+      "flags": [
+        "time_not_stated"
+      ],
+      "output": {
+        "drug": "sodium bicarbonate",
+        "dose_value": 15.0,
+        "dose_unit": "mmol",
+        "route": "IV"
+      },
+      "expected": {
+        "drug": "sodium bicarbonate",
+        "dose_value": 50.0,
+        "dose_unit": "mmol",
+        "route": "IV",
+        "time": "2026-10-31T10:30:00+05:30"
+      },
+      "why_no_flag": "valid dose for the recorded drug and route (inside the cited range)",
+      "origin": "ASR (dose_value '50' not in the transcript)"
+    },
+    {
+      "run": "r4-dev-audio-hybrid-v2",
+      "id": "mb07-0-013",
+      "input": "bicarbonate, fifty millimole, intravenous, 15 minutes ago",
+      "asr_text": "Bicarbonate, 15 millimole, intravenous, 15 minutes at all.",
+      "fields": [
+        "dose_value"
+      ],
+      "flags": [
+        "time_not_stated"
+      ],
+      "output": {
+        "drug": "sodium bicarbonate",
+        "dose_value": 15.0,
+        "dose_unit": "mmol",
+        "route": "IV"
+      },
+      "expected": {
+        "drug": "sodium bicarbonate",
+        "dose_value": 50.0,
+        "dose_unit": "mmol",
+        "route": "IV",
+        "time": "2026-10-31T10:30:00+05:30"
+      },
+      "why_no_flag": "valid dose for the recorded drug and route (inside the cited range)",
+      "origin": "ASR (dose_value '50' not in the transcript)"
+    }
+  ]
+}
