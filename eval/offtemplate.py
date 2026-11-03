@@ -11,7 +11,7 @@ from datagen.schema import GoldEntry, GoldField, GoldTime, GoldUtterance
 PATH = Path(__file__).with_name("offtemplate_dev.yaml")
 CATEGORY = {"range": "med_messy", "weight_based": "med_messy", "another": "med_multi", "borrowed_time": "time_clock",
             "multi": "med_multi", "negation": "context_negation", "correction": "med_correction",
-            "hinglish": "hinglish", "filler": "med_messy"}
+            "hinglish": "hinglish", "filler": "med_messy", "route": "med_basic"}
 
 
 def _f(v) -> GoldField:

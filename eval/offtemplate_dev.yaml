@@ -70,7 +70,6 @@ cases:
     group: negation
     text: fentanyl 50 mcg IN given, no morphine
     entries: [{drug: fentanyl, dose: 50, unit: mcg, route: IN}, {drug: morphine, context: not_given}]
-    xfail: "written 'IN' (intranasal) is not a route synonym: it is ambiguous with the word 'in'"
   # ---- ranges ----------------------------------------------------------------------------------------------------
   - id: ot-rng-01
     group: range
@@ -201,3 +200,61 @@ cases:
     entries: [{kind: procedure, procedure: 12-lead ecg, time: "10:20"}, {drug: aspirin, dose: 324, unit: mg, route: PO}]
     ok_if_flagged: {time: time_borrowed}
     xfail: "'chewed' is not a route synonym for PO"
+  # ---- routes (round 4, item 5): one abbreviated and one spelled/phrased form per route ------------------------
+  - id: ot-rt-in-1
+    group: route
+    text: gave naloxone 0.4 mg IN for the overdose
+    entries: [{drug: naloxone, dose: 0.4, unit: mg, route: IN}]
+  - id: ot-rt-in-2
+    group: route
+    text: fentanyl 75 mcg up the nose
+    entries: [{drug: fentanyl, dose: 75, unit: mcg, route: IN}]
+  - id: ot-rt-in-3
+    group: route
+    text: midazolam 5 mg nasally, patient still fitting
+    entries: [{drug: midazolam, dose: 5, unit: mg, route: IN}]
+  - id: ot-rt-io-1
+    group: route
+    text: tibial IO in, adrenaline 1 mg IO
+    entries: [{drug: epinephrine, dose: 1, unit: mg, route: IO}]
+  - id: ot-rt-io-2
+    group: route
+    text: amiodarone 300 mg intraosseously
+    entries: [{drug: amiodarone, dose: 300, unit: mg, route: IO}]
+  - id: ot-rt-sl-1
+    group: route
+    text: one GTN 0.4 mg SL for the chest pain
+    entries: [{drug: nitroglycerin, dose: 0.4, unit: mg, route: SL}]
+  - id: ot-rt-sl-2
+    group: route
+    text: lorazepam 2 mg sublingually
+    entries: [{drug: lorazepam, dose: 2, unit: mg, route: SL}]
+  - id: ot-rt-pr-1
+    group: route
+    text: diazepam 10 mg PR, still seizing
+    entries: [{drug: diazepam, dose: 10, unit: mg, route: PR}]
+  - id: ot-rt-pr-2
+    group: route
+    text: paracetamol 500 mg rectally for the fever
+    entries: [{drug: paracetamol, dose: 500, unit: mg, route: PR}]
+  - id: ot-rt-neb-1
+    group: route
+    text: salbutamol 5 mg neb running
+    entries: [{drug: salbutamol, dose: 5, unit: mg, route: NEB}]
+  - id: ot-rt-neb-2
+    group: route
+    text: ipratropium 500 mcg nebulised with the salbutamol 5 mg nebulised
+    entries: [{drug: ipratropium, dose: 500, unit: mcg, route: NEB}, {drug: salbutamol, dose: 5, unit: mg, route: NEB}]
+  - id: ot-rt-inh-1
+    group: route
+    text: salbutamol inhaler 4 puffs inhaled
+    entries: [{drug: salbutamol, dose: 4, unit: puffs, route: INH}]
+  - id: ot-rt-sc-1
+    group: route
+    text: morphine 5 mg SC into the abdomen
+    entries: [{drug: morphine, dose: 5, unit: mg, route: SC}]
+  - id: ot-rt-sc-2
+    group: route
+    text: glucagon 1 mg sub cut, no IV access
+    entries: [{drug: glucagon, dose: 1, unit: mg, route: SC}]
+    xfail: "'no IV access' is extracted as the procedure 'iv cannulation' (negation is not applied to procedures); the route itself is read"

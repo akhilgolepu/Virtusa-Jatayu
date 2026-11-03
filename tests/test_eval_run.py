@@ -96,4 +96,5 @@ def test_offtemplate_dev_split_runs_in_text_mode(tiny_root, tmp_path):
     from eval.run import main
     main(["--split", "offtemplate_dev", "--tag", "ot", "--extractor", "rules", "--root", str(tiny_root), "--out", str(tmp_path)])
     m = json.loads((tmp_path / "ot" / "metrics.json").read_text())
-    assert m["config"]["n_utterances"] == 40 and "hand-written" in m["config"]["source_label"]
+    from eval.offtemplate import cases
+    assert m["config"]["n_utterances"] == len(cases()) and "hand-written" in m["config"]["source_label"]

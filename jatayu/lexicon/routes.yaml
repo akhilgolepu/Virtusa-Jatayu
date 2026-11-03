@@ -1,12 +1,13 @@
-# canonical route -> synonyms. Ambiguous phrasings ("in the thigh", "pushed", bare "in") are deliberately absent.
+# canonical route -> synonyms. Ambiguous phrasings ("in the thigh", "pushed", bare "in") are deliberately absent;
+# a written upper-case "IN" is read as intranasal by the rules extractor (round 4), lower-case "in" never is.
 routes:
   IV:  [iv, i.v., intravenous, intravenously, iv push, ivp, into the vein]
   IM:  [im, i.m., intramuscular, intramuscularly]
   IO:  [io, i.o., intraosseous, intraosseously]
-  SC:  [sc, s.c., sq, subcut, subcutaneous, subcutaneously]
+  SC:  [sc, s.c., sq, subcut, sub cut, subcutaneous, subcutaneously]
   PO:  [po, p.o., oral, orally, by mouth]
   SL:  [sl, sublingual, sublingually, under the tongue]
-  IN:  [intranasal, intranasally, nasal, nasally, up the nose, in the nose]
+  IN:  [i.n., intranasal, intranasally, nasal, nasally, up the nose, in the nose]
   NEB: [neb, nebs, nebulised, nebulized, nebuliser, nebulizer, via nebuliser, via nebulizer, nebulisation, nebulization]
   INH: [inhaled, inhaler, via inhaler, mdi]
   ET:  [et, endotracheally, down the tube]
