@@ -271,8 +271,11 @@ class RulesExtractor:
         # A correction ("4, no sorry, 2 mg") needs the marker *between* two numbers; "pain 8, no nausea" is not one.
         corrected = any(nums[0] < k < nums[-1] and toks[k].text in CORRECTIONS for k in range(s, e)) if nums else False
         if corrected:
+            marker = max(k for k in range(s, e) if nums[0] < k < nums[-1] and toks[k].text in CORRECTIONS)
+            after = min(k for k in nums if k > marker)
+            before = max(k for k in nums if k < marker)
             flags.append(Flag(code="self_correction", field="dose_value", severity="low",
-                              message=f"The speaker corrected the dose ({toks[nums[0]].text} -> {toks[nums[-1]].text}); "
+                              message=f"The speaker corrected the dose ({toks[before].text} -> {toks[after].text}); "
                                       "the later value is used."))
         with_unit = [k for k in nums if k + 1 in unit_at]
         ambiguous = False
@@ -280,7 +283,10 @@ class RulesExtractor:
             toks[k].text in RANGE_JOINERS or (toks[k].text == "and" and a > 0 and toks[a - 1].text == "between")
             for k in range(a + 1, b))), None)
         if corrected:
-            pick = nums[-1]
+            # the number right after the last correction marker ("800, sorry, 1000 mg ... 10 men ago" -> 1000), not
+            # the last number of the clause (a misheard time can follow)
+            marker = max(k for k in range(s, e) if nums[0] < k < nums[-1] and toks[k].text in CORRECTIONS)
+            pick = min(k for k in nums if k > marker)
         elif with_unit:
             pick = with_unit[0]
         elif nums:

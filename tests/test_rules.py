@@ -172,3 +172,8 @@ def test_route_forms(lexicon, raw, route):
 def test_lowercase_in_is_not_a_route(lexicon):
     [e] = ext(lexicon, "gave 5 mg morphine in the ambulance")
     assert e.route.value is None
+
+
+def test_correction_takes_the_number_after_the_marker_not_a_later_one(lexicon):
+    [e] = ext(lexicon, "administered pcm 800, sorry, 1000 mg intravenously 10 men ago")
+    assert e.dose_value.value == 1000.0 and any(f.code == "self_correction" for f in e.flags)

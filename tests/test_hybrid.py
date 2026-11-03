@@ -208,3 +208,12 @@ def test_agreeing_llm_keeps_its_fields_and_gets_the_correction_note(lexicon):
     [e] = hybrid(lexicon, runner).extract("given morphine 1.5, no, 8 milligramme intramuscularly", CAP)
     assert e.dose_value.value == 8.0 and e.dose_value.source == "llm"
     assert any(f.code == "self_correction" for f in e.flags)
+
+
+def test_correction_override_keeps_the_missing_unit_flag(lexicon):
+    raw = "administered furosemide 30, no 25, empty IVP"
+    # candidates: 1 furosemide, 2 30, 3 25, 4 IV(P) -- the LLM links 30 and no unit
+    runner = StubRunner({"entries": [_e(drug=1, dose=2, route=4)]})
+    [e] = hybrid(lexicon, runner).extract(raw, CAP)
+    assert e.dose_value.value == 25.0 and e.dose_unit.value is None
+    assert any(f.code == "field_missing" and f.field == "dose_unit" for f in e.flags)

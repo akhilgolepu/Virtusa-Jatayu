@@ -85,8 +85,11 @@ class HybridExtractor:
             if r is None or r.dose_value.span == e.dose_value.span:
                 out.append(e if r is None else e.model_copy(update={"flags": [*e.flags, *[f for f in r.flags if f.code == "self_correction"]]}))
                 continue
-            keep = [f for f in e.flags if not (f.field in ("dose_value", "dose_unit") and f.code in ("field_missing", "llm_unsupported"))]
             unit = r.dose_unit if r.dose_unit.value is not None else e.dose_unit
+            replaced = {"dose_value"} | ({"dose_unit"} if r.dose_unit.value is not None else set())
+            keep = [f for f in e.flags if not (f.field in replaced and f.code in ("field_missing", "llm_unsupported"))]
+            if unit.value is None and not any(f.code == "field_missing" and f.field == "dose_unit" for f in keep):
+                keep.append(Flag(code="field_missing", field="dose_unit", severity="high", message="Dose has no unit."))
             out.append(e.model_copy(update={"dose_value": r.dose_value, "dose_unit": unit,
                                             "flags": keep + [f for f in r.flags if f.code == "self_correction"]}))
         return out
