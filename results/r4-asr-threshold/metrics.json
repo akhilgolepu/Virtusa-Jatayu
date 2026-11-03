@@ -1,0 +1,128 @@
+{
+  "commit": "a117f45",
+  "transcripts": "results/r4-dev-audio-rules-no-asr-flag/transcripts.jsonl",
+  "n_correct": 125,
+  "n_wrong": 132,
+  "chosen": {
+    "threshold": 0.2,
+    "catch_wrong": 0.2424,
+    "flag_rate_correct": 0.128,
+    "youden_j": 0.1144
+  },
+  "sweep": [
+    {
+      "threshold": 0.05,
+      "catch_wrong": 0.0606,
+      "flag_rate_correct": 0.04,
+      "youden_j": 0.0206
+    },
+    {
+      "threshold": 0.1,
+      "catch_wrong": 0.1061,
+      "flag_rate_correct": 0.064,
+      "youden_j": 0.0421
+    },
+    {
+      "threshold": 0.15,
+      "catch_wrong": 0.1667,
+      "flag_rate_correct": 0.104,
+      "youden_j": 0.0627
+    },
+    {
+      "threshold": 0.2,
+      "catch_wrong": 0.2424,
+      "flag_rate_correct": 0.128,
+      "youden_j": 0.1144
+    },
+    {
+      "threshold": 0.25,
+      "catch_wrong": 0.2727,
+      "flag_rate_correct": 0.184,
+      "youden_j": 0.0887
+    },
+    {
+      "threshold": 0.3,
+      "catch_wrong": 0.3258,
+      "flag_rate_correct": 0.272,
+      "youden_j": 0.0538
+    },
+    {
+      "threshold": 0.35,
+      "catch_wrong": 0.4167,
+      "flag_rate_correct": 0.36,
+      "youden_j": 0.0567
+    },
+    {
+      "threshold": 0.4,
+      "catch_wrong": 0.4848,
+      "flag_rate_correct": 0.4,
+      "youden_j": 0.0848
+    },
+    {
+      "threshold": 0.45,
+      "catch_wrong": 0.553,
+      "flag_rate_correct": 0.504,
+      "youden_j": 0.049
+    },
+    {
+      "threshold": 0.5,
+      "catch_wrong": 0.6364,
+      "flag_rate_correct": 0.568,
+      "youden_j": 0.0684
+    },
+    {
+      "threshold": 0.55,
+      "catch_wrong": 0.7348,
+      "flag_rate_correct": 0.656,
+      "youden_j": 0.0788
+    },
+    {
+      "threshold": 0.6,
+      "catch_wrong": 0.7955,
+      "flag_rate_correct": 0.768,
+      "youden_j": 0.0275
+    },
+    {
+      "threshold": 0.65,
+      "catch_wrong": 0.8409,
+      "flag_rate_correct": 0.824,
+      "youden_j": 0.0169
+    },
+    {
+      "threshold": 0.7,
+      "catch_wrong": 0.8712,
+      "flag_rate_correct": 0.88,
+      "youden_j": -0.0088
+    },
+    {
+      "threshold": 0.75,
+      "catch_wrong": 0.9318,
+      "flag_rate_correct": 0.904,
+      "youden_j": 0.0278
+    },
+    {
+      "threshold": 0.8,
+      "catch_wrong": 0.9621,
+      "flag_rate_correct": 0.96,
+      "youden_j": 0.0021
+    },
+    {
+      "threshold": 0.85,
+      "catch_wrong": 0.9697,
+      "flag_rate_correct": 0.992,
+      "youden_j": -0.0223
+    },
+    {
+      "threshold": 0.9,
+      "catch_wrong": 0.9924,
+      "flag_rate_correct": 0.992,
+      "youden_j": 0.0004
+    },
+    {
+      "threshold": 0.95,
+      "catch_wrong": 1.0,
+      "flag_rate_correct": 1.0,
+      "youden_j": 0.0
+    }
+  ]
+}

@@ -48,3 +48,5 @@
 {"timestamp": "2026-11-03T11:10:07.609758+05:30", "commit": "f64572b", "dirty": false, "dirty_paths": [], "runner": "eval.phonetic_sweep", "split": "dev", "tag": "r4-phonetic-sweep", "transcripts": "results/r3-dev-audio-hybrid/transcripts.jsonl"}
 {"timestamp": "2026-11-03T11:10:16.549821+05:30", "commit": "f64572b", "dirty": false, "dirty_paths": [], "runner": "eval.asr_diag", "split": "dev", "tag": "r4-asr-options", "n": 100, "seed": 3}
 {"timestamp": "2026-11-03T11:13:30.947005+05:30", "commit": "f64572b-dirty", "dirty": true, "dirty_paths": ["eval/asr_threshold.py"], "runner": "eval.asr_diag", "split": "dev", "tag": "r4-asr-options-distil", "n": 100, "seed": 3}
+{"timestamp": "2026-11-03T11:15:04.543562+05:30", "commit": "a117f45", "dirty": false, "dirty_paths": [], "runner": "eval.run", "split": "dev", "tag": "r4-dev-audio-rules-no-asr-flag", "mode": "audio", "extractor": "rules", "limit": 0}
+{"timestamp": "2026-11-03T11:17:37.737518+05:30", "commit": "a117f45", "dirty": false, "dirty_paths": [], "runner": "eval.asr_threshold", "split": "dev", "tag": "r4-asr-threshold", "transcripts": "results/r4-dev-audio-rules-no-asr-flag/transcripts.jsonl"}
