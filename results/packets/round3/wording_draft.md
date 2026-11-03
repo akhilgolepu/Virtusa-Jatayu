@@ -20,7 +20,8 @@ count how often the checker flags the corrupted record. Four measurements, in th
 **Harder corruptions** (×2, ×5, a slipped digit, mg→g), regenerated test, checker frozen: **78.0%** (156/200;
 95% CI 71.8-83.2). By kind: mg→g 50/50, ×5 44/50, ×2 34/50, digit slip 28/50. Of the 44 misses, 35 got no flag
 at all because the corrupted dose is still inside the published range, and 9 got only the informational weight-based
-note — a doubled dose that is still a legal dose is the residual risk the medic's review has to catch.
+note. A corrupted dose that is still a legal dose cannot be seen by a range check, and that residual risk depends on
+read-back confirmation, whose effectiveness we have not measured.
 
 **Why the 99% is not the number to quote alone.** The corruptions are the error kinds the checker's rules were written
 for, and the correct doses come from the same lexicon ranges the checker uses, so a high catch rate mostly confirms
