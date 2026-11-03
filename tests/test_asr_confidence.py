@@ -12,14 +12,15 @@ def test_low_probability_dose_word_is_flagged(lexicon):
              for w, p in (("gave", 0.99), ("5", 0.31), ("mg", 0.97), ("morphine", 0.95), ("IV", 0.9))]
     [f] = flag_low_confidence([e], words, threshold=0.5)
     hits = [x for x in f.flags if x.code == "low_asr_confidence"]
-    assert [x.field for x in hits] == ["dose_value"] and "0.31" in hits[0].message
+    assert [x.field for x in hits] == ["dose_value"] and "0.31" in hits[0].message and hits[0].severity == "low"
     assert flag_low_confidence([e], words, threshold=0.2)[0].flags == e.flags  # nothing below 0.2
     assert flag_low_confidence([e], [], threshold=0.9)[0] is e  # typed text: no word probabilities, no flag
 
 
-def test_low_asr_confidence_catches_a_dangerous_error():
-    from eval.metrics import is_dangerous
-    assert not is_dangerous(["dose_value"], ["low_asr_confidence"])
+def test_low_asr_confidence_is_informational_strict_and_a_catch_only_lenient():
+    from eval.metrics import NON_CATCHING_LENIENT, is_dangerous
+    assert is_dangerous(["dose_value"], ["low_asr_confidence"])
+    assert not is_dangerous(["dose_value"], ["low_asr_confidence"], NON_CATCHING_LENIENT)
 
 
 def test_prompt_fits_the_whisper_budget(lexicon):

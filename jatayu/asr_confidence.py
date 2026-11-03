@@ -1,5 +1,5 @@
-"""low_asr_confidence: a drug, dose or unit read from words Whisper itself was unsure of is flagged, never trusted
-silently. Word probabilities come from AsrResult.words (offsets into the transcript the extractor read)."""
+"""low_asr_confidence (informational, severity low): a drug, dose or unit read from words Whisper itself was unsure of
+is marked. It does not count as a catch in the headline dangerous-error rate (round-5 ruling). Word probabilities come from AsrResult.words (offsets into the transcript the extractor read)."""
 from __future__ import annotations
 
 from jatayu import config
@@ -27,7 +27,7 @@ def flag_low_confidence(entries: list[Entry], words: list[dict],
             f = getattr(e, name, None)
             w = lowest(words, f.span) if f is not None and f.source != "user" else None
             if w is not None and w["p"] < threshold:
-                flags.append(Flag(code="low_asr_confidence", field=name, severity="medium",
+                flags.append(Flag(code="low_asr_confidence", field=name, severity="low",
                                   message=f"The speech recogniser was unsure of '{w['word']}' (p = {w['p']:.2f}); "
                                           "check it against the audio."))
         out.append(e.model_copy(update={"flags": flags}) if len(flags) != len(e.flags) else e)

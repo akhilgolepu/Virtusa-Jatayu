@@ -58,9 +58,15 @@ def test_extractor_choice(client):
     assert client.post("/api/utterances", data={"incident_id": inc, "text": "x", "extractor": "magic"}).status_code == 422
 
 
-def test_default_extractor_is_hybrid():
+def test_default_extractor_is_rules_and_others_stay_selectable():
+    """Round 5: rules is the default (the LLM added nothing measurable on dev; DECISIONS 2026-11-03)."""
+    import re
+    from pathlib import Path
+
     from jatayu import config
-    assert config.DEFAULT_EXTRACTOR == "hybrid"
+    assert config.DEFAULT_EXTRACTOR == "rules"
+    ui = Path(__file__).resolve().parents[1].joinpath("web/src/screens/Capture.tsx").read_text()
+    assert 'useState<Extractor>("rules")' in ui and re.search(r'\["rules", "hybrid", "llm"\]', ui)
 
 
 def test_llm_mode_without_model_is_503_and_hybrid_falls_back(tmp_path, monkeypatch):

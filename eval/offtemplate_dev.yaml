@@ -256,5 +256,14 @@ cases:
   - id: ot-rt-sc-2
     group: route
     text: glucagon 1 mg sub cut, no IV access
-    entries: [{drug: glucagon, dose: 1, unit: mg, route: SC}]
-    xfail: "'no IV access' is extracted as the procedure 'iv cannulation' (negation is not applied to procedures); the route itself is read"
+    # round 5: the procedure is recorded as NOT done (possible_not_given) instead of as a cannulation
+    entries: [{drug: glucagon, dose: 1, unit: mg, route: SC}, {kind: procedure, procedure: iv cannulation, context: not_given}]
+  # ---- procedure negation (round 5, item 5; dev only) -----------------------------------------------------------
+  - id: ot-proc-neg-1
+    group: negation
+    text: unable to get IV access, gave glucagon 1 mg IM
+    entries: [{kind: procedure, procedure: iv cannulation, context: not_given}, {drug: glucagon, dose: 1, unit: mg, route: IM}]
+  - id: ot-proc-neg-2
+    group: negation
+    text: failed intubation, bag valve mask ventilation started
+    entries: [{kind: procedure, procedure: endotracheal intubation, context: not_given}, {kind: procedure, procedure: bag-valve-mask ventilation}]

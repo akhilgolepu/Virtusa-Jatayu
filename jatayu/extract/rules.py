@@ -16,6 +16,8 @@ CONTEXT_WINDOW = 4  # tokens before a drug name searched for negation / measurem
 NEGATION_CUES = {"not", "no", "didn't", "never", "without", "allergic", "allergy", "allergies",
                  "held", "withheld", "refused", "declined", "contraindicated"}
 HOME_MED_CUES = {"takes", "taking", "daily", "regularly", "prescribed", "home"}
+# A procedure said with these before it was not done ("no IV access", "unable to get IO", "failed intubation").
+PROCEDURE_NEGATION_CUES = NEGATION_CUES | {"unable", "failed", "couldn't", "cannot", "can't"}
 # Lab and monitor words added in evaluator round 3 (dev context errors were all "serum magnesium 0.7"): a reading's
 # qualifier, never something said about a dose given.
 MEASUREMENT_CUES = {"blood", "bgl", "bsl", "sugar", "level", "levels", "reading", "sats", "sat", "saturation",
@@ -358,5 +360,9 @@ class RulesExtractor:
             if toks[k].text == "size" and toks[k + 1].kind == "number":
                 detail = self._f(nt, nt.raw[slice(*nt.raw_span(k, k + 2))], k, k + 2)
                 break
+        words = [t.text for t in toks]
+        if set(words[max(s, anchor.i - CONTEXT_WINDOW):anchor.i]) & PROCEDURE_NEGATION_CUES:
+            flags.append(Flag(code="possible_not_given", field="procedure", severity="high",
+                              message=f"Context suggests {anchor.canon} was not done (negation, or an attempt that failed)."))
         return ProcedureEntry(procedure=self._f(nt, anchor.canon, anchor.i, anchor.j, anchor.confidence),
                               time=time_field, detail=detail, flags=flags)

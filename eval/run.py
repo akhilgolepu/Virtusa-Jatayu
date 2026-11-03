@@ -231,8 +231,8 @@ def _report(o: dict, errors: list[dict]) -> str:
              f"| Record exact match | {m['record_exact_match']['count']}/{m['record_exact_match']['denominator']} "
              f"= {m['record_exact_match']['rate']:.3f} |",
              f"| **Dangerous errors** | **{m['dangerous_error']['count']} of {m['dangerous_error']['denominator']}** "
-             f"({m['dangerous_error']['rate']:.2%}; strict: weight_based_dose does not catch) |",
-             f"| Dangerous errors, lenient (weight_based_dose counts as a catch) | "
+             f"({m['dangerous_error']['rate']:.2%}; strict: weight_based_dose and low_asr_confidence do not catch) |",
+             f"| Dangerous errors, lenient (weight_based_dose and low_asr_confidence count as catches) | "
              f"{m['dangerous_error_lenient']['count']} of {m['dangerous_error_lenient']['denominator']} |",
              f"| **Administration-status errors** (not given, recorded as given) | "
              f"**{m['administration_status_error']['count']} of {m['administration_status_error']['denominator']}** |",

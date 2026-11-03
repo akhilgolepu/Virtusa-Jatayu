@@ -5,7 +5,8 @@
 - Record exact match: every gold field of the record equals the matched prediction's.
 - Dangerous error: a matched given-medication record whose drug, dose, unit or route is wrong AND carries no
   catching flag, over all given gold records, reported as count/denominator. Headline = strict: time_not_stated,
-  no_reference_range and weight_based_dose do not catch. Lenient (secondary row) also counts weight_based_dose.
+  time_borrowed, no_reference_range, self_correction, weight_based_dose and low_asr_confidence do not catch.
+  Lenient (secondary row) also counts weight_based_dose and low_asr_confidence as catches.
   A gold record with no prediction is a miss (recall), not a dangerous error.
 - Context error (spec §9): a not_given/measurement gold record emitted without possible_not_given/possible_measurement.
 - Administration-status error: a not_given gold record (allergy, refused, withheld, home medication, "did not give")
@@ -26,9 +27,10 @@ DANGER_FIELDS = ("drug", "dose_value", "dose_unit", "route")
 # range-checked at all, and "weight_based_dose" is informational (low; "check against weight") — strict, the headline.
 # The lenient definition (secondary row) counts weight_based_dose as a catch.
 # time_borrowed (round 3) is about time too, so it never catches a dose/unit/route error either; self_correction
-# (round 4) only says the speaker corrected themselves. low_asr_confidence DOES catch (evaluator round 4, item 3).
+# (round 4) only says the speaker corrected themselves. low_asr_confidence (round 5 ruling) is informational: it does
+# not catch in the headline (strict) rate; the lenient row counts it, like weight_based_dose.
 NON_CATCHING_LENIENT = {"time_not_stated", "time_borrowed", "no_reference_range", "self_correction"}
-NON_CATCHING = NON_CATCHING_LENIENT | {"weight_based_dose"}
+NON_CATCHING = NON_CATCHING_LENIENT | {"weight_based_dose", "low_asr_confidence"}
 CONTEXT_FLAGS = {"not_given": "possible_not_given", "measurement": "possible_measurement"}
 TIME_TOLERANCE_S = 60
 

@@ -22,7 +22,7 @@ export function Capture() {
   const [current, setCurrent] = useState<string>(() => { try { return localStorage.getItem(KEY) ?? ""; } catch { return ""; } });
   const [state, setState] = useState<IncidentState | null>(null);
   const [lexicon, setLexicon] = useState<Lexicon | null>(null);
-  const [extractor, setExtractor] = useState<Extractor>("hybrid");
+  const [extractor, setExtractor] = useState<Extractor>("rules"); // default: rules (DECISIONS 2026-11-03, round 5)
   const [label, setLabel] = useState("");
   const [text, setText] = useState("");
   const [recording, setRecording] = useState(false);
@@ -118,8 +118,8 @@ export function Capture() {
           <div class="row spread">
             <span class="label">{recording ? <><span class="live-dot" /> recording</> : busy ? "processing…" : "ready"}</span>
             <div class="seg" role="group" aria-label="Extractor">
-              {(["hybrid", "llm", "rules"] as Extractor[]).map((x) => (
-                <button key={x} aria-pressed={extractor === x} onClick={() => setExtractor(x)}>{x}</button>
+              {(["rules", "hybrid", "llm"] as Extractor[]).map((x) => (
+                <button key={x} aria-pressed={extractor === x} onClick={() => setExtractor(x)}>{x === "llm" ? "llm only" : x}</button>
               ))}
             </div>
           </div>
