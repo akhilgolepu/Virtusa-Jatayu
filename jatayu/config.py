@@ -15,6 +15,9 @@ ASR_MODEL_DIR = MODELS_DIR / "asr/faster-whisper-small.en"
 # Chosen by scripts/smoke_gpu.py on the demo laptop (RTX 5060): RESULT device=cuda compute_type=int8_float16
 ASR_DEVICE = os.environ.get("JATAYU_ASR_DEVICE", "cuda")
 ASR_COMPUTE_TYPE = os.environ.get("JATAYU_ASR_COMPUTE", "int8_float16")
+ASR_PROMPT_ALIASES = os.environ.get("JATAYU_ASR_PROMPT_ALIASES", "0") == "1"  # set from the round-4 dev comparison
+# Words Whisper heard with probability below this get a low_asr_confidence flag (threshold chosen on dev, round 4)
+ASR_WORD_PROB_THRESHOLD = float(os.environ.get("JATAYU_ASR_WORD_P", "0.5"))
 
 DISCLAIMER = "Decision-support demo, not a clinical device."
 

@@ -83,10 +83,10 @@ def _load(args, root: Path):
     return load_split(args.split, final=args.split in ("test", "final_test"), sealed_ok=args.sealed_ok, root=root)
 
 
-def _cached(path: Path | None) -> dict[str, str]:
+def _cached(path: Path | None) -> dict[str, dict]:
     if path is None:
         return {}
-    return {r["path"]: r["text"] for r in map(json.loads, path.read_text().splitlines()) if r}
+    return {r["path"]: r for r in map(json.loads, path.read_text().splitlines()) if r}
 
 
 def run(args, start: dict) -> dict:
@@ -114,8 +114,14 @@ def run(args, start: dict) -> dict:
         from jatayu.asr import Transcriber
         from jatayu.audio import decode_to_16k
 
-        asr = Transcriber(lexicon=lex)
+        from jatayu.asr_confidence import flag_low_confidence
+
+        asr = Transcriber(model_dir=args.asr_model, lexicon=lex)
         cache = _cached(args.transcripts)
+        if args.split in SEALED:  # the audio heard must be the audio that was frozen
+            from datagen.audio_manifest import verify
+
+            verify(args.split, root)
         rows = _audio_rows(root, args.split, args.mode)
         if args.limit:  # keep whole utterances across voices/SNRs so subsets stay comparable
             keep = sorted({r["utt_id"] for r in rows})[: args.limit]
@@ -132,12 +138,14 @@ def run(args, start: dict) -> dict:
                 continue
             t0 = time.perf_counter()
             if r["file"] in cache:
-                hyp = cache[r["file"]]
+                hyp, words = cache[r["file"]]["text"], cache[r["file"]].get("words", [])
             else:
                 samples, _ = decode_to_16k((root / "audio" / r["file"]).read_bytes())
-                hyp = asr.transcribe(samples).text
-            transcripts.append({"path": r["file"], "utt_id": u.id, "voice": r["voice"], "text": hyp})
-            preds = _extract(x, lex, hyp, datetime.fromisoformat(u.capture_time))
+                res = asr.transcribe(samples)
+                hyp, words = res.text, res.words
+            transcripts.append({"path": r["file"], "utt_id": u.id, "voice": r["voice"], "text": hyp, "words": words})
+            preds = flag_low_confidence(_extract(x, lex, hyp, datetime.fromisoformat(u.capture_time)), words,
+                                        args.asr_word_p)
             latencies.append(time.perf_counter() - t0)
             evaluated.add(u.id)
             raw_err, raw_words = word_errors(_norm_text(u.text), _norm_text(hyp))
@@ -172,7 +180,9 @@ def run(args, start: dict) -> dict:
                    "created": datetime.now().astimezone().isoformat(),
                    "source_label": OFFTEMPLATE_LABEL if args.split == "offtemplate_dev" else
                    TEXT_LABEL if args.mode == "text" else SPEECH_LABEL,
-                   "asr_model": config.ASR_MODEL_DIR.name if args.mode != "text" else None,
+                   "asr_model": Path(args.asr_model).name if args.mode != "text" else None,
+                   "asr_prompt_aliases": config.ASR_PROMPT_ALIASES if args.mode != "text" else None,
+                   "asr_word_p_threshold": args.asr_word_p if args.mode != "text" else None,
                    "llm_model": config.LLM_MODEL_PATH.name if args.extractor != "rules" else None},
         "metrics": m,
         "groups": {k: {"entity_f1": v.metrics()["entity"]["micro"]["f1"],
@@ -271,6 +281,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", type=Path, default=config.ROOT / "results")
     ap.add_argument("--sealed-ok", action="store_true", help="allow final_test (Stage 3 S7 only)")
     ap.add_argument("--transcripts", type=Path, help="reuse ASR transcripts (a transcripts.jsonl from a dev run)")
+    ap.add_argument("--asr-model", type=Path, default=config.ASR_MODEL_DIR)
+    ap.add_argument("--asr-word-p", type=float, default=config.ASR_WORD_PROB_THRESHOLD,
+                    help="flag drug/dose/unit words Whisper heard below this probability (low_asr_confidence)")
     args = ap.parse_args(argv)
     if args.split == "final_test" and not args.sealed_ok:
         raise PermissionError("final_test is sealed until Stage 3 S7; pass --sealed-ok only then")

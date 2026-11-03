@@ -80,6 +80,10 @@ class Pipeline:
             warnings += extra
         else:
             entries = extractor.extract(text, capture_time)
+        if asr and asr.get("words"):
+            from jatayu.asr_confidence import flag_low_confidence
+
+            entries = flag_low_confidence(entries, asr["words"])
         if self.validator is not None:
             entries = self.validator(entries, history)
 
