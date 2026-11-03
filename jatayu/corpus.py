@@ -132,17 +132,19 @@ def create_corpus_router(recordings_dir: Path, transcriber, lexicon: Lexicon) ->
         with store._lock:
             take, path = store.new_take_path(prompt_id)
             path.write_bytes(wav)
+        row = {"take_id": uuid.uuid4().hex, "prompt_id": prompt_id, "take": take, "split": prompt.get("split"),
+               "path": str(path.relative_to(store.root)), "condition": condition,
+               "recorded_at": datetime.now().astimezone().isoformat(),
+               "gold_text": prompt["text"], "entries": prompt["entries"]}
+        if prompt.get("split") == "test":
+            # Sealed: a test take is never transcribed at record time (that would be a speech result on test).
+            # The reader checks their own take by listening; the evaluator releases test clips.
+            return store.append({**row, "asr_text": None, "wer": None, "gold_field_mismatch": [], "status": "sealed"})
         asr_text = transcriber.transcribe(samples).text
         wer = normalised_wer(prompt["text"], asr_text, lexicon)
         mismatch = gold_field_mismatches(prompt["entries"], asr_text, lexicon)
-        return store.append({
-            "take_id": uuid.uuid4().hex, "prompt_id": prompt_id, "take": take,
-            "path": str(path.relative_to(store.root)), "condition": condition,
-            "recorded_at": datetime.now().astimezone().isoformat(), "asr_text": asr_text,
-            "wer": round(wer, 4), "gold_field_mismatch": mismatch,
-            "status": "ok" if wer <= WER_OK and not mismatch else "review",
-            "gold_text": prompt["text"], "entries": prompt["entries"],
-        })
+        return store.append({**row, "asr_text": asr_text, "wer": round(wer, 4), "gold_field_mismatch": mismatch,
+                             "status": "ok" if wer <= WER_OK and not mismatch else "review"})
 
     @router.post("/recordings/{take_id}/resolve")
     def resolve(take_id: str, body: Resolve):

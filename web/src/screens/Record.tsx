@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 
 type Prompt = { prompt_id: string; text: string; condition_hint: string; status: string; lang?: string };
-type Take = { take_id?: string; status?: string; wer?: number; asr_text?: string; gold_field_mismatch?: string[]; detail?: string };
+type Take = { take_id?: string; status?: string; wer?: number | null; asr_text?: string | null; gold_field_mismatch?: string[]; detail?: string };
 
 // Record-corpus page (Akhil reads the prompts aloud). Keys: Space record/stop · Enter next · R re-record · E edit.
 export function Record() {
@@ -81,10 +81,12 @@ export function Record() {
       </div>
       {take && (
         <div class="card stack">
-          <div class="row"><span class="status" data-status={take.status === "ok" || take.status === "keep_edited" ? "confirmed" : "edited"}>{take.status ?? "…"}</span>
-            {take.wer !== undefined && <span class="label">WER {take.wer.toFixed(2)}</span>}
+          <div class="row"><span class="status" data-status={take.status === "ok" || take.status === "keep_edited" || take.status === "sealed" ? "confirmed" : "edited"}>{take.status ?? "…"}</span>
+            {take.wer != null && <span class="label">WER {take.wer.toFixed(2)}</span>}
             {take.gold_field_mismatch?.length ? <span class="label">▲ not heard: {take.gold_field_mismatch.join(", ")}</span> : null}</div>
-          <p class="muted">{take.asr_text ?? take.detail}</p>
+          <p class="muted">{take.status === "sealed"
+            ? "Test take saved, sealed: not transcribed. Listen back if unsure; R to re-record."
+            : take.asr_text ?? take.detail}</p>
         </div>
       )}
       {editing && (

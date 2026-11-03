@@ -88,3 +88,24 @@ def test_audio_manifest_freeze_and_verify(tmp_path):
     clip.write_bytes(clip.read_bytes()[:-4] + b"\1\1\1\1")
     with pytest.raises(ValueError, match="audio changed"):
         verify("test", root)
+
+
+def test_import_from_the_record_page(tmp_path):
+    from scripts.import_real import import_recordings
+    root = tmp_path / "data"
+    rec = root / "recordings"
+    (rec / "audio").mkdir(parents=True)
+    prompts, takes = [], []
+    for i, split in enumerate(("dev", "test", "dev")):
+        _wav(rec / "audio" / f"p{i}__01.wav", freq=300 + 50 * i)
+        prompts.append({"prompt_id": f"p{i}", "split": split, "text": f"gave {i + 1} mg morphine IV", "entries": []})
+        takes.append({"take_id": f"t{i}", "prompt_id": f"p{i}", "take": 1, "path": f"audio/p{i}__01.wav",
+                      "condition": "quiet", "gold_text": f"gave {i + 1} mg morphine IV", "entries": [],
+                      "status": "rerecord" if i == 2 else "ok"})
+    (rec / "prompts.jsonl").write_text("".join(json.dumps(p) + "\n" for p in prompts))
+    (rec / "manifest.jsonl").write_text("".join(json.dumps(t) + "\n" for t in takes))
+    assert import_recordings("S01", root) == {"dev": 1, "test": 1}
+    assert [r["prompt_id"] for r in load_real("dev", root)] == ["p0"]
+    with pytest.raises(PermissionError):
+        load_real("test", root)
+    assert import_recordings("S01", root) == {"dev": 0, "test": 0}

@@ -26,11 +26,11 @@ class StubTranscriber:
         return _Asr(self.text)
 
 
-def _prompt(pid="p000", text="gave 4 mg ondansetron IV"):
+def _prompt(pid="p000", text="gave 4 mg ondansetron IV", split="dev"):
     def f(value, surface):
         s = text.index(surface)
         return {"value": value, "surface": surface, "span": [s, s + len(surface)]}
-    return {"prompt_id": pid, "split": "test", "text": text, "gold_utt_id": "x-0-000", "condition_hint": "quiet",
+    return {"prompt_id": pid, "split": split, "text": text, "gold_utt_id": "x-0-000", "condition_hint": "quiet",
             "entries": [{"kind": "medication", "context": "given", "drug": f("ondansetron", "ondansetron"),
                          "dose_value": f(4.0, "4"), "dose_unit": f("mg", "mg"), "route": f("IV", "IV"),
                          "time": {"kind": "none"}}]}
@@ -143,7 +143,7 @@ def test_changed_dose_forces_review_despite_low_wer(tmp_path):
     rec = tmp_path / "recordings"
     rec.mkdir()
     text = "gave 0.5 mg of glucagon IM two minutes ago please"
-    prompt = {"prompt_id": "p000", "split": "test", "text": text, "gold_utt_id": "x-0-000", "condition_hint": "quiet",
+    prompt = {"prompt_id": "p000", "split": "dev", "text": text, "gold_utt_id": "x-0-000", "condition_hint": "quiet",
               "entries": _entries_for(text, {"dose_value": (0.5, "0.5"), "dose_unit": ("mg", "mg"),
                                              "drug": ("glucagon", "glucagon"), "route": ("IM", "IM")})}
     (rec / "prompts.jsonl").write_text(json.dumps(prompt) + "\n")
@@ -152,3 +152,20 @@ def test_changed_dose_forces_review_despite_low_wer(tmp_path):
     row = TestClient(app).post("/api/corpus/recordings", data={"prompt_id": "p000", "condition": "quiet"},
                                files={"audio": ("t.wav", WAV, "audio/wav")}).json()
     assert row["wer"] <= 0.4 and row["status"] == "review" and row["gold_field_mismatch"] == ["dose_value"]
+
+
+def test_test_take_is_sealed_and_never_transcribed(tmp_path):
+    rec = tmp_path / "recordings"
+    rec.mkdir()
+    (rec / "prompts.jsonl").write_text(json.dumps(_prompt(split="test")) + "\n")
+
+    class Boom:
+        device = "stub"
+
+        def transcribe(self, samples):
+            raise AssertionError("a sealed test take must not be transcribed")
+    client = TestClient(create_app(db_path=tmp_path / "a.sqlite", audio_dir=tmp_path / "audio", recordings_dir=rec,
+                                   transcriber=Boom()))
+    row = _upload(client).json()
+    assert row["status"] == "sealed" and row["asr_text"] is None and row["wer"] is None
+    assert (rec / row["path"]).exists()

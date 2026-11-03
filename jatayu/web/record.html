@@ -14,7 +14,7 @@
   button { font: inherit; padding: 10px 16px; margin: 4px 6px 4px 0; cursor: pointer; background: #222; color: #f2f0ea; border: 1px solid #555; }
   #rec.on { background: #da291c; border-color: #da291c; }
   .status { padding: 2px 8px; border: 1px solid currentColor; font-size: 13px; text-transform: uppercase; }
-  .ok { color: #6fcf6f; } .review, .needs_annotation { color: #ffb347; } .rerecord { color: #ff6b6b; }
+  .ok, .sealed { color: #6fcf6f; } .review, .needs_annotation { color: #ffb347; } .rerecord { color: #ff6b6b; }
   textarea { width: 100%; min-height: 3em; font: inherit; background: #1a1a1a; color: #f2f0ea; border: 1px solid #555; }
   kbd { border: 1px solid #555; padding: 0 4px; font-size: 12px; }
   footer { margin-top: 32px; font-size: 13px; color: #888; }
@@ -63,7 +63,8 @@ function render(row) {
   const st = row.status || "error";
   $("last").innerHTML = "";
   const b = document.createElement("span"); b.className = `status ${st}`; b.textContent = st;
-  $("last").append(b, document.createTextNode(` WER ${row.wer ?? "?"} — “${row.asr_text ?? row.detail ?? ""}”`));
+  $("last").append(b, document.createTextNode(row.status === "sealed" ? " test take saved (sealed: not transcribed; listen back to check it)"
+                                                : ` WER ${row.wer ?? "?"} — “${row.asr_text ?? row.detail ?? ""}”`));
   prompts[idx].status = st; show();
 }
 async function toggle() {
