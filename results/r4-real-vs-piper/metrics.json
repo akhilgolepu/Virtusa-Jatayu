@@ -1,0 +1,16 @@
+{
+  "commit": "212d5e3",
+  "piper_run": "results/r4-dev-audio-hybrid",
+  "piper": {
+    "wer": 0.4058,
+    "wer_raw": 0.6395,
+    "drug_term_recall": 0.5739,
+    "drug_term_recall_den": 460,
+    "wer_by_accent": {
+      "us": 0.2567,
+      "in": 0.5318,
+      "gb": 0.26
+    }
+  },
+  "real": {}
+}
