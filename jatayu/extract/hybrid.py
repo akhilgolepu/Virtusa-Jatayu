@@ -71,7 +71,25 @@ class HybridExtractor:
         except Exception as exc:  # LlmError, missing model, CUDA trouble, malformed output: never lose the utterance
             log.warning("hybrid falling back to rules: %s", exc)
             return rules_entries, [f"llm unavailable: {exc}; used rules"]
-        return self._keep_omitted(linked, rules_entries)
+        return self._keep_omitted(self._prefer_corrections(linked, rules_entries), rules_entries)
+
+    @staticmethod
+    def _prefer_corrections(linked: list[Entry], rules_entries: list[Entry]) -> list[Entry]:
+        """Where the rules layer saw a spoken correction ("1.5, no, 8 mg") for the same drug span, its dose stands: the
+        LLM linked the value said BEFORE the correction in all 10 extraction-origin dangerous errors of round 3."""
+        out = []
+        for e in linked:
+            anchor = getattr(e, "drug", None)
+            r = next((r for r in rules_entries if getattr(r, "drug", None) is not None and anchor is not None
+                      and r.drug.span == anchor.span and any(f.code == "self_correction" for f in r.flags)), None)
+            if r is None or r.dose_value.span == e.dose_value.span:
+                out.append(e if r is None else e.model_copy(update={"flags": [*e.flags, *[f for f in r.flags if f.code == "self_correction"]]}))
+                continue
+            keep = [f for f in e.flags if not (f.field in ("dose_value", "dose_unit") and f.code in ("field_missing", "llm_unsupported"))]
+            unit = r.dose_unit if r.dose_unit.value is not None else e.dose_unit
+            out.append(e.model_copy(update={"dose_value": r.dose_value, "dose_unit": unit,
+                                            "flags": keep + [f for f in r.flags if f.code == "self_correction"]}))
+        return out
 
     @staticmethod
     def _keep_omitted(linked: list[Entry], rules_entries: list[Entry]) -> tuple[list[Entry], list[str]]:

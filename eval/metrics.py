@@ -25,8 +25,9 @@ DANGER_FIELDS = ("drug", "dose_value", "dose_unit", "route")
 # Flags that do NOT catch an error: "time not stated" is about time, "no_reference_range" says the dose was NOT
 # range-checked at all, and "weight_based_dose" is informational (low; "check against weight") — strict, the headline.
 # The lenient definition (secondary row) counts weight_based_dose as a catch.
-# time_borrowed (round 3) is about time too, so it never catches a dose/unit/route error either.
-NON_CATCHING_LENIENT = {"time_not_stated", "time_borrowed", "no_reference_range"}
+# time_borrowed (round 3) is about time too, so it never catches a dose/unit/route error either; self_correction
+# (round 4) only says the speaker corrected themselves. low_asr_confidence DOES catch (evaluator round 4, item 3).
+NON_CATCHING_LENIENT = {"time_not_stated", "time_borrowed", "no_reference_range", "self_correction"}
 NON_CATCHING = NON_CATCHING_LENIENT | {"weight_based_dose"}
 CONTEXT_FLAGS = {"not_given": "possible_not_given", "measurement": "possible_measurement"}
 TIME_TOLERANCE_S = 60

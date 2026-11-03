@@ -192,3 +192,19 @@ def test_dose_range_flag_carried_into_hybrid(lexicon):
     runner = StubRunner({"entries": [_e(drug=1, dose=3, unit=4, route=5)]})
     [e] = hybrid(lexicon, runner).extract("morphine 2 to 4 mg IV", CAP)
     assert any(f.code == "dose_range_stated" for f in e.flags)
+
+
+def test_rules_correction_overrides_the_llm_dose(lexicon):
+    raw = "given morphine 1.5, no, 8 milligramme intramuscularly"
+    # candidates: 1 morphine, 2 1.5, 3 8, 4 mg, 5 IM -- the LLM links the pre-correction 1.5
+    runner = StubRunner({"entries": [_e(drug=1, dose=2, unit=4, route=5)]})
+    [e] = hybrid(lexicon, runner).extract(raw, CAP)
+    assert e.dose_value.value == 8.0 and e.dose_value.source == "rules" and e.dose_unit.value == "mg"
+    assert any(f.code == "self_correction" for f in e.flags)
+
+
+def test_agreeing_llm_keeps_its_fields_and_gets_the_correction_note(lexicon):
+    runner = StubRunner({"entries": [_e(drug=1, dose=3, unit=4, route=5)]})
+    [e] = hybrid(lexicon, runner).extract("given morphine 1.5, no, 8 milligramme intramuscularly", CAP)
+    assert e.dose_value.value == 8.0 and e.dose_value.source == "llm"
+    assert any(f.code == "self_correction" for f in e.flags)

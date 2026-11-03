@@ -21,9 +21,34 @@ HOME_MED_CUES = {"takes", "taking", "daily", "regularly", "prescribed", "home"}
 MEASUREMENT_CUES = {"blood", "bgl", "bsl", "sugar", "level", "levels", "reading", "sats", "sat", "saturation",
                     "saturations", "spo2", "serum", "plasma", "ionised", "ionized", "measured", "checked"}
 LOW_CONFIDENCE = 0.95
+FUZZY_CONFIDENCE_CAP = 0.94  # a fuzzy or phonetic drug match is always below LOW_CONFIDENCE, so always flagged
+PHONETIC_THRESHOLD = 84  # rapidfuzz ratio between phonetic keys (chosen on dev transcripts, round 4)
 SHARED_TIME_CONFIDENCE = 0.7
 RANGE_JOINERS = {"to", "-", "or"}  # "2 to 4 mg", "2-4 mg", "2 or 4 mg": a range, not a dose given
 REPEAT_CUES = {"another", "again", "repeat", "repeated"}  # "then another 2 mg": a second dose of the same drug
+
+
+# Ordinary words the recogniser produces that must never be re-read as a drug name by sound.
+COMMON_WORDS = {"minute", "minutes", "ago", "given", "gave", "patient", "right", "now", "just", "then", "and", "the",
+                "after", "before", "pushed", "push", "started", "start", "time", "times", "about", "around", "into",
+                "point", "sorry", "actually", "second", "seconds", "hour", "hours", "again", "another", "repeat",
+                "because", "still", "pain", "score", "nausea", "chest", "blood", "level", "reading", "allergic"}
+
+
+def phonetic_key(word: str) -> str:
+    """A crude English/Indian-English sound key: c/k/q, s/z, f/ph/v, i/y and doubled letters collapse; vowels after the
+    first letter drop. Enough to match "ketool" to "ketorol" or "adenol card" to "adenocard", never used unflagged."""
+    import re
+
+    w = re.sub(r"[^a-z]", "", word.lower())
+    if not w:
+        return ""
+    for a, b in (("ph", "f"), ("ck", "k"), ("q", "k"), ("x", "ks"), ("z", "s"), ("v", "f"), ("w", "f"),
+                 ("dg", "j"), ("gh", "g"), ("y", "i")):
+        w = w.replace(a, b)
+    w = re.sub(r"c(?=[eiy])", "s", w).replace("c", "k")
+    head, tail = w[0], re.sub(r"[aeiouh]", "", w[1:])
+    return re.sub(r"(.)\1+", r"\1", head + tail)
 
 
 @dataclass
@@ -60,6 +85,11 @@ class RulesExtractor:
                 self._by_first[toks[0]].append((toks, kind, canon))
         for cands in self._by_first.values():
             cands.sort(key=lambda c: len(c[0]), reverse=True)
+        # Words of every lexicon phrase (routes, units, procedures, drugs): never re-read as a misheard drug name.
+        self._known_words = {t for toks in (tuple(t.text for t in normalise(ph).tokens) for ph, _, _ in lexicon.phrases())
+                             for t in toks} | COMMON_WORDS
+        self._phonetic_index = [(phonetic_key(t), canon) for t, kind, canon in lexicon.phrases() if kind == "drug"
+                                and len(phonetic_key(t)) >= 4]
 
     # ---- matching -------------------------------------------------------------------------
     def _mentions(self, nt: NormalisedText, blocked: set[int]) -> list[Mention]:
@@ -69,7 +99,10 @@ class RulesExtractor:
                 i += 1
                 continue
             hit = None
-            for phrase, kind, canon in self._by_first.get(toks[i].text, ()):
+            raw_tok = nt.raw[toks[i].raw_start:toks[i].raw_end]
+            if raw_tok == "IN" and not nt.raw.isupper():  # written "IN" = intranasal; the word "in" is not a route
+                hit = Mention("route", "IN", i, i + 1, 1.0)
+            for phrase, kind, canon in () if hit else self._by_first.get(toks[i].text, ()):
                 j = i + len(phrase)
                 if j <= len(toks) and tuple(t.text for t in toks[i:j]) == phrase and not blocked & set(range(i, j)):
                     hit = Mention(kind, canon, i, j, 1.0)
@@ -77,13 +110,38 @@ class RulesExtractor:
             if hit is None and toks[i].kind == "word" and sum(c.isalpha() for c in toks[i].text) >= 5:
                 fz = self.lexicon.fuzzy_drug(toks[i].text, self.fuzzy_threshold)
                 if fz:
-                    hit = Mention("drug", fz[0], i, i + 1, fz[1])
+                    hit = Mention("drug", fz[0], i, i + 1, min(fz[1], FUZZY_CONFIDENCE_CAP))
+            if hit is None and toks[i].kind == "word" and toks[i].text not in self._known_words:
+                hit = self._phonetic(toks, i, blocked)
             if hit:
                 out.append(hit)
                 i = hit.j
             else:
                 i += 1
         return out
+
+    def _phonetic(self, toks, i: int, blocked: set[int]) -> Mention | None:
+        """A drug name the recogniser split or misspelt ("adenol card" -> adenocard, "ketool" -> ketorol): 1-3
+        adjacent unknown words joined and compared by phonetic key. Confidence is capped, so it is always flagged."""
+        from rapidfuzz import fuzz
+
+        best = None
+        for n in (1, 2, 3):
+            j = i + n
+            if j > len(toks) or any(k in blocked or toks[k].kind != "word" or toks[k].text in self._known_words
+                                    for k in range(i, j)):
+                break
+            joined = "".join(t.text for t in toks[i:j])
+            key = phonetic_key(joined)
+            if sum(c.isalpha() for c in joined) < 5 or len(key) < 4:
+                continue
+            for k, canon in self._phonetic_index:
+                score = fuzz.ratio(key, k)
+                if score >= PHONETIC_THRESHOLD and (best is None or score > best[0]):
+                    best = (score, canon, j)
+        if best is None:
+            return None
+        return Mention("drug", best[1], i, best[2], min(best[0] / 100.0, FUZZY_CONFIDENCE_CAP))
 
     # ---- segmentation ---------------------------------------------------------------------
     @staticmethod
@@ -212,6 +270,10 @@ class RulesExtractor:
         nums = [k for k in range(s, e) if toks[k].kind == "number" and k not in consumed]
         # A correction ("4, no sorry, 2 mg") needs the marker *between* two numbers; "pain 8, no nausea" is not one.
         corrected = any(nums[0] < k < nums[-1] and toks[k].text in CORRECTIONS for k in range(s, e)) if nums else False
+        if corrected:
+            flags.append(Flag(code="self_correction", field="dose_value", severity="low",
+                              message=f"The speaker corrected the dose ({toks[nums[0]].text} -> {toks[nums[-1]].text}); "
+                                      "the later value is used."))
         with_unit = [k for k in nums if k + 1 in unit_at]
         ambiguous = False
         stated_range = next(((a, b) for a, b in zip(nums, nums[1:]) if 0 < b - a <= 3 and all(

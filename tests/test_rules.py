@@ -1,3 +1,4 @@
+import pytest
 from datetime import datetime, timedelta
 
 from jatayu.extract.rules import RulesExtractor
@@ -152,3 +153,22 @@ def test_time_from_another_clause_is_flagged(lexicon):
     a, b = ext(lexicon, "at 10 40 aspirin 300 mg PO and ondansetron 4 mg IV")
     assert not any(f.code == "time_borrowed" for f in a.flags)
     assert b.time.value.strftime("%H:%M") == "10:40" and any(f.code == "time_borrowed" for f in b.flags)
+
+
+@pytest.mark.parametrize("raw,route", [
+    ("fentanyl 50 mcg IN", "IN"), ("fentanyl 50 mcg I.N.", "IN"), ("fentanyl 50 mcg intranasal", "IN"),
+    ("naloxone 2 mg nasal", "IN"), ("midazolam 5 mg in the nose", "IN"),
+    ("amiodarone 300 mg IO", "IO"), ("adrenaline 1 mg intraosseous", "IO"),
+    ("nitroglycerin 0.4 mg SL", "SL"), ("GTN 0.4 mg under the tongue", "SL"),
+    ("diazepam 10 mg PR", "PR"), ("diazepam 10 mg rectally", "PR"),
+    ("salbutamol 5 mg neb", "NEB"), ("ipratropium 500 mcg via nebulizer", "NEB"), ("salbutamol 2 puffs inhaled", "INH"),
+    ("morphine 5 mg SC", "SC"), ("morphine 5 mg sub cut", "SC"), ("naloxone 0.4 mg subcutaneous", "SC"),
+])
+def test_route_forms(lexicon, raw, route):
+    [e] = ext(lexicon, raw)
+    assert e.route.value == route
+
+
+def test_lowercase_in_is_not_a_route(lexicon):
+    [e] = ext(lexicon, "gave 5 mg morphine in the ambulance")
+    assert e.route.value is None
