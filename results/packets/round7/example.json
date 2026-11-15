@@ -1,0 +1,226 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "timestamp": "2026-11-15T20:22:07.622302+05:30",
+  "meta": {
+    "tag": [
+      {
+        "code": "demo",
+        "display": "Decision-support demo, not a clinical device."
+      }
+    ],
+    "device": "jatayu-ce6b623c989a"
+  },
+  "incident": "834ddc8efa2a4d77ad90d1278309c080",
+  "utterance": "834ddc8efa2a4d77ad90d1278309c080",
+  "transcript": "",
+  "utterances": [
+    {
+      "id": "a42726f4424f4fde96a3cf71a36099dc",
+      "transcript": "gave 0.3 mg adrenaline IM two minutes ago",
+      "capture_time": "2026-11-15T20:22:07.630791+05:30"
+    },
+    {
+      "id": "2993a3921f07496d8f13824755b78fe4",
+      "transcript": "aspirin 300 mg PO at 10 40",
+      "capture_time": "2026-11-15T20:22:07.642131+05:30"
+    },
+    {
+      "id": "975edc3b84a24032ad29171eb27c0703",
+      "transcript": "patient allergic to morphine",
+      "capture_time": "2026-11-15T20:22:07.652347+05:30"
+    },
+    {
+      "id": "da421d5552a14e428b005d19c8791963",
+      "transcript": "blood glucose 3.2 mmol",
+      "capture_time": "2026-11-15T20:22:07.663611+05:30"
+    },
+    {
+      "id": "d52f326f82594dc8bd4f392ead8a8d1b",
+      "transcript": "started CPR",
+      "capture_time": "2026-11-15T20:22:07.676608+05:30"
+    },
+    {
+      "id": "3422d3fefa9a4bec94393a46facde742",
+      "transcript": "ondansetron 4, no sorry, 2 mg IV",
+      "capture_time": "2026-11-15T20:22:07.688394+05:30"
+    }
+  ],
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "in-progress",
+        "medicationCodeableConcept": {
+          "text": "epinephrine",
+          "coding": [
+            {
+              "system": "http://www.whocc.no/atc",
+              "code": "C01CA24"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-11-15T20:20:07.630791+05:30",
+        "dosage": {
+          "route": {
+            "text": "IM"
+          },
+          "dose": {
+            "value": 0.3,
+            "unit": "mg"
+          }
+        },
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":1.0,\"raw\":\"mg\",\"source\":\"rules\",\"span\":[9,11]},\"dose_value\":{\"confidence\":1.0,\"raw\":\"0.3\",\"source\":\"rules\",\"span\":[5,8]},\"drug\":{\"confidence\":1.0,\"raw\":\"adrenaline\",\"source\":\"rules\",\"span\":[12,22]},\"entry_id\":\"44b4979969c74d0a9db795f7d78288b9\",\"flags\":[],\"review_status\":\"draft\",\"route\":{\"confidence\":1.0,\"raw\":\"IM\",\"source\":\"rules\",\"span\":[23,25]},\"time\":{\"confidence\":1.0,\"raw\":\"two minutes ago\",\"source\":\"rules\",\"span\":[26,41]},\"time_source\":\"spoken\",\"utterance_id\":\"a42726f4424f4fde96a3cf71a36099dc\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "completed",
+        "medicationCodeableConcept": {
+          "text": "aspirin",
+          "coding": [
+            {
+              "system": "http://www.whocc.no/atc",
+              "code": "B01AC06"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-11-15T10:40:00+05:30",
+        "dosage": {
+          "route": {
+            "text": "PO"
+          },
+          "dose": {
+            "value": 300.0,
+            "unit": "mg"
+          }
+        },
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":1.0,\"raw\":\"mg\",\"source\":\"rules\",\"span\":[12,14]},\"dose_value\":{\"confidence\":1.0,\"raw\":\"300\",\"source\":\"rules\",\"span\":[8,11]},\"drug\":{\"confidence\":1.0,\"raw\":\"aspirin\",\"source\":\"rules\",\"span\":[0,7]},\"entry_id\":\"26ce62ab67354cffb6f3efdb8a7e7195\",\"flags\":[],\"review_status\":\"confirmed\",\"route\":{\"confidence\":1.0,\"raw\":\"PO\",\"source\":\"rules\",\"span\":[15,17]},\"time\":{\"confidence\":1.0,\"raw\":\"at 10 40\",\"source\":\"rules\",\"span\":[18,26]},\"time_source\":\"spoken\",\"utterance_id\":\"2993a3921f07496d8f13824755b78fe4\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "not-done",
+        "medicationCodeableConcept": {
+          "text": "morphine",
+          "coding": [
+            {
+              "system": "http://www.whocc.no/atc",
+              "code": "N02AA01"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-11-15T20:22:07.652347+05:30",
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":0.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"dose_value\":{\"confidence\":0.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"drug\":{\"confidence\":1.0,\"raw\":\"morphine\",\"source\":\"rules\",\"span\":[20,28]},\"entry_id\":\"b10f8674aaa545d3bfb8470cb5adbaa4\",\"flags\":[{\"code\":\"time_not_stated\",\"field\":\"time\",\"message\":\"No time stated; using capture time.\",\"severity\":\"low\"},{\"code\":\"field_missing\",\"field\":\"dose_value\",\"message\":\"No dose stated for morphine.\",\"severity\":\"high\"},{\"code\":\"field_missing\",\"field\":\"route\",\"message\":\"No route stated for morphine.\",\"severity\":\"medium\"},{\"code\":\"possible_not_given\",\"field\":\"drug\",\"message\":\"Context suggests morphine may not have been given now (negation, allergy or regular medication).\",\"severity\":\"high\"}],\"review_status\":\"confirmed\",\"route\":{\"confidence\":0.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time\":{\"confidence\":1.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time_source\":\"device_clock\",\"utterance_id\":\"975edc3b84a24032ad29171eb27c0703\"}"
+          }
+        ],
+        "statusReason": [
+          {
+            "text": "Not given: the utterance states a negation, allergy, refusal or regular medication."
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "not-done",
+        "medicationCodeableConcept": {
+          "text": "dextrose",
+          "coding": [
+            {
+              "system": "http://www.whocc.no/atc",
+              "code": "V06DC01"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-11-15T20:22:07.663611+05:30",
+        "dosage": {
+          "dose": {
+            "value": 3.2,
+            "unit": "mmol"
+          }
+        },
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":1.0,\"raw\":\"mmol\",\"source\":\"rules\",\"span\":[18,22]},\"dose_value\":{\"confidence\":1.0,\"raw\":\"3.2\",\"source\":\"rules\",\"span\":[14,17]},\"drug\":{\"confidence\":1.0,\"raw\":\"glucose\",\"source\":\"rules\",\"span\":[6,13]},\"entry_id\":\"3a1923aa1fdf4de483bf6291ef7eb219\",\"flags\":[{\"code\":\"time_not_stated\",\"field\":\"time\",\"message\":\"No time stated; using capture time.\",\"severity\":\"low\"},{\"code\":\"field_missing\",\"field\":\"route\",\"message\":\"No route stated for dextrose.\",\"severity\":\"medium\"},{\"code\":\"possible_measurement\",\"field\":\"drug\",\"message\":\"'dextrose' looks like a measurement, not a dose given.\",\"severity\":\"high\"}],\"review_status\":\"draft\",\"route\":{\"confidence\":0.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time\":{\"confidence\":1.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time_source\":\"device_clock\",\"utterance_id\":\"da421d5552a14e428b005d19c8791963\"}"
+          }
+        ],
+        "statusReason": [
+          {
+            "text": "A reading, not an administration."
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "in-progress",
+        "code": {
+          "text": "cpr",
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "89666000"
+            }
+          ]
+        },
+        "performedDateTime": "2026-11-15T20:22:07.676608+05:30",
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"entry_id\":\"de422e3abea74c19a8fe5fc94f3160ec\",\"flags\":[{\"code\":\"time_not_stated\",\"field\":\"time\",\"message\":\"No time stated; using capture time.\",\"severity\":\"low\"}],\"procedure\":{\"confidence\":1.0,\"raw\":\"CPR\",\"source\":\"rules\",\"span\":[8,11]},\"review_status\":\"draft\",\"time\":{\"confidence\":1.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time_source\":\"device_clock\",\"utterance_id\":\"d52f326f82594dc8bd4f392ead8a8d1b\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "in-progress",
+        "medicationCodeableConcept": {
+          "text": "ondansetron",
+          "coding": [
+            {
+              "system": "http://www.whocc.no/atc",
+              "code": "A04AA01"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-11-15T20:22:07.688394+05:30",
+        "dosage": {
+          "route": {
+            "text": "IV"
+          },
+          "dose": {
+            "value": 2.0,
+            "unit": "mg"
+          }
+        },
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":1.0,\"raw\":\"mg\",\"source\":\"rules\",\"span\":[27,29]},\"dose_value\":{\"confidence\":1.0,\"raw\":\"2\",\"source\":\"rules\",\"span\":[25,26]},\"drug\":{\"confidence\":1.0,\"raw\":\"ondansetron\",\"source\":\"rules\",\"span\":[0,11]},\"entry_id\":\"2894e662353040ef8eefbeb11b15b238\",\"flags\":[{\"code\":\"time_not_stated\",\"field\":\"time\",\"message\":\"No time stated; using capture time.\",\"severity\":\"low\"},{\"code\":\"self_correction\",\"field\":\"dose_value\",\"message\":\"The speaker corrected the dose (4 -> 2); the later value is used.\",\"severity\":\"low\"},{\"code\":\"dose_below_range\",\"field\":\"dose_value\",\"message\":\"2 mg is below the published adult dose. Source: Altitude Illness p.342; Nausea-Vomiting p.89.\",\"severity\":\"medium\"}],\"review_status\":\"draft\",\"route\":{\"confidence\":1.0,\"raw\":\"IV\",\"source\":\"rules\",\"span\":[30,32]},\"time\":{\"confidence\":1.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time_source\":\"device_clock\",\"utterance_id\":\"3422d3fefa9a4bec94393a46facde742\"}"
+          }
+        ]
+      }
+    }
+  ]
+}
