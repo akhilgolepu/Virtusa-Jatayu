@@ -1,0 +1,1858 @@
+{
+  "commit": "1515ea5",
+  "clips": 480,
+  "wrong_drug": {
+    "wrong_drug_entries": 10,
+    "by_match": {
+      "exact word": 6,
+      "by sound": 4
+    },
+    "only_weak_identity_flags": 6,
+    "no_high_flag": 1,
+    "needs_sound_acknowledgement": 4,
+    "correct_by_sound": 55,
+    "correct_by_sound_needing_acknowledgement": 49
+  },
+  "unknown_drug_flag": {
+    "flags_raised": 42,
+    "by_label": {
+      "drug": 37,
+      "junk": 2,
+      "other": 3
+    },
+    "drug_labels_total": 38,
+    "precision": 0.881,
+    "recall": 0.974
+  },
+  "wrong_drug_cases": [
+    {
+      "utt": "mx07-1-016",
+      "heard": "adenosine",
+      "recorded": "adenosine",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_borrowed",
+        "dose_range_stated",
+        "route_not_allowed"
+      ],
+      "high": [
+        "dose_range_stated",
+        "route_not_allowed"
+      ],
+      "gold_drugs": [
+        "calcium chloride",
+        "epinephrine"
+      ],
+      "reference": "fifteen minutes ago adrenaline point three mg intramuscular, at 9:40 calcium chloride 1 gram intraosseous",
+      "transcript": "15 minutes above adenosine point, 3-8 mg intramuscular, at 9.40 calcium chloride. It was a great training process.",
+      "identity_flags": [],
+      "only_weak_identity": true,
+      "no_high_flag": false
+    },
+    {
+      "utt": "mc01-1-011",
+      "heard": "ASTEL",
+      "recorded": "salbutamol",
+      "confidence": 0.889,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "gold_drugs": [
+        "ondansetron"
+      ],
+      "reference": "given vomikind 8, sorry, four mg sl 2 mins ago",
+      "transcript": "GIVEN VOMITINE 8, SORRY, IV, IMG, ASTEL, 2 MEANS ABO.",
+      "identity_flags": [
+        "sound_alike_drug"
+      ],
+      "only_weak_identity": false,
+      "no_high_flag": false
+    },
+    {
+      "utt": "mi02-1-015",
+      "heard": "oxygen",
+      "recorded": "oxygen",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "field_missing",
+        "field_missing",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "field_missing"
+      ],
+      "gold_drugs": [
+        "calcium chloride"
+      ],
+      "reference": "Calcium chloride io given at ten fourteen",
+      "transcript": "calcium chloride, oxygen, at 10.14.",
+      "identity_flags": [
+        "low_asr_confidence"
+      ],
+      "only_weak_identity": true,
+      "no_high_flag": false
+    },
+    {
+      "utt": "mi02-1-018",
+      "heard": "salbutamol",
+      "recorded": "salbutamol",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "field_missing"
+      ],
+      "gold_drugs": [
+        "methylprednisolone"
+      ],
+      "reference": "solumedrol intramuscular given at nine fifty seven",
+      "transcript": "salbutamol, intranuscula, tivendat 957.",
+      "identity_flags": [
+        "low_asr_confidence"
+      ],
+      "only_weak_identity": true,
+      "no_high_flag": false
+    },
+    {
+      "utt": "hi01-0-001",
+      "heard": "Atropine",
+      "recorded": "atropine",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "dose_below_range",
+        "low_asr_confidence"
+      ],
+      "high": [],
+      "gold_drugs": [
+        "epinephrine"
+      ],
+      "reference": "epipen 15 micrograms i.v. de diya",
+      "transcript": "Atropine 50 micrograms, IV to the U.",
+      "identity_flags": [
+        "low_asr_confidence"
+      ],
+      "only_weak_identity": true,
+      "no_high_flag": true
+    },
+    {
+      "utt": "hi01-1-019",
+      "heard": "At event",
+      "recorded": "ipratropium",
+      "confidence": 0.909,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug",
+        "dose_out_of_range",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "dose_out_of_range",
+        "sound_alike_drug"
+      ],
+      "gold_drugs": [
+        "lorazepam"
+      ],
+      "reference": "ativan 1 milligram chadhaya at 10 12",
+      "transcript": "At event, 1 milligram, chadrin, adenosine.",
+      "identity_flags": [
+        "low_asr_confidence",
+        "sound_alike_drug"
+      ],
+      "only_weak_identity": false,
+      "no_high_flag": false
+    },
+    {
+      "utt": "hi01-1-019",
+      "heard": "chadrin",
+      "recorded": "amiodarone",
+      "confidence": 0.889,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "gold_drugs": [
+        "lorazepam"
+      ],
+      "reference": "ativan 1 milligram chadhaya at 10 12",
+      "transcript": "At event, 1 milligram, chadrin, adenosine.",
+      "identity_flags": [
+        "low_asr_confidence",
+        "sound_alike_drug"
+      ],
+      "only_weak_identity": false,
+      "no_high_flag": false
+    },
+    {
+      "utt": "hi01-1-019",
+      "heard": "adenosine",
+      "recorded": "adenosine",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "field_missing"
+      ],
+      "gold_drugs": [
+        "lorazepam"
+      ],
+      "reference": "ativan 1 milligram chadhaya at 10 12",
+      "transcript": "At event, 1 milligram, chadrin, adenosine.",
+      "identity_flags": [
+        "low_asr_confidence"
+      ],
+      "only_weak_identity": true,
+      "no_high_flag": false
+    },
+    {
+      "utt": "cn04-0-012",
+      "heard": "salin",
+      "recorded": "normal saline",
+      "confidence": 0.909,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug",
+        "possible_not_given",
+        "unit_not_allowed"
+      ],
+      "high": [
+        "possible_not_given",
+        "sound_alike_drug",
+        "unit_not_allowed"
+      ],
+      "gold_drugs": [
+        "salbutamol"
+      ],
+      "reference": "patient takes asthalin five milligram daily",
+      "transcript": "Patient takes a salin five milligram daily.",
+      "identity_flags": [
+        "sound_alike_drug"
+      ],
+      "only_weak_identity": false,
+      "no_high_flag": false
+    },
+    {
+      "utt": "tc01-1-019",
+      "heard": "Salbutamol",
+      "recorded": "salbutamol",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "route_not_allowed",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "route_not_allowed"
+      ],
+      "gold_drugs": [
+        "methylprednisolone"
+      ],
+      "reference": "solumedrol 125 milligram iv at 10 25",
+      "transcript": "Salbutamol, 125mg IV, 1025.",
+      "identity_flags": [
+        "low_asr_confidence"
+      ],
+      "only_weak_identity": true,
+      "no_high_flag": false
+    }
+  ],
+  "correct_by_sound": [
+    {
+      "utt": "mb07-0-004",
+      "heard": "Solumadrol",
+      "recorded": "methylprednisolone",
+      "confidence": 0.9,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mb07-1-000",
+      "heard": "Morphin",
+      "recorded": "morphine",
+      "confidence": 0.933,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mb07-1-016",
+      "heard": "Ventiline",
+      "recorded": "salbutamol",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mb07-1-018",
+      "heard": "lorazepam1",
+      "recorded": "lorazepam",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "low_confidence"
+      ],
+      "high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mm02-0-008",
+      "heard": "Narcon",
+      "recorded": "naloxone",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mm02-0-013",
+      "heard": "furosenide",
+      "recorded": "furosemide",
+      "confidence": 0.9,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug",
+        "dose_below_range"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mm02-1-004",
+      "heard": "decadrin",
+      "recorded": "dexamethasone",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mm02-1-014",
+      "heard": "Salut medral",
+      "recorded": "methylprednisolone",
+      "confidence": 0.923,
+      "match": "by sound",
+      "flags": [
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mm02-1-017",
+      "heard": "Atropina",
+      "recorded": "atropine",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mm02-2-002",
+      "heard": "sublimates",
+      "recorded": "fentanyl",
+      "confidence": 0.909,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mm02-2-004",
+      "heard": "add an objects",
+      "recorded": "adenosine",
+      "confidence": 0.857,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mm02-2-005",
+      "heard": "Kettler",
+      "recorded": "ketamine",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mm02-2-009",
+      "heard": "adextrose",
+      "recorded": "dextrose",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "sound_alike_drug",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mm02-2-012",
+      "heard": "adexa",
+      "recorded": "dexamethasone",
+      "confidence": 0.889,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mm02-2-013",
+      "heard": "ahydrocortisone",
+      "recorded": "hydrocortisone",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "low_confidence"
+      ],
+      "high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mm02-2-018",
+      "heard": "add an object",
+      "recorded": "adenosine",
+      "confidence": 0.923,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mx07-0-000",
+      "heard": "It prevents",
+      "recorded": "ipratropium",
+      "confidence": 0.857,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mx07-0-007",
+      "heard": "glucagon4",
+      "recorded": "glucagon",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_borrowed",
+        "field_missing",
+        "low_confidence"
+      ],
+      "high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mx07-0-009",
+      "heard": "Corderone",
+      "recorded": "amiodarone",
+      "confidence": 0.889,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mx07-0-011",
+      "heard": "Compose",
+      "recorded": "diazepam",
+      "confidence": 0.889,
+      "match": "by sound",
+      "flags": [
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mx07-0-012",
+      "heard": "mitroglycerin",
+      "recorded": "nitroglycerin",
+      "confidence": 0.923,
+      "match": "by sound",
+      "flags": [
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mx07-0-013",
+      "heard": "cyclocaparin",
+      "recorded": "tranexamic acid",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mx07-1-000",
+      "heard": "nalpinephrine",
+      "recorded": "norepinephrine",
+      "confidence": 0.857,
+      "match": "by sound",
+      "flags": [
+        "sound_alike_drug",
+        "dose_out_of_range"
+      ],
+      "high": [
+        "dose_out_of_range",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mx07-1-002",
+      "heard": "benaduel",
+      "recorded": "diphenhydramine",
+      "confidence": 0.889,
+      "match": "by sound",
+      "flags": [
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mx07-1-019",
+      "heard": "phenamine",
+      "recorded": "pheniramine",
+      "confidence": 0.9,
+      "match": "by sound",
+      "flags": [
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mc01-0-000",
+      "heard": "Furosmide",
+      "recorded": "furosemide",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "ambiguous_dose",
+        "sound_alike_drug",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "ambiguous_dose",
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mc01-0-002",
+      "heard": "magsulfate",
+      "recorded": "magnesium sulfate",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "self_correction",
+        "field_missing",
+        "low_confidence"
+      ],
+      "high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mc01-0-005",
+      "heard": "Norepineframe",
+      "recorded": "norepinephrine",
+      "confidence": 0.857,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "self_correction",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mc01-0-013",
+      "heard": "Pentazocine-60",
+      "recorded": "pentazocine",
+      "confidence": 0.88,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "low_confidence"
+      ],
+      "high": []
+    },
+    {
+      "utt": "mc01-1-019",
+      "heard": "corderone",
+      "recorded": "amiodarone",
+      "confidence": 0.889,
+      "match": "by sound",
+      "flags": [
+        "self_correction",
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mc01-2-004",
+      "heard": "at even",
+      "recorded": "lorazepam",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "self_correction",
+        "sound_alike_drug",
+        "possible_not_given"
+      ],
+      "high": [
+        "possible_not_given",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mc01-2-007",
+      "heard": "paracetamoliol",
+      "recorded": "paracetamol",
+      "confidence": 0.88,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "self_correction",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mc01-2-009",
+      "heard": "metroglycerin",
+      "recorded": "nitroglycerin",
+      "confidence": 0.875,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug",
+        "dose_out_of_range"
+      ],
+      "high": [
+        "dose_out_of_range",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mc01-2-015",
+      "heard": "hydroportisone",
+      "recorded": "hydrocortisone",
+      "confidence": 0.929,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mi02-0-000",
+      "heard": "anguised",
+      "recorded": "nitroglycerin",
+      "confidence": 0.933,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mi02-0-004",
+      "heard": "paranorm",
+      "recorded": "metoclopramide",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mi02-0-008",
+      "heard": "solumadrolite",
+      "recorded": "methylprednisolone",
+      "confidence": 0.923,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mi02-0-013",
+      "heard": "an adeno jiktiv",
+      "recorded": "adenosine",
+      "confidence": 0.857,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mi02-1-006",
+      "heard": "Cacol",
+      "recorded": "calcium chloride",
+      "confidence": 0.889,
+      "match": "by sound",
+      "flags": [
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mi02-1-009",
+      "heard": "Pexamethasone",
+      "recorded": "dexamethasone",
+      "confidence": 0.923,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mi02-1-017",
+      "heard": "Solucortif",
+      "recorded": "hydrocortisone",
+      "confidence": 0.9,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "mi02-1-019",
+      "heard": "glucogen",
+      "recorded": "glucagon",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "hi01-0-000",
+      "heard": "furosmide",
+      "recorded": "furosemide",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "hi01-0-005",
+      "heard": "Mirzolam",
+      "recorded": "midazolam",
+      "confidence": 0.889,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "hi01-0-006",
+      "heard": "dextrose-25G",
+      "recorded": "dextrose",
+      "confidence": 0.923,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "hi01-1-003",
+      "heard": "ipratopium",
+      "recorded": "ipratropium",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "field_missing",
+        "low_confidence",
+        "low_asr_confidence"
+      ],
+      "high": []
+    },
+    {
+      "utt": "hi01-1-011",
+      "heard": "Solocort F100",
+      "recorded": "hydrocortisone",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "hi01-1-012",
+      "heard": "Phenamine",
+      "recorded": "pheniramine",
+      "confidence": 0.9,
+      "match": "by sound",
+      "flags": [
+        "field_missing",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "hi01-2-005",
+      "heard": "g-ketamine",
+      "recorded": "ketamine",
+      "confidence": 0.889,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "field_missing",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "hi01-2-015",
+      "heard": "salucortif",
+      "recorded": "hydrocortisone",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "cn04-0-008",
+      "heard": "phenamine",
+      "recorded": "pheniramine",
+      "confidence": 0.9,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug",
+        "possible_not_given",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "possible_not_given",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "cn04-0-013",
+      "heard": "Keterol",
+      "recorded": "ketorolac",
+      "confidence": 0.94,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug",
+        "possible_not_given"
+      ],
+      "high": [
+        "possible_not_given",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "cn04-1-013",
+      "heard": "phenamine",
+      "recorded": "pheniramine",
+      "confidence": 0.9,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug",
+        "possible_not_given"
+      ],
+      "high": [
+        "possible_not_given",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "cn04-1-018",
+      "heard": "hydropotisone",
+      "recorded": "hydrocortisone",
+      "confidence": 0.889,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "sound_alike_drug",
+        "possible_not_given"
+      ],
+      "high": [
+        "possible_not_given",
+        "sound_alike_drug"
+      ]
+    },
+    {
+      "utt": "tc01-0-009",
+      "heard": "metazolam",
+      "recorded": "midazolam",
+      "confidence": 0.889,
+      "match": "by sound",
+      "flags": [
+        "time_not_stated",
+        "sound_alike_drug"
+      ],
+      "high": [
+        "sound_alike_drug"
+      ]
+    }
+  ],
+  "unknown_drug_cases": [
+    {
+      "utt": "mb07-0-011",
+      "heard": "Vomicind",
+      "recorded": "vomicind",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mb07-0-014",
+      "heard": "Tixa",
+      "recorded": "tixa",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "possible_not_given",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "possible_not_given"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mb07-0-017",
+      "heard": "Matbok",
+      "recorded": "matbok",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "drug_not_in_lexicon",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mm02-1-000",
+      "heard": "Thaxia",
+      "recorded": "thaxia",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "field_missing",
+        "field_missing",
+        "possible_not_given",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing",
+        "possible_not_given"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mm02-2-015",
+      "heard": "averse",
+      "recorded": "averse",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "drug_not_in_lexicon",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mx07-0-001",
+      "heard": "glucetin",
+      "recorded": "glucetin",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mx07-0-004",
+      "heard": "cackle",
+      "recorded": "cackle",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mx07-0-015",
+      "heard": "Epitropion",
+      "recorded": "epitropion",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mx07-0-018",
+      "heard": "ringless",
+      "recorded": "ringless",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mx07-1-000",
+      "heard": "nacin",
+      "recorded": "nacin",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mx07-1-002",
+      "heard": "linolectate",
+      "recorded": "linolectate",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mx07-1-005",
+      "heard": "metrolizarin",
+      "recorded": "metrolizarin",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mx07-1-006",
+      "heard": "naco",
+      "recorded": "naco",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "field_missing",
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mx07-1-011",
+      "heard": "valion",
+      "recorded": "valion",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mx07-1-013",
+      "heard": "drumming",
+      "recorded": "drumming",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mx07-1-015",
+      "heard": "adenogenic",
+      "recorded": "adenogenic",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mx07-1-019",
+      "heard": "catalyzed",
+      "recorded": "catalyzed",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mc01-0-008",
+      "heard": "Nesolam",
+      "recorded": "nesolam",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "self_correction",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mc01-0-011",
+      "heard": "thalumidiol",
+      "recorded": "thalumidiol",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "self_correction",
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mc01-0-012",
+      "heard": "Heterol",
+      "recorded": "heterol",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "self_correction",
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mc01-1-011",
+      "heard": "VOMITINE",
+      "recorded": "vomitine",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mc01-2-001",
+      "heard": "Benetryl",
+      "recorded": "benetryl",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "self_correction",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "mi02-1-018",
+      "heard": "tivendat",
+      "recorded": "tivendat",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "drug_not_in_lexicon",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "junk"
+    },
+    {
+      "utt": "hi01-0-007",
+      "heard": "Chloron",
+      "recorded": "chloron",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "drug_not_in_lexicon",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "hi01-0-008",
+      "heard": "benatev",
+      "recorded": "benatev",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "drug_not_in_lexicon",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "hi01-0-011",
+      "heard": "slows",
+      "recorded": "slows",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "drug_not_in_lexicon",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "hi01-1-016",
+      "heard": "Textures",
+      "recorded": "textures",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "field_missing",
+        "drug_not_in_lexicon",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "hi01-2-012",
+      "heard": "kefelol",
+      "recorded": "kefelol",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "cn04-0-000",
+      "heard": "NOPY",
+      "recorded": "nopy",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "possible_not_given",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "possible_not_given"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "cn04-0-004",
+      "heard": "Koehler",
+      "recorded": "koehler",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "possible_not_given",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "possible_not_given"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "cn04-0-010",
+      "heard": "perinol",
+      "recorded": "perinol",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "possible_not_given",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "possible_not_given"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "cn04-0-015",
+      "heard": "spring",
+      "recorded": "spring",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "possible_not_given",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "possible_not_given"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "cn04-1-003",
+      "heard": "Larco",
+      "recorded": "larco",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "possible_not_given",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing",
+        "possible_not_given"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "cn04-1-012",
+      "heard": "noregenerant",
+      "recorded": "noregenerant",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "drug_not_in_lexicon",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "cn04-1-016",
+      "heard": "Homefuls",
+      "recorded": "homefuls",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "cm05-1-002",
+      "heard": "Deromegnesium",
+      "recorded": "deromegnesium",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "other"
+    },
+    {
+      "utt": "cm05-1-006",
+      "heard": "Ceramachinesium",
+      "recorded": "ceramachinesium",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "other"
+    },
+    {
+      "utt": "cm05-1-012",
+      "heard": "Ceramagnesian",
+      "recorded": "ceramagnesian",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "other"
+    },
+    {
+      "utt": "tc01-0-002",
+      "heard": "adenergic",
+      "recorded": "adenergic",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "tc01-0-016",
+      "heard": "adenogenic",
+      "recorded": "adenogenic",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "drug_not_in_lexicon"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "tc01-1-006",
+      "heard": "Vucose",
+      "recorded": "vucose",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "ambiguous_dose",
+        "drug_not_in_lexicon"
+      ],
+      "high": [
+        "ambiguous_dose",
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "drug"
+    },
+    {
+      "utt": "tc01-1-013",
+      "heard": "elida",
+      "recorded": "elida",
+      "confidence": 1.0,
+      "match": "exact word",
+      "flags": [
+        "time_not_stated",
+        "field_missing",
+        "field_missing",
+        "drug_not_in_lexicon",
+        "low_asr_confidence"
+      ],
+      "high": [
+        "drug_not_in_lexicon",
+        "field_missing"
+      ],
+      "label": "junk"
+    }
+  ]
+}
