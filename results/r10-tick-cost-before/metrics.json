@@ -1,0 +1,802 @@
+{
+  "commit": "157ae7a",
+  "clips": 480,
+  "edits": 2,
+  "correct_by_class": {
+    "alias/brand spelling variant": 20,
+    "canonical spelling variant": 25,
+    "look-alike": 10
+  },
+  "wrong_by_class": {
+    "look-alike": 2,
+    "alias/brand spelling variant": 2
+  },
+  "options": {
+    "current rule (round 9/10 code)": {
+      "all_ticks_per_note": {
+        "notes": 480,
+        "mean": 0.76,
+        "p90": 2,
+        "max": 5,
+        "notes_with_any": 236
+      },
+      "sound_ticks_per_note": {
+        "notes": 480,
+        "mean": 0.11,
+        "p90": 1,
+        "max": 2,
+        "notes_with_any": 52
+      },
+      "wrong_still_sound_flagged": 4,
+      "wrong_with_any_high_flag": 4,
+      "correct_still_ticked": 49
+    },
+    "exempt canonical spelling variants": {
+      "all_ticks_per_note": {
+        "notes": 480,
+        "mean": 0.719,
+        "p90": 2,
+        "max": 5,
+        "notes_with_any": 229
+      },
+      "sound_ticks_per_note": {
+        "notes": 480,
+        "mean": 0.069,
+        "p90": 0,
+        "max": 2,
+        "notes_with_any": 32
+      },
+      "wrong_still_sound_flagged": 4,
+      "wrong_with_any_high_flag": 4,
+      "correct_still_ticked": 29
+    },
+    "exempt canonical + alias/brand spelling variants": {
+      "all_ticks_per_note": {
+        "notes": 480,
+        "mean": 0.675,
+        "p90": 2,
+        "max": 4,
+        "notes_with_any": 223
+      },
+      "sound_ticks_per_note": {
+        "notes": 480,
+        "mean": 0.025,
+        "p90": 0,
+        "max": 1,
+        "notes_with_any": 12
+      },
+      "wrong_still_sound_flagged": 2,
+      "wrong_with_any_high_flag": 4,
+      "correct_still_ticked": 10
+    }
+  },
+  "correct": [
+    {
+      "utt": "mb07-0-004",
+      "heard": "Solumadrol",
+      "recorded": "methylprednisolone",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 14,
+      "edits_to_nearest_alias": 1,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mb07-1-000",
+      "heard": "Morphin",
+      "recorded": "morphine",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 8,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mb07-1-016",
+      "heard": "Ventiline",
+      "recorded": "salbutamol",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 10,
+      "edits_to_nearest_alias": 2,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mb07-1-018",
+      "heard": "lorazepam1",
+      "recorded": "lorazepam",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 0,
+      "edits_to_nearest_alias": 7,
+      "correct": true,
+      "flag": "low_confidence",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mm02-0-008",
+      "heard": "Narcon",
+      "recorded": "naloxone",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 4,
+      "edits_to_nearest_alias": 1,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mm02-0-013",
+      "heard": "furosenide",
+      "recorded": "furosemide",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 3,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mm02-1-004",
+      "heard": "decadrin",
+      "recorded": "dexamethasone",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 9,
+      "edits_to_nearest_alias": 1,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mm02-1-014",
+      "heard": "Salut medral",
+      "recorded": "methylprednisolone",
+      "class": "look-alike",
+      "edits_to_canonical": 15,
+      "edits_to_nearest_alias": 3,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mm02-1-017",
+      "heard": "Atropina",
+      "recorded": "atropine",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 7,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mm02-2-002",
+      "heard": "sublimates",
+      "recorded": "fentanyl",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 9,
+      "edits_to_nearest_alias": 2,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mm02-2-004",
+      "heard": "add an objects",
+      "recorded": "adenosine",
+      "class": "look-alike",
+      "edits_to_canonical": 8,
+      "edits_to_nearest_alias": 4,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mm02-2-005",
+      "heard": "Kettler",
+      "recorded": "ketamine",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 5,
+      "edits_to_nearest_alias": 2,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mm02-2-009",
+      "heard": "adextrose",
+      "recorded": "dextrose",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 6,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mm02-2-012",
+      "heard": "adexa",
+      "recorded": "dexamethasone",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 10,
+      "edits_to_nearest_alias": 1,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mm02-2-013",
+      "heard": "ahydrocortisone",
+      "recorded": "hydrocortisone",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 6,
+      "correct": true,
+      "flag": "low_confidence",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mm02-2-018",
+      "heard": "add an object",
+      "recorded": "adenosine",
+      "class": "look-alike",
+      "edits_to_canonical": 7,
+      "edits_to_nearest_alias": 3,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mx07-0-000",
+      "heard": "It prevents",
+      "recorded": "ipratropium",
+      "class": "look-alike",
+      "edits_to_canonical": 9,
+      "edits_to_nearest_alias": 3,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mx07-0-007",
+      "heard": "glucagon4",
+      "recorded": "glucagon",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 0,
+      "edits_to_nearest_alias": 1,
+      "correct": true,
+      "flag": "low_confidence",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mx07-0-009",
+      "heard": "Corderone",
+      "recorded": "amiodarone",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 5,
+      "edits_to_nearest_alias": 1,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mx07-0-011",
+      "heard": "Compose",
+      "recorded": "diazepam",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 8,
+      "edits_to_nearest_alias": 2,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mx07-0-012",
+      "heard": "mitroglycerin",
+      "recorded": "nitroglycerin",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 2,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mx07-0-013",
+      "heard": "cyclocaparin",
+      "recorded": "tranexamic acid",
+      "class": "look-alike",
+      "edits_to_canonical": 11,
+      "edits_to_nearest_alias": 4,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mx07-1-000",
+      "heard": "nalpinephrine",
+      "recorded": "norepinephrine",
+      "class": "look-alike",
+      "edits_to_canonical": 3,
+      "edits_to_nearest_alias": 8,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "dose_out_of_range"
+      ]
+    },
+    {
+      "utt": "mx07-1-002",
+      "heard": "benaduel",
+      "recorded": "diphenhydramine",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 12,
+      "edits_to_nearest_alias": 2,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mx07-1-019",
+      "heard": "phenamine",
+      "recorded": "pheniramine",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 2,
+      "edits_to_nearest_alias": 7,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mc01-0-000",
+      "heard": "Furosmide",
+      "recorded": "furosemide",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 3,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "ambiguous_dose",
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mc01-0-002",
+      "heard": "magsulfate",
+      "recorded": "magnesium sulfate",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 6,
+      "edits_to_nearest_alias": 0,
+      "correct": true,
+      "flag": "low_confidence",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mc01-0-005",
+      "heard": "Norepineframe",
+      "recorded": "norepinephrine",
+      "class": "look-alike",
+      "edits_to_canonical": 4,
+      "edits_to_nearest_alias": 7,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mc01-0-013",
+      "heard": "Pentazocine-60",
+      "recorded": "pentazocine",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 0,
+      "edits_to_nearest_alias": 7,
+      "correct": true,
+      "flag": "low_confidence",
+      "other_high": []
+    },
+    {
+      "utt": "mc01-1-019",
+      "heard": "corderone",
+      "recorded": "amiodarone",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 5,
+      "edits_to_nearest_alias": 1,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mc01-2-004",
+      "heard": "at even",
+      "recorded": "lorazepam",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 7,
+      "edits_to_nearest_alias": 2,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "possible_not_given"
+      ]
+    },
+    {
+      "utt": "mc01-2-007",
+      "heard": "paracetamoliol",
+      "recorded": "paracetamol",
+      "class": "look-alike",
+      "edits_to_canonical": 3,
+      "edits_to_nearest_alias": 9,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mc01-2-009",
+      "heard": "metroglycerin",
+      "recorded": "nitroglycerin",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 2,
+      "edits_to_nearest_alias": 3,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "dose_out_of_range"
+      ]
+    },
+    {
+      "utt": "mc01-2-015",
+      "heard": "hydroportisone",
+      "recorded": "hydrocortisone",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 6,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "mi02-0-000",
+      "heard": "anguised",
+      "recorded": "nitroglycerin",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 11,
+      "edits_to_nearest_alias": 1,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mi02-0-004",
+      "heard": "paranorm",
+      "recorded": "metoclopramide",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 11,
+      "edits_to_nearest_alias": 2,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mi02-0-008",
+      "heard": "solumadrolite",
+      "recorded": "methylprednisolone",
+      "class": "look-alike",
+      "edits_to_canonical": 13,
+      "edits_to_nearest_alias": 4,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mi02-0-013",
+      "heard": "an adeno jiktiv",
+      "recorded": "adenosine",
+      "class": "look-alike",
+      "edits_to_canonical": 7,
+      "edits_to_nearest_alias": 6,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mi02-1-006",
+      "heard": "Cacol",
+      "recorded": "calcium chloride",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 11,
+      "edits_to_nearest_alias": 1,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mi02-1-009",
+      "heard": "Pexamethasone",
+      "recorded": "dexamethasone",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 9,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mi02-1-017",
+      "heard": "Solucortif",
+      "recorded": "hydrocortisone",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 9,
+      "edits_to_nearest_alias": 1,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "mi02-1-019",
+      "heard": "glucogen",
+      "recorded": "glucagon",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 2,
+      "edits_to_nearest_alias": 1,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "hi01-0-000",
+      "heard": "furosmide",
+      "recorded": "furosemide",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 3,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "hi01-0-005",
+      "heard": "Mirzolam",
+      "recorded": "midazolam",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 2,
+      "edits_to_nearest_alias": 2,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "hi01-0-006",
+      "heard": "dextrose-25G",
+      "recorded": "dextrose",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 6,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "hi01-1-003",
+      "heard": "ipratopium",
+      "recorded": "ipratropium",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 6,
+      "correct": true,
+      "flag": "low_confidence",
+      "other_high": []
+    },
+    {
+      "utt": "hi01-1-011",
+      "heard": "Solocort F100",
+      "recorded": "hydrocortisone",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 9,
+      "edits_to_nearest_alias": 2,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "hi01-1-012",
+      "heard": "Phenamine",
+      "recorded": "pheniramine",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 2,
+      "edits_to_nearest_alias": 7,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "hi01-2-005",
+      "heard": "g-ketamine",
+      "recorded": "ketamine",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 1,
+      "edits_to_nearest_alias": 5,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "hi01-2-015",
+      "heard": "salucortif",
+      "recorded": "hydrocortisone",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 9,
+      "edits_to_nearest_alias": 2,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    },
+    {
+      "utt": "cn04-0-008",
+      "heard": "phenamine",
+      "recorded": "pheniramine",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 2,
+      "edits_to_nearest_alias": 7,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "possible_not_given"
+      ]
+    },
+    {
+      "utt": "cn04-0-013",
+      "heard": "Keterol",
+      "recorded": "ketorolac",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 3,
+      "edits_to_nearest_alias": 1,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "possible_not_given"
+      ]
+    },
+    {
+      "utt": "cn04-1-013",
+      "heard": "phenamine",
+      "recorded": "pheniramine",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 2,
+      "edits_to_nearest_alias": 7,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "possible_not_given"
+      ]
+    },
+    {
+      "utt": "cn04-1-018",
+      "heard": "hydropotisone",
+      "recorded": "hydrocortisone",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 2,
+      "edits_to_nearest_alias": 7,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "possible_not_given"
+      ]
+    },
+    {
+      "utt": "tc01-0-009",
+      "heard": "metazolam",
+      "recorded": "midazolam",
+      "class": "canonical spelling variant",
+      "edits_to_canonical": 2,
+      "edits_to_nearest_alias": 2,
+      "correct": true,
+      "flag": "sound_alike_drug",
+      "other_high": []
+    }
+  ],
+  "wrong": [
+    {
+      "utt": "mc01-1-011",
+      "heard": "ASTEL",
+      "recorded": "salbutamol",
+      "class": "look-alike",
+      "edits_to_canonical": 7,
+      "edits_to_nearest_alias": 4,
+      "correct": false,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "hi01-1-019",
+      "heard": "At event",
+      "recorded": "ipratropium",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 9,
+      "edits_to_nearest_alias": 2,
+      "correct": false,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "dose_out_of_range"
+      ]
+    },
+    {
+      "utt": "hi01-1-019",
+      "heard": "chadrin",
+      "recorded": "amiodarone",
+      "class": "look-alike",
+      "edits_to_canonical": 7,
+      "edits_to_nearest_alias": 5,
+      "correct": false,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "field_missing"
+      ]
+    },
+    {
+      "utt": "cn04-0-012",
+      "heard": "salin",
+      "recorded": "normal saline",
+      "class": "alias/brand spelling variant",
+      "edits_to_canonical": 7,
+      "edits_to_nearest_alias": 1,
+      "correct": false,
+      "flag": "sound_alike_drug",
+      "other_high": [
+        "possible_not_given",
+        "unit_not_allowed"
+      ]
+    }
+  ]
+}

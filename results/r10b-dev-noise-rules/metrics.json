@@ -1,0 +1,297 @@
+{
+  "config": {
+    "split": "dev",
+    "mode": "noisy",
+    "extractor": "rules",
+    "tag": "r10b-dev-noise-rules",
+    "n_utterances": 160,
+    "n_clips": 640,
+    "split_sha256": null,
+    "commit_at_start": "8761138",
+    "started": "2026-11-15T23:56:30.545380+05:30",
+    "created": "2026-11-15T23:56:30.948976+05:30",
+    "source_label": "synthetic speech (Piper)",
+    "asr_model": "faster-whisper-small.en",
+    "asr_prompt_aliases": false,
+    "asr_word_p_threshold": 0.2,
+    "llm_model": null,
+    "transcripts_from": "results/r3-dev-noise-paired-hybrid/transcripts.jsonl"
+  },
+  "metrics": {
+    "entity": {
+      "micro": {
+        "tp": 724,
+        "gold": 1482,
+        "pred": 903,
+        "precision": 0.8018,
+        "recall": 0.4885,
+        "f1": 0.6071
+      },
+      "per_field": {
+        "drug": {
+          "tp": 324,
+          "gold": 480,
+          "pred": 390,
+          "precision": 0.8308,
+          "recall": 0.675,
+          "f1": 0.7448
+        },
+        "dose_value": {
+          "tp": 174,
+          "gold": 360,
+          "pred": 241,
+          "precision": 0.722,
+          "recall": 0.4833,
+          "f1": 0.579
+        },
+        "dose_unit": {
+          "tp": 144,
+          "gold": 360,
+          "pred": 174,
+          "precision": 0.8276,
+          "recall": 0.4,
+          "f1": 0.5393
+        },
+        "route": {
+          "tp": 45,
+          "gold": 180,
+          "pred": 60,
+          "precision": 0.75,
+          "recall": 0.25,
+          "f1": 0.375
+        },
+        "time": {
+          "tp": 37,
+          "gold": 102,
+          "pred": 38,
+          "precision": 0.9737,
+          "recall": 0.3627,
+          "f1": 0.5286
+        },
+        "procedure": {
+          "tp": 0,
+          "gold": 0,
+          "pred": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      }
+    },
+    "record_exact_match": {
+      "count": 200,
+      "denominator": 480,
+      "rate": 0.4167
+    },
+    "dangerous_error_r10": {
+      "count": 6,
+      "denominator": 360,
+      "rate": 0.0167,
+      "uncaught_by_kind": {
+        "wrong dose/unit/route": 4,
+        "wrong drug": 2
+      },
+      "errors_by_kind": {
+        "omitted dose/unit/route (shown as not stated; not counted)": 86,
+        "wrong dose/unit/route": 15,
+        "wrong drug": 43,
+        "status (not given recorded as given)": 10
+      }
+    },
+    "dangerous_error": {
+      "count": 3,
+      "denominator": 240,
+      "rate": 0.0125
+    },
+    "dangerous_error_lenient": {
+      "count": 3,
+      "denominator": 240,
+      "rate": 0.0125
+    },
+    "context_error": {
+      "count": 20,
+      "denominator": 240,
+      "rate": 0.0833
+    },
+    "administration_status_error": {
+      "count": 10,
+      "denominator": 120,
+      "rate": 0.0833
+    },
+    "anomaly_flagged": {
+      "count": 6,
+      "denominator": 9,
+      "rate": 0.6667
+    },
+    "source_quote_coverage": {
+      "count": 972,
+      "denominator": 972,
+      "rate": 1.0
+    }
+  },
+  "groups": {
+    "accent:gb": {
+      "entity_f1": 0.5333,
+      "record_exact_match": 0.5156,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 8,
+        "rate": 0.0
+      },
+      "dangerous_error_r10": {
+        "count": 0,
+        "denominator": 28,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 20,
+        "rate": 0.0
+      }
+    },
+    "accent:in": {
+      "entity_f1": 0.5854,
+      "record_exact_match": 0.3271,
+      "dangerous_error": {
+        "count": 4,
+        "denominator": 284,
+        "rate": 0.0141
+      },
+      "dangerous_error_r10": {
+        "count": 8,
+        "denominator": 364,
+        "rate": 0.022
+      },
+      "administration_status_error": {
+        "count": 12,
+        "denominator": 80,
+        "rate": 0.15
+      }
+    },
+    "accent:us": {
+      "entity_f1": 0.7252,
+      "record_exact_match": 0.6757,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 28,
+        "rate": 0.0
+      },
+      "dangerous_error_r10": {
+        "count": 0,
+        "denominator": 88,
+        "rate": 0.0
+      },
+      "administration_status_error": {
+        "count": 0,
+        "denominator": 60,
+        "rate": 0.0
+      }
+    },
+    "snr:10": {
+      "entity_f1": 0.6131,
+      "record_exact_match": 0.4375,
+      "dangerous_error": {
+        "count": 1,
+        "denominator": 80,
+        "rate": 0.0125
+      },
+      "dangerous_error_r10": {
+        "count": 2,
+        "denominator": 120,
+        "rate": 0.0167
+      },
+      "administration_status_error": {
+        "count": 4,
+        "denominator": 40,
+        "rate": 0.1
+      }
+    },
+    "snr:20": {
+      "entity_f1": 0.629,
+      "record_exact_match": 0.4313,
+      "dangerous_error": {
+        "count": 2,
+        "denominator": 80,
+        "rate": 0.025
+      },
+      "dangerous_error_r10": {
+        "count": 3,
+        "denominator": 120,
+        "rate": 0.025
+      },
+      "administration_status_error": {
+        "count": 2,
+        "denominator": 40,
+        "rate": 0.05
+      }
+    },
+    "snr:5": {
+      "entity_f1": 0.5781,
+      "record_exact_match": 0.3812,
+      "dangerous_error": {
+        "count": 0,
+        "denominator": 80,
+        "rate": 0.0
+      },
+      "dangerous_error_r10": {
+        "count": 1,
+        "denominator": 120,
+        "rate": 0.0083
+      },
+      "administration_status_error": {
+        "count": 4,
+        "denominator": 40,
+        "rate": 0.1
+      }
+    },
+    "snr:clean": {
+      "entity_f1": 0.6244,
+      "record_exact_match": 0.4562,
+      "dangerous_error": {
+        "count": 1,
+        "denominator": 80,
+        "rate": 0.0125
+      },
+      "dangerous_error_r10": {
+        "count": 2,
+        "denominator": 120,
+        "rate": 0.0167
+      },
+      "administration_status_error": {
+        "count": 2,
+        "denominator": 40,
+        "rate": 0.05
+      }
+    }
+  },
+  "latency_s": {
+    "n": 640,
+    "p50": 0.0002,
+    "p95": 0.0004,
+    "mean": 0.0002
+  },
+  "leakage": {
+    "test_families_in_train_or_dev": 0,
+    "test_patterns_in_final_test": 0
+  },
+  "asr": {
+    "wer": 0.4626,
+    "wer_definition": "reference and hypothesis normalised the same way (eval/asr_text.py)",
+    "wer_raw": 0.6831,
+    "drug_term_recall": 0.6,
+    "drug_term_recall_den": 640,
+    "drug_term_recall_surface": 0.5953,
+    "wer_by_accent": {
+      "us": 0.1905,
+      "in": 0.5633,
+      "gb": 0.2923
+    }
+  },
+  "noise_curve": {
+    "clean": 0.6244,
+    "20": 0.629,
+    "10": 0.6131,
+    "5": 0.5781
+  },
+  "noise_curve_paired_on": "the same 160 utterances (one voice each) at every condition"
+}

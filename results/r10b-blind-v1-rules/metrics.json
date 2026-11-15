@@ -1,0 +1,192 @@
+{
+  "conversion": {
+    "drug: in lexicon": 33,
+    "unit: mapped": 28,
+    "route: mapped": 31,
+    "status: given": 34,
+    "time: unparseable -> not stated": 2,
+    "status: not_given": 2,
+    "dose: text, not one number -> no single gold dose": 4,
+    "drug: NOT in lexicon (kept as written)": 4,
+    "status: measurement": 3,
+    "procedure: in lexicon": 3,
+    "status: not_done": 1,
+    "concentration: no field in the repo's gold format (dropped)": 1
+  },
+  "results": {
+    "rules": {
+      "commit": "8761138",
+      "tiers": {
+        "core": {
+          "utterances": 28,
+          "entity_f1": 0.906,
+          "precision": 0.9464,
+          "recall": 0.8689,
+          "exact_match": {
+            "count": 25,
+            "denominator": 36,
+            "rate": 0.6944
+          },
+          "dangerous_error_r10": {
+            "count": 1,
+            "denominator": 33,
+            "rate": 0.0303,
+            "uncaught_by_kind": {
+              "wrong dose/unit/route": 1
+            },
+            "errors_by_kind": {
+              "omitted dose/unit/route (shown as not stated; not counted)": 3,
+              "wrong dose/unit/route": 4
+            }
+          },
+          "dangerous_error": {
+            "count": 0,
+            "denominator": 30,
+            "rate": 0.0
+          },
+          "dangerous_error_lenient": {
+            "count": 0,
+            "denominator": 30,
+            "rate": 0.0
+          },
+          "administration_status_error": {
+            "count": 0,
+            "denominator": 3,
+            "rate": 0.0
+          },
+          "context_error": {
+            "count": 0,
+            "denominator": 6,
+            "rate": 0.0
+          },
+          "flags_raised": 60,
+          "flags_by_code": {
+            "time_not_stated": 28,
+            "field_missing": 14,
+            "possible_not_given": 3,
+            "ambiguous_dose": 2,
+            "repeat_dose_inferred": 2,
+            "self_correction": 2,
+            "dose_range_stated": 2,
+            "possible_measurement": 1,
+            "sound_alike_drug": 1,
+            "duplicate_dose": 1,
+            "repeat_too_soon": 1,
+            "dose_below_range": 1,
+            "dose_out_of_range": 1,
+            "drug_not_in_lexicon": 1
+          }
+        },
+        "stretch": {
+          "utterances": 4,
+          "entity_f1": 0.5714,
+          "precision": 0.6154,
+          "recall": 0.5333,
+          "exact_match": {
+            "count": 0,
+            "denominator": 4,
+            "rate": 0.0
+          },
+          "dangerous_error_r10": {
+            "count": 0,
+            "denominator": 4,
+            "rate": 0.0,
+            "uncaught_by_kind": {},
+            "errors_by_kind": {
+              "omitted dose/unit/route (shown as not stated; not counted)": 3,
+              "wrong dose/unit/route": 1
+            }
+          },
+          "dangerous_error": {
+            "count": 0,
+            "denominator": 4,
+            "rate": 0.0
+          },
+          "dangerous_error_lenient": {
+            "count": 0,
+            "denominator": 4,
+            "rate": 0.0
+          },
+          "administration_status_error": {
+            "count": 0,
+            "denominator": 0,
+            "rate": 0.0
+          },
+          "context_error": {
+            "count": 0,
+            "denominator": 0,
+            "rate": 0.0
+          },
+          "flags_raised": 11,
+          "flags_by_code": {
+            "time_not_stated": 5,
+            "field_missing": 4,
+            "concentration_not_dose": 1,
+            "drug_not_in_lexicon": 1
+          }
+        },
+        "all": {
+          "utterances": 32,
+          "entity_f1": 0.8702,
+          "precision": 0.912,
+          "recall": 0.8321,
+          "exact_match": {
+            "count": 25,
+            "denominator": 40,
+            "rate": 0.625
+          },
+          "dangerous_error_r10": {
+            "count": 1,
+            "denominator": 37,
+            "rate": 0.027,
+            "uncaught_by_kind": {
+              "wrong dose/unit/route": 1
+            },
+            "errors_by_kind": {
+              "omitted dose/unit/route (shown as not stated; not counted)": 6,
+              "wrong dose/unit/route": 5
+            }
+          },
+          "dangerous_error": {
+            "count": 0,
+            "denominator": 34,
+            "rate": 0.0
+          },
+          "dangerous_error_lenient": {
+            "count": 0,
+            "denominator": 34,
+            "rate": 0.0
+          },
+          "administration_status_error": {
+            "count": 0,
+            "denominator": 3,
+            "rate": 0.0
+          },
+          "context_error": {
+            "count": 0,
+            "denominator": 6,
+            "rate": 0.0
+          },
+          "flags_raised": 71,
+          "flags_by_code": {
+            "time_not_stated": 33,
+            "field_missing": 18,
+            "possible_not_given": 3,
+            "ambiguous_dose": 2,
+            "repeat_dose_inferred": 2,
+            "self_correction": 2,
+            "dose_range_stated": 2,
+            "drug_not_in_lexicon": 2,
+            "possible_measurement": 1,
+            "sound_alike_drug": 1,
+            "duplicate_dose": 1,
+            "repeat_too_soon": 1,
+            "dose_below_range": 1,
+            "dose_out_of_range": 1,
+            "concentration_not_dose": 1
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "commit": "8761138",
+  "checks": {
+    "schema_valid": true,
+    "every_bundle_entry_in_pdf": true,
+    "morphine_not_given_status": "not-done",
+    "morphine_confirmed_yet_not_done": true,
+    "pdf_says_not_given": true,
+    "glucose_reading_status": "not-done",
+    "every_resource_has_subject": true,
+    "transcripts_as_communications": true,
+    "sound_alike_heard_word_in_pdf": true,
+    "unknown_drug_kept": true,
+    "concentration_has_no_dose": true,
+    "procedure_not_done": true,
+    "no_completed_not_given": true
+  },
+  "rows": [
+    {
+      "item": "epinephrine",
+      "heard": "adrenaline",
+      "fhir_status": "in-progress",
+      "review_status": "draft",
+      "dose": "0.3 mg",
+      "flags": [],
+      "in_pdf": true
+    },
+    {
+      "item": "aspirin",
+      "heard": "aspirin",
+      "fhir_status": "completed",
+      "review_status": "confirmed",
+      "dose": "300 mg",
+      "flags": [],
+      "in_pdf": true
+    },
+    {
+      "item": "morphine",
+      "heard": "morphine",
+      "fhir_status": "not-done",
+      "review_status": "confirmed",
+      "dose": "",
+      "flags": [
+        "field_missing",
+        "possible_not_given"
+      ],
+      "in_pdf": true
+    },
+    {
+      "item": "dextrose",
+      "heard": "glucose",
+      "fhir_status": "not-done",
+      "review_status": "draft",
+      "dose": "3.2 mmol",
+      "flags": [
+        "possible_measurement"
+      ],
+      "in_pdf": true
+    },
+    {
+      "item": "cpr",
+      "heard": null,
+      "fhir_status": "in-progress",
+      "review_status": "draft",
+      "dose": "",
+      "flags": [],
+      "in_pdf": true
+    },
+    {
+      "item": "ondansetron",
+      "heard": "ondansetron",
+      "fhir_status": "in-progress",
+      "review_status": "draft",
+      "dose": "2 mg",
+      "flags": [],
+      "in_pdf": true
+    },
+    {
+      "item": "furosemide",
+      "heard": "lasicks",
+      "fhir_status": "in-progress",
+      "review_status": "draft",
+      "dose": "40 mg",
+      "flags": [
+        "sound_alike_drug"
+      ],
+      "in_pdf": true
+    },
+    {
+      "item": "levetiracetam",
+      "heard": "levetiracetam",
+      "fhir_status": "in-progress",
+      "review_status": "draft",
+      "dose": "500 mg",
+      "flags": [
+        "drug_not_in_lexicon"
+      ],
+      "in_pdf": true
+    },
+    {
+      "item": "atropine",
+      "heard": "atropine",
+      "fhir_status": "in-progress",
+      "review_status": "draft",
+      "dose": "",
+      "flags": [
+        "concentration_not_dose"
+      ],
+      "in_pdf": true
+    },
+    {
+      "item": "iv cannulation",
+      "heard": null,
+      "fhir_status": "not-done",
+      "review_status": "draft",
+      "dose": "",
+      "flags": [
+        "possible_not_given"
+      ],
+      "in_pdf": true
+    }
+  ]
+}
