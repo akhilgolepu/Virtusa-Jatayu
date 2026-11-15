@@ -29,7 +29,9 @@ export TZ=Asia/Kolkata                   # WSL's clock is UTC; times are read re
 - the audit chain;
 - the port.
 
-The server alone is still `uvicorn jatayu.api:app --host 127.0.0.1 --port 8000`. Before the one test run, follow
+The server alone is still `uvicorn jatayu.api:app --host 127.0.0.1 --port 8000`. The read-back test harness is a
+separate app: `python -m scripts.readback_test_server`, then open `http://localhost:8010/readback-test`
+(`docs/architecture.md` §6d). Before the one test run, follow
 `docs/freeze_checklist.md`.
 
 ## NER: rules-first clinical NER, with optional LLM-assisted NER

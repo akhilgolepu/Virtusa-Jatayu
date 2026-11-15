@@ -128,6 +128,7 @@ weight range. Sources and every choice: `DECISIONS.md`.
 | Speech, rules: wrong drug recorded as a known drug | 10 entries (4 matched by sound, 6 a wrong drug word from the recogniser). Round 8: all 10 carried no identity flag stronger than low_confidence / low_asr_confidence. Round 9: the 4 sound matches need a "did you mean" tick; the 6 exact-word ones are unchanged (open) | dev · synthetic |
 | Speech, rules: `drug_not_in_lexicon` precision / recall (hand labels, 49 round-8 flags) | round 8: 0.776 / 1.000 (49 flags: 38 misheard drugs, 7 junk, 4 other); round 9: **0.881 / 0.974** (42 flags: 37 / 2 / 3) | **dev · synthetic · IN-SAMPLE**: the labels and the guard were made on these same clips; one labeller (the AI coding assistant used on this project), not reviewed by a second person, no agreement measured |
 | Speech, rules: sound-alike ticks per note (one note = one clip) mean / p90 / max | round 11 (every sound match below 0.95 ticked, generic-name variants included): **0.11 / 1 / 2** (49 correct and 4 wrong matches ticked); round 10's exemption gave 0.069 / 0 / 2 and was removed. All high-flag ticks per note: 0.76 / 2 / 5 | dev · synthetic · IN-SAMPLE |
+| Speech, rules: required fields (drug, dose, unit, route) left empty on the recorded entries, per note (one note = one clip): mean / p90 / max | **0.81 / 2 / 7** (228 of 480 notes have at least one; by field: drug 0, dose 51, unit 155, route 182). Apart: medication records with no entry at all, 0.20 / 1 / 2 per note (96 records; nothing on screen to fill: re-dictate or type) | dev · synthetic (`r12-required-fields`) |
 | Speech, same transcripts: rules / hybrid / LLM-only (experimental) entity F1 | 0.673 / 0.673 / 0.527 (round 5) | dev · synthetic |
 | Noise, same 160 utterances (hybrid): clean / 20 / 10 / 5 dB entity F1 | 0.653 / 0.633 / 0.624 / 0.567 | dev · synthetic |
 | Noisy speech (20/10/5 dB), dangerous errors: headline / matched-drug only | rules, round-11 code: **6 of 360** / 3 of 240; hybrid (round 3, re-scored): **≤ 10 of 360** / 3 of 240 | dev · synthetic |
@@ -202,6 +203,39 @@ accepts as a catch only a flag that must be ticked. So a record the old metric c
 
 The round-10 tick exemption added one: "furosenide 14 mg" for furosemide 40 mg, whose wrong dose was covered only by
 the drug's sound-alike tick. Round 11 removed the exemption, and the headline is back to 5 of 480.
+
+## 6d. Read-back test harness (round 12; built, no human results yet)
+
+This is a separate small app (`jatayu/readback_trial.py`; serve it with `python -m scripts.readback_test_server`, then
+open `http://localhost:8010/readback-test`). It has its own store; the pipeline and the demo database are not
+involved. It measures whether a person catches a wrong record from the confirm screen and the read-back.
+
+**Who:** a tester with an anonymous code (capital letters then digits, e.g. T01; names are refused) gets 24 synthetic
+records in a seeded random order, one record per drug:
+
+| Records | Count | How it differs from the order |
+|---|---|---|
+| Correct | 10 | — |
+| Wrong but valid drug | 6 | another drug valid at the same dose and route |
+| In-range wrong dose | 4 | another dose inside the drug's cited range |
+| Wrong route | 4 | another route the drug is given by |
+
+The validator raises no flag on any of these records, so only the tester can catch an error.
+
+**A trial:**
+1. The page shows the order to say aloud.
+2. It hides the order and shows the record on a confirm-style card, drug first, while the read-back speaks it.
+3. The tester presses **Confirm** or **Needs correction**.
+
+The page shows nothing about errors, flags, the mix or counts. The answer key stays in the server's store, and trial
+tokens are opaque.
+
+**Stored:** tester code, trial token, answer, response time. No names, no audio, no transcripts.
+
+**Output:** `python -m eval.readback_test_report` gives the catch rate per error type and the false-alarm rate on
+correct records, each with a Wilson 95% interval, aggregate only.
+
+**Testing:** dummy testers only (`tests/test_readback_trial.py`). There are no human results yet.
 
 ## 6a. Per entity type, dev
 
@@ -322,6 +356,11 @@ Changed in round 10:
   measured (the human test comes later).
 
 Still open:
+- **Required fields are not enforced at confirm time** (round 12, not fixed). A dose with no unit is confirmed with one
+  tick on `field_missing`; the unit stays empty, and no unit or explicit "unknown" is required. An entry whose drug is
+  blanked by an edit confirms with no tick at all. The unit and route lists offer "not stated", not "unknown", and the
+  edit form has no drug field. Pinned by strict expected-failure tests in `tests/test_required_fields_confirm.py`. On
+  dev speech, responders would face 0.81 empty required fields per note (p90 2, max 7).
 - **Drug identity (main limitation).** A wrong drug recorded from an exact drug word the recogniser wrote ("salbutamol"
   for "solumedrol", "atropine" for "epipen") has no flag of ours on its identity. On dev speech that is 6 of the 10
   wrong drugs recorded as a known drug. Only `low_asr_confidence` (informational) and any dose or route flags apply,
