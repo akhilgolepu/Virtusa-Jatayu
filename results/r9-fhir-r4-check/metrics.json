@@ -1,0 +1,151 @@
+{
+  "commit": "183bfac",
+  "fhir_resources_pydantic": "6.5.0 1.10.27",
+  "bundle_file": "results/r9-fhir-pdf-example/example.json",
+  "bundle": {
+    "valid": true,
+    "errors": []
+  },
+  "resources": [
+    {
+      "index": 0,
+      "type": "MedicationAdministration",
+      "status": "in-progress",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 1,
+      "type": "MedicationAdministration",
+      "status": "completed",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 2,
+      "type": "MedicationAdministration",
+      "status": "not-done",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 3,
+      "type": "MedicationAdministration",
+      "status": "not-done",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 4,
+      "type": "Procedure",
+      "status": "in-progress",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 5,
+      "type": "MedicationAdministration",
+      "status": "in-progress",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 6,
+      "type": "MedicationAdministration",
+      "status": "in-progress",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 7,
+      "type": "MedicationAdministration",
+      "status": "in-progress",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 8,
+      "type": "MedicationAdministration",
+      "status": "in-progress",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 9,
+      "type": "Procedure",
+      "status": "not-done",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 10,
+      "type": "Communication",
+      "status": "completed",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 11,
+      "type": "Communication",
+      "status": "completed",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 12,
+      "type": "Communication",
+      "status": "completed",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 13,
+      "type": "Communication",
+      "status": "completed",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 14,
+      "type": "Communication",
+      "status": "completed",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 15,
+      "type": "Communication",
+      "status": "completed",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 16,
+      "type": "Communication",
+      "status": "completed",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 17,
+      "type": "Communication",
+      "status": "completed",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 18,
+      "type": "Communication",
+      "status": "completed",
+      "valid": true,
+      "errors": []
+    },
+    {
+      "index": 19,
+      "type": "Communication",
+      "status": "completed",
+      "valid": true,
+      "errors": []
+    }
+  ]
+}

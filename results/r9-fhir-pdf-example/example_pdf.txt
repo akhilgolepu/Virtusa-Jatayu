@@ -1,0 +1,151 @@
+Decision-support demo, not a clinical device.
+Jatayu · page 1
+INCIDENT NOTE
+Synthetic example — not a real patient
+Started 15 Nov 2026, 23:27 · 10 entries · 10 utterances
+Incident b0086b0484274f8793032c3a872a9214 · Device jatayu-87df0626352a
+ENTRIES
+ #
+TIME
+DRUG / PROCEDURE
+DOSE
+ROUTE
+STATUS
+FLAGS
+01
+23:25
+epinephrine
+heard “adrenaline”
+0.3 mg
+IM
+DRAFT
+—
+02
+22:40
+aspirin
+300 mg
+PO
+CONFIRMED
+—
+03
+23:27
+morphine
+—
+—
+NOT GIVEN
+confirmed
+■ time_not_stated
+▲ field_missing
+■ field_missing
+▲ possible_not_given
+04
+23:27
+dextrose
+heard “glucose”
+3.2 mmol
+—
+READING
+draft
+■ time_not_stated
+■ field_missing
+▲ possible_measurement
+05
+23:27
+cpr
+DRAFT
+■ time_not_stated
+06
+23:27
+ondansetron
+2 mg
+IV
+DRAFT
+■ time_not_stated
+■ self_correction
+■ dose_below_range
+07
+23:27
+furosemide
+heard “furosemid”
+40 mg
+IV
+DRAFT
+■ time_not_stated
+▲ sound_alike_drug
+08
+23:27
+levetiracetam
+500 mg
+IV
+DRAFT
+■ time_not_stated
+▲ drug_not_in_lexicon
+09
+23:27
+atropine
+—
+—
+DRAFT
+■ time_not_stated
+▲ concentration_not_dose
+■ field_missing
+10
+23:27
+iv cannulation
+NOT GIVEN
+draft
+■ time_not_stated
+▲ possible_not_given
+RECORD HISTORY (APPEND-ONLY)
+ SEQ
+EVENT
+TIME
+ENTRY HASH
+1
+draft
+23:27
+0ed0cfd1d4c48ada435a1310…
+2
+draft
+23:27
+289c2d29a9c58616edd34e89…
+3
+draft
+23:27
+9492fb9145d1a49cf058dca6…
+4
+draft
+23:27
+84f71e9ba4b616d7a73762ad…
+5
+draft
+23:27
+825cb2b4ef2481c6028322de…
+6
+draft
+23:27
+79fa0b0fcd39cba476f55d6c…
+7
+draft
+23:27
+1907c55aa8e2f3b7b8049dc0…
+8
+draft
+23:27
+3d883f762c4b9b269bf27df7…
+9
+draft
+23:27
+4a0873bb4433fceab65a741d…
+10
+draft
+23:27
+92d6c72607868909a5b59e6a…
+11
+confirm
+23:27
+c32132abf6334bb3b67b13e5…
+AUDIT CHAIN
+Chain verified: 11 rows intact.
+Head hash c32132abf6334bb3b67b13e5bea2c5c5093e95f674b3f29657f6b227919da86c
+
