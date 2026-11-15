@@ -1,0 +1,423 @@
+{
+  "conversion": {
+    "drug: in lexicon": 32,
+    "unit: mapped": 28,
+    "route: mapped": 31,
+    "status: given": 34,
+    "time: unparseable -> not stated": 2,
+    "status: not_given": 2,
+    "dose: text, not one number -> no single gold dose": 4,
+    "drug: NOT in lexicon (kept as written)": 5,
+    "status: measurement": 3,
+    "procedure: NOT in lexicon (kept as written)": 2,
+    "status: not_done": 1,
+    "procedure: in lexicon": 1,
+    "concentration: no field in the repo's gold format (dropped)": 1
+  },
+  "results": {
+    "rules": {
+      "commit": "3b7be15",
+      "tiers": {
+        "core": {
+          "utterances": 28,
+          "entity_f1": 0.8398,
+          "precision": 0.8899,
+          "recall": 0.7951,
+          "exact_match": {
+            "count": 21,
+            "denominator": 36,
+            "rate": 0.5833
+          },
+          "dangerous_error": {
+            "count": 0,
+            "denominator": 30,
+            "rate": 0.0
+          },
+          "dangerous_error_lenient": {
+            "count": 0,
+            "denominator": 30,
+            "rate": 0.0
+          },
+          "administration_status_error": {
+            "count": 0,
+            "denominator": 3,
+            "rate": 0.0
+          },
+          "context_error": {
+            "count": 0,
+            "denominator": 6,
+            "rate": 0.0
+          },
+          "flags_raised": 57,
+          "flags_by_code": {
+            "time_not_stated": 27,
+            "field_missing": 13,
+            "possible_not_given": 3,
+            "ambiguous_dose": 2,
+            "repeat_dose_inferred": 2,
+            "self_correction": 2,
+            "dose_range_stated": 2,
+            "possible_measurement": 1,
+            "low_confidence": 1,
+            "duplicate_dose": 1,
+            "repeat_too_soon": 1,
+            "dose_below_range": 1,
+            "dose_out_of_range": 1
+          }
+        },
+        "stretch": {
+          "utterances": 4,
+          "entity_f1": 0.8571,
+          "precision": 0.9231,
+          "recall": 0.8,
+          "exact_match": {
+            "count": 1,
+            "denominator": 4,
+            "rate": 0.25
+          },
+          "dangerous_error": {
+            "count": 1,
+            "denominator": 4,
+            "rate": 0.25
+          },
+          "dangerous_error_lenient": {
+            "count": 1,
+            "denominator": 4,
+            "rate": 0.25
+          },
+          "administration_status_error": {
+            "count": 0,
+            "denominator": 0,
+            "rate": 0.0
+          },
+          "context_error": {
+            "count": 0,
+            "denominator": 0,
+            "rate": 0.0
+          },
+          "flags_raised": 7,
+          "flags_by_code": {
+            "time_not_stated": 4,
+            "field_missing": 2,
+            "no_reference_range": 1
+          }
+        },
+        "all": {
+          "utterances": 32,
+          "entity_f1": 0.8417,
+          "precision": 0.8934,
+          "recall": 0.7956,
+          "exact_match": {
+            "count": 22,
+            "denominator": 40,
+            "rate": 0.55
+          },
+          "dangerous_error": {
+            "count": 1,
+            "denominator": 34,
+            "rate": 0.0294
+          },
+          "dangerous_error_lenient": {
+            "count": 1,
+            "denominator": 34,
+            "rate": 0.0294
+          },
+          "administration_status_error": {
+            "count": 0,
+            "denominator": 3,
+            "rate": 0.0
+          },
+          "context_error": {
+            "count": 0,
+            "denominator": 6,
+            "rate": 0.0
+          },
+          "flags_raised": 64,
+          "flags_by_code": {
+            "time_not_stated": 31,
+            "field_missing": 15,
+            "possible_not_given": 3,
+            "ambiguous_dose": 2,
+            "repeat_dose_inferred": 2,
+            "self_correction": 2,
+            "dose_range_stated": 2,
+            "possible_measurement": 1,
+            "low_confidence": 1,
+            "duplicate_dose": 1,
+            "repeat_too_soon": 1,
+            "dose_below_range": 1,
+            "dose_out_of_range": 1,
+            "no_reference_range": 1
+          }
+        }
+      }
+    },
+    "hybrid": {
+      "commit": "3b7be15",
+      "tiers": {
+        "core": {
+          "utterances": 28,
+          "entity_f1": 0.8053,
+          "precision": 0.875,
+          "recall": 0.7459,
+          "exact_match": {
+            "count": 19,
+            "denominator": 36,
+            "rate": 0.5278
+          },
+          "dangerous_error": {
+            "count": 0,
+            "denominator": 30,
+            "rate": 0.0
+          },
+          "dangerous_error_lenient": {
+            "count": 0,
+            "denominator": 30,
+            "rate": 0.0
+          },
+          "administration_status_error": {
+            "count": 0,
+            "denominator": 3,
+            "rate": 0.0
+          },
+          "context_error": {
+            "count": 0,
+            "denominator": 6,
+            "rate": 0.0
+          },
+          "flags_raised": 62,
+          "flags_by_code": {
+            "time_not_stated": 28,
+            "field_missing": 14,
+            "possible_not_given": 3,
+            "repeat_dose_inferred": 2,
+            "self_correction": 2,
+            "dose_range_stated": 2,
+            "dose_out_of_range": 2,
+            "llm_unsupported": 2,
+            "ambiguous_dose": 1,
+            "possible_measurement": 1,
+            "low_confidence": 1,
+            "duplicate_dose": 1,
+            "repeat_too_soon": 1,
+            "dose_below_range": 1,
+            "llm_omitted": 1
+          }
+        },
+        "stretch": {
+          "utterances": 4,
+          "entity_f1": 0.8571,
+          "precision": 0.9231,
+          "recall": 0.8,
+          "exact_match": {
+            "count": 1,
+            "denominator": 4,
+            "rate": 0.25
+          },
+          "dangerous_error": {
+            "count": 1,
+            "denominator": 4,
+            "rate": 0.25
+          },
+          "dangerous_error_lenient": {
+            "count": 1,
+            "denominator": 4,
+            "rate": 0.25
+          },
+          "administration_status_error": {
+            "count": 0,
+            "denominator": 0,
+            "rate": 0.0
+          },
+          "context_error": {
+            "count": 0,
+            "denominator": 0,
+            "rate": 0.0
+          },
+          "flags_raised": 7,
+          "flags_by_code": {
+            "time_not_stated": 4,
+            "field_missing": 2,
+            "no_reference_range": 1
+          }
+        },
+        "all": {
+          "utterances": 32,
+          "entity_f1": 0.811,
+          "precision": 0.8803,
+          "recall": 0.7518,
+          "exact_match": {
+            "count": 20,
+            "denominator": 40,
+            "rate": 0.5
+          },
+          "dangerous_error": {
+            "count": 1,
+            "denominator": 34,
+            "rate": 0.0294
+          },
+          "dangerous_error_lenient": {
+            "count": 1,
+            "denominator": 34,
+            "rate": 0.0294
+          },
+          "administration_status_error": {
+            "count": 0,
+            "denominator": 3,
+            "rate": 0.0
+          },
+          "context_error": {
+            "count": 0,
+            "denominator": 6,
+            "rate": 0.0
+          },
+          "flags_raised": 69,
+          "flags_by_code": {
+            "time_not_stated": 32,
+            "field_missing": 16,
+            "possible_not_given": 3,
+            "repeat_dose_inferred": 2,
+            "self_correction": 2,
+            "dose_range_stated": 2,
+            "dose_out_of_range": 2,
+            "llm_unsupported": 2,
+            "ambiguous_dose": 1,
+            "possible_measurement": 1,
+            "low_confidence": 1,
+            "duplicate_dose": 1,
+            "repeat_too_soon": 1,
+            "dose_below_range": 1,
+            "llm_omitted": 1,
+            "no_reference_range": 1
+          }
+        }
+      }
+    },
+    "llm": {
+      "commit": "3b7be15",
+      "tiers": {
+        "core": {
+          "utterances": 28,
+          "entity_f1": 0.7469,
+          "precision": 0.7563,
+          "recall": 0.7377,
+          "exact_match": {
+            "count": 19,
+            "denominator": 36,
+            "rate": 0.5278
+          },
+          "dangerous_error": {
+            "count": 0,
+            "denominator": 30,
+            "rate": 0.0
+          },
+          "dangerous_error_lenient": {
+            "count": 0,
+            "denominator": 30,
+            "rate": 0.0
+          },
+          "administration_status_error": {
+            "count": 1,
+            "denominator": 3,
+            "rate": 0.3333
+          },
+          "context_error": {
+            "count": 1,
+            "denominator": 6,
+            "rate": 0.1667
+          },
+          "flags_raised": 62,
+          "flags_by_code": {
+            "time_not_stated": 27,
+            "llm_unsupported": 17,
+            "repeat_too_soon": 6,
+            "duplicate_dose": 5,
+            "field_missing": 3,
+            "dose_below_range": 3,
+            "dose_out_of_range": 1
+          }
+        },
+        "stretch": {
+          "utterances": 4,
+          "entity_f1": 0.8125,
+          "precision": 0.7647,
+          "recall": 0.8667,
+          "exact_match": {
+            "count": 1,
+            "denominator": 4,
+            "rate": 0.25
+          },
+          "dangerous_error": {
+            "count": 0,
+            "denominator": 4,
+            "rate": 0.0
+          },
+          "dangerous_error_lenient": {
+            "count": 0,
+            "denominator": 4,
+            "rate": 0.0
+          },
+          "administration_status_error": {
+            "count": 0,
+            "denominator": 0,
+            "rate": 0.0
+          },
+          "context_error": {
+            "count": 0,
+            "denominator": 0,
+            "rate": 0.0
+          },
+          "flags_raised": 12,
+          "flags_by_code": {
+            "llm_unsupported": 5,
+            "time_not_stated": 5,
+            "no_reference_range": 1,
+            "repeat_too_soon": 1
+          }
+        },
+        "all": {
+          "utterances": 32,
+          "entity_f1": 0.7546,
+          "precision": 0.7574,
+          "recall": 0.7518,
+          "exact_match": {
+            "count": 20,
+            "denominator": 40,
+            "rate": 0.5
+          },
+          "dangerous_error": {
+            "count": 0,
+            "denominator": 34,
+            "rate": 0.0
+          },
+          "dangerous_error_lenient": {
+            "count": 0,
+            "denominator": 34,
+            "rate": 0.0
+          },
+          "administration_status_error": {
+            "count": 1,
+            "denominator": 3,
+            "rate": 0.3333
+          },
+          "context_error": {
+            "count": 1,
+            "denominator": 6,
+            "rate": 0.1667
+          },
+          "flags_raised": 74,
+          "flags_by_code": {
+            "time_not_stated": 32,
+            "llm_unsupported": 22,
+            "repeat_too_soon": 7,
+            "duplicate_dose": 5,
+            "field_missing": 3,
+            "dose_below_range": 3,
+            "dose_out_of_range": 1,
+            "no_reference_range": 1
+          }
+        }
+      }
+    }
+  }
+}
