@@ -1,4 +1,8 @@
-"""FHIR-lite Bundle: MedicationAdministration- and Procedure-style resources with span provenance."""
+"""FHIR-lite Bundle: MedicationAdministration and Procedure resources with span provenance, plus one Communication per
+utterance carrying its transcript. Checked every time by our FHIR-lite JSON Schema (jatayu/schemas/fhir_lite.schema.json).
+Round 9: the bundle is also shaped to pass the fhir.resources R4 models (scripts/fhir_r4_check.py) as it is emitted —
+every resource names its subject (an unidentified patient, keyed by the incident), the incident id is
+Bundle.identifier, the device is meta.source, and the transcripts are Communication resources, not extra fields."""
 from __future__ import annotations
 
 import json
@@ -13,6 +17,14 @@ from jatayu.models import Entry, Field, MedicationEntry, ProcedureEntry, Utteran
 
 ATC = "http://www.whocc.no/atc"
 SNOMED = "http://snomed.info/sct"
+PATIENT_SYSTEM = "urn:jatayu:incident-patient"
+UTTERANCE_SYSTEM = "urn:jatayu:utterance"
+CLINICAL = ("MedicationAdministration", "Procedure")
+
+
+def subject(incident_id: str) -> dict:
+    """The patient every resource is about: not identified in the field, so a logical reference keyed by the incident."""
+    return {"identifier": {"system": PATIENT_SYSTEM, "value": incident_id}, "display": "Unidentified patient"}
 # An entry the utterance says was NOT given (negation, allergy, refusal, home medication) or that is a reading is
 # never written as an administration, whatever its review status: FHIR status "not-done" plus the reason. Acknowledging
 # the flag at confirm time records that the medic saw it; to record a real administration they reject and re-dictate.
@@ -52,6 +64,7 @@ def _medication(e: MedicationEntry, lexicon: Lexicon, status: str = "in-progress
     res = {
         "resourceType": "MedicationAdministration",
         "status": status,
+        "subject": {},  # filled by _resource
         # a drug not in the lexicon keeps its spoken name and has no code (it carries drug_not_in_lexicon)
         "medicationCodeableConcept": {"text": e.drug.value, **({"coding": [{"system": ATC, "code": lexicon.drug(e.drug.value).atc}]}
                                                                if lexicon.has_drug(e.drug.value) else {})},
@@ -76,7 +89,7 @@ def _procedure(e: ProcedureEntry, lexicon: Lexicon, status: str = "in-progress",
     snomed = lexicon.procedure(e.procedure.value).snomed
     if snomed:
         code["coding"] = [{"system": SNOMED, "code": snomed}]
-    res = {"resourceType": "Procedure", "status": status, "code": code,
+    res = {"resourceType": "Procedure", "status": status, "subject": {}, "code": code,
            "performedDateTime": e.time.value.isoformat()}
     if e.detail is not None and e.detail.value:
         res["note"] = [{"text": e.detail.value}]
@@ -84,47 +97,77 @@ def _procedure(e: ProcedureEntry, lexicon: Lexicon, status: str = "in-progress",
     return res
 
 
-def _resource(e: Entry, lexicon: Lexicon, status: str = "in-progress", utterance_id: str | None = None,
-              review_status: str = "draft") -> dict:
+def _resource(e: Entry, lexicon: Lexicon, incident_id: str, status: str = "in-progress",
+              utterance_id: str | None = None, review_status: str = "draft") -> dict:
     build = _medication if isinstance(e, MedicationEntry) else _procedure
     status, reason = _status(e, status)
     res = build(e, lexicon, status, utterance_id, review_status)
-    if reason:
-        res["statusReason"] = [{"text": reason}]
+    res["subject"] = subject(incident_id)
+    if reason:  # R4: MedicationAdministration.statusReason is a list, Procedure.statusReason a single concept
+        res["statusReason"] = [{"text": reason}] if isinstance(e, MedicationEntry) else {"text": reason}
     return res
 
 
+def _communication(incident_id: str, utterance_id: str, transcript: str, capture_time: str) -> dict:
+    """One utterance as said: provenance spans of the resources that name this utterance index into its text."""
+    return {"resourceType": "Communication", "identifier": [{"system": UTTERANCE_SYSTEM, "value": utterance_id}],
+            "status": "completed", "subject": subject(incident_id), "sent": capture_time,
+            "payload": [{"contentString": transcript}]}
+
+
+def _meta(device: str | None = None) -> dict:
+    meta = {"tag": [{"code": "demo", "display": DISCLAIMER}]}
+    if device:
+        meta["source"] = f"urn:jatayu:device:{device}"
+    return meta
+
+
 def to_bundle(utterance: Utterance, entries: list[Entry], lexicon: Lexicon) -> dict:
+    """One utterance: its clinical resources, then its transcript as a Communication."""
+    inc = utterance.incident_id
     return {
         "resourceType": "Bundle",
         "type": "collection",
+        "identifier": {"system": "urn:jatayu:incident", "value": inc},
         "timestamp": utterance.capture_time.isoformat(),
-        "meta": {"tag": [{"code": "demo", "display": DISCLAIMER}]},
-        "incident": utterance.incident_id,
-        "utterance": utterance.id,
-        "transcript": utterance.raw_transcript,  # spans in each resource's provenance index into this text
-        "entry": [{"resource": _resource(e, lexicon)} for e in entries],
+        "meta": _meta(),
+        "entry": [{"resource": _resource(e, lexicon, inc, utterance_id=utterance.id)} for e in entries]
+        + [{"resource": _communication(inc, utterance.id, utterance.raw_transcript, utterance.capture_time.isoformat())}],
     }
 
 
 def to_incident_bundle(incident: dict, items: list[tuple[Entry, str, str]], utterances: list[dict],
                        lexicon: Lexicon) -> dict:
-    """items: (entry, status, utterance_id). Spans in each resource's provenance index into the transcript of
-    the utterance it names; the top-level transcript is empty for an incident bundle."""
+    """items: (entry, status, utterance_id). Clinical resources first, then one Communication per utterance; spans in
+    each resource's provenance index into the transcript of the utterance it names."""
     fhir_status = {"confirmed": "completed", "rejected": "entered-in-error"}
+    inc = incident["id"]
     return {
         "resourceType": "Bundle",
         "type": "collection",
+        "identifier": {"system": "urn:jatayu:incident", "value": inc},
         "timestamp": incident["started_at"],
-        "meta": {"tag": [{"code": "demo", "display": DISCLAIMER}], "device": incident.get("device", "unknown")},
-        "incident": incident["id"],
-        "utterance": incident["id"],
-        "transcript": "",
-        "utterances": [{"id": u["id"], "transcript": u["transcript"], "capture_time": u["capture_time"]}
-                       for u in utterances],
-        "entry": [{"resource": _resource(e, lexicon, fhir_status.get(status, "in-progress"), utt, status)}
-                  for e, status, utt in items],
+        "meta": _meta(incident.get("device", "unknown")),
+        "entry": [{"resource": _resource(e, lexicon, inc, fhir_status.get(status, "in-progress"), utt, status)}
+                  for e, status, utt in items]
+        + [{"resource": _communication(inc, u["id"], u["transcript"], u["capture_time"])} for u in utterances],
     }
+
+
+def clinical(bundle: dict) -> list[dict]:
+    """The MedicationAdministration and Procedure resources of a bundle, in order."""
+    return [e["resource"] for e in bundle["entry"] if e["resource"]["resourceType"] in CLINICAL]
+
+
+def transcripts(bundle: dict) -> list[dict]:
+    """[{id, transcript, capture_time}] from the bundle's Communication resources."""
+    return [{"id": r["identifier"][0]["value"], "transcript": r["payload"][0]["contentString"], "capture_time": r["sent"]}
+            for r in (e["resource"] for e in bundle["entry"]) if r["resourceType"] == "Communication"]
+
+
+def status_reason(resource: dict) -> str | None:
+    r = resource.get("statusReason")
+    return (r[0] if isinstance(r, list) else r)["text"] if r else None
 
 
 @lru_cache(maxsize=1)

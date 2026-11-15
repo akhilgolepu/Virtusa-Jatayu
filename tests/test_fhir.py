@@ -47,4 +47,25 @@ def test_schema_rejects_garbage():
 def test_bundle_keeps_raw_transcript(lexicon, sample_utterance, sample_entries):
     b = to_bundle(sample_utterance, sample_entries, lexicon)
     validate_bundle(b)
-    assert b["transcript"] == sample_utterance.raw_transcript
+    from jatayu.output.fhir import transcripts
+    # round 9: the transcript is a Communication resource (R4), not an extra top-level field
+    assert transcripts(b) == [{"id": sample_utterance.id, "transcript": sample_utterance.raw_transcript,
+                               "capture_time": sample_utterance.capture_time.isoformat()}]
+    assert b["entry"][-1]["resource"]["resourceType"] == "Communication"
+
+
+def test_every_resource_names_the_unidentified_patient(lexicon, sample_utterance, sample_entries):
+    b = to_bundle(sample_utterance, sample_entries, lexicon)
+    assert b["identifier"] == {"system": "urn:jatayu:incident", "value": sample_utterance.incident_id}
+    for e in b["entry"]:
+        assert e["resource"]["subject"] == {"identifier": {"system": "urn:jatayu:incident-patient",
+                                                           "value": sample_utterance.incident_id},
+                                            "display": "Unidentified patient"}
+
+
+def test_not_done_procedure_has_a_single_status_reason(lexicon, sample_utterance):
+    from datetime import datetime
+    from jatayu.extract.rules import RulesExtractor
+    entries = RulesExtractor(lexicon).extract("unable to get IV access", datetime(2026, 10, 31, 10, 45).astimezone())
+    proc = to_bundle(sample_utterance, entries, lexicon)["entry"][0]["resource"]
+    assert proc["status"] == "not-done" and isinstance(proc["statusReason"], dict)  # R4: 0..1 CodeableConcept

@@ -1,92 +1,390 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:jatayu:fhir-lite",
-  "title": "Jatayu FHIR-lite Bundle (decision-support demo, not a clinical device)",
+  "title": "Jatayu FHIR-lite Bundle (decision-support demo, not a clinical device); round 9: shaped to pass the R4 models as emitted",
   "type": "object",
   "additionalProperties": false,
-  "required": ["resourceType", "type", "timestamp", "meta", "incident", "utterance", "transcript", "entry"],
+  "required": [
+    "resourceType",
+    "type",
+    "identifier",
+    "timestamp",
+    "meta",
+    "entry"
+  ],
   "properties": {
-    "resourceType": {"const": "Bundle"},
-    "type": {"const": "collection"},
-    "timestamp": {"type": "string", "format": "date-time"},
+    "resourceType": {
+      "const": "Bundle"
+    },
+    "type": {
+      "const": "collection"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
     "meta": {
       "type": "object",
-      "required": ["tag"],
-      "properties": {"tag": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/coding"}}, "device": {"type": "string"}}
+      "additionalProperties": false,
+      "required": [
+        "tag"
+      ],
+      "properties": {
+        "tag": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/coding"
+          }
+        },
+        "source": {
+          "type": "string",
+          "pattern": "^urn:jatayu:device:"
+        }
+      }
     },
-    "incident": {"type": "string", "minLength": 1},
-    "utterance": {"type": "string", "minLength": 1},
-    "utterances": {"type": "array", "items": {"type": "object", "required": ["id", "transcript"],
-      "properties": {"id": {"type": "string"}, "transcript": {"type": "string"}, "capture_time": {"type": "string"}}}},
-    "transcript": {"type": "string", "description": "Raw transcript; provenance spans are [start, end) Unicode code-point offsets into it (use Array.from() in JS, not UTF-16 indices)."},
     "entry": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["resource"],
-        "properties": {"resource": {"oneOf": [{"$ref": "#/$defs/medicationAdministration"}, {"$ref": "#/$defs/procedure"}]}}
+        "required": [
+          "resource"
+        ],
+        "properties": {
+          "resource": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/medicationAdministration"
+              },
+              {
+                "$ref": "#/$defs/procedure"
+              },
+              {
+                "$ref": "#/$defs/communication"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "identifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "system",
+        "value"
+      ],
+      "properties": {
+        "system": {
+          "const": "urn:jatayu:incident"
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     }
   },
   "$defs": {
     "coding": {
       "type": "object",
-      "required": ["code"],
-      "properties": {"system": {"type": "string"}, "code": {"type": "string"}, "display": {"type": "string"}}
+      "required": [
+        "code"
+      ],
+      "properties": {
+        "system": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "display": {
+          "type": "string"
+        }
+      }
     },
     "codeableConcept": {
       "type": "object",
-      "required": ["text"],
-      "properties": {"text": {"type": "string"}, "coding": {"type": "array", "items": {"$ref": "#/$defs/coding"}}}
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "coding": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/coding"
+          }
+        }
+      }
     },
     "provenance": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["url", "valueString"],
-        "properties": {"url": {"const": "urn:jatayu:provenance"}, "valueString": {"type": "string"}}
+        "required": [
+          "url",
+          "valueString"
+        ],
+        "properties": {
+          "url": {
+            "const": "urn:jatayu:provenance"
+          },
+          "valueString": {
+            "type": "string"
+          }
+        }
       }
     },
     "medicationAdministration": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["resourceType", "status", "medicationCodeableConcept", "effectiveDateTime", "extension"],
+      "required": [
+        "resourceType",
+        "status",
+        "subject",
+        "medicationCodeableConcept",
+        "effectiveDateTime",
+        "extension"
+      ],
       "properties": {
-        "resourceType": {"const": "MedicationAdministration"},
-        "status": {"enum": ["in-progress", "completed", "not-done", "entered-in-error"]},
-        "statusReason": {"type": "array", "items": {"type": "object", "required": ["text"], "properties": {"text": {"type": "string"}}}},
-        "medicationCodeableConcept": {"$ref": "#/$defs/codeableConcept"},
-        "effectiveDateTime": {"type": "string", "format": "date-time"},
+        "resourceType": {
+          "const": "MedicationAdministration"
+        },
+        "status": {
+          "enum": [
+            "in-progress",
+            "completed",
+            "not-done",
+            "entered-in-error"
+          ]
+        },
+        "subject": {
+          "$ref": "#/$defs/subject"
+        },
+        "statusReason": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "R4: 0..* CodeableConcept"
+        },
+        "medicationCodeableConcept": {
+          "$ref": "#/$defs/codeableConcept"
+        },
+        "effectiveDateTime": {
+          "type": "string",
+          "format": "date-time"
+        },
         "dosage": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "route": {"type": "object", "required": ["text"], "properties": {"text": {"type": "string"}}},
+            "route": {
+              "type": "object",
+              "required": [
+                "text"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string"
+                }
+              }
+            },
             "dose": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["value"],
-              "properties": {"value": {"type": "number"}, "unit": {"type": "string"}}
+              "required": [
+                "value"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string"
+                }
+              }
             }
           }
         },
-        "extension": {"$ref": "#/$defs/provenance"}
+        "extension": {
+          "$ref": "#/$defs/provenance"
+        }
       }
     },
     "procedure": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["resourceType", "status", "code", "performedDateTime", "extension"],
+      "required": [
+        "resourceType",
+        "status",
+        "subject",
+        "code",
+        "performedDateTime",
+        "extension"
+      ],
       "properties": {
-        "resourceType": {"const": "Procedure"},
-        "status": {"enum": ["in-progress", "completed", "not-done", "entered-in-error"]},
-        "statusReason": {"type": "array", "items": {"type": "object", "required": ["text"], "properties": {"text": {"type": "string"}}}},
-        "code": {"$ref": "#/$defs/codeableConcept"},
-        "performedDateTime": {"type": "string", "format": "date-time"},
-        "note": {"type": "array", "items": {"type": "object", "required": ["text"], "properties": {"text": {"type": "string"}}}},
-        "extension": {"$ref": "#/$defs/provenance"}
+        "resourceType": {
+          "const": "Procedure"
+        },
+        "status": {
+          "enum": [
+            "in-progress",
+            "completed",
+            "not-done",
+            "entered-in-error"
+          ]
+        },
+        "subject": {
+          "$ref": "#/$defs/subject"
+        },
+        "statusReason": {
+          "type": "object",
+          "required": [
+            "text"
+          ],
+          "properties": {
+            "text": {
+              "type": "string"
+            }
+          },
+          "description": "R4: 0..1 CodeableConcept (a single object, not a list)"
+        },
+        "code": {
+          "$ref": "#/$defs/codeableConcept"
+        },
+        "performedDateTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "note": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "extension": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identifier",
+        "display"
+      ],
+      "properties": {
+        "identifier": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "system",
+            "value"
+          ],
+          "properties": {
+            "system": {
+              "const": "urn:jatayu:incident-patient"
+            },
+            "value": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "display": {
+          "type": "string"
+        }
+      },
+      "description": "Round 9: the patient, unidentified in the field; a logical reference keyed by the incident."
+    },
+    "communication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resourceType",
+        "identifier",
+        "status",
+        "subject",
+        "sent",
+        "payload"
+      ],
+      "description": "One utterance as said. Provenance spans of the resources naming this utterance (utterance_id) are [start, end) Unicode code-point offsets into payload[0].contentString (use Array.from() in JS, not UTF-16 indices).",
+      "properties": {
+        "resourceType": {
+          "const": "Communication"
+        },
+        "identifier": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "system",
+              "value"
+            ],
+            "properties": {
+              "system": {
+                "const": "urn:jatayu:utterance"
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "status": {
+          "const": "completed"
+        },
+        "subject": {
+          "$ref": "#/$defs/subject"
+        },
+        "sent": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "payload": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "contentString"
+            ],
+            "properties": {
+              "contentString": {
+                "type": "string"
+              }
+            }
+          }
+        }
       }
     }
   }

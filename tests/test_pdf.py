@@ -33,7 +33,7 @@ def test_pdf_entries_come_from_the_fhir_bundle(tmp_path):
     c.post("/api/utterances", data={"incident_id": inc, "text": "aspirin 300 mg PO at 10 40"})
     c.post("/api/utterances", data={"incident_id": inc, "text": "patient allergic to morphine"})
     bundle = c.get(f"/api/incidents/{inc}/bundle").json()
-    assert [e["resource"]["status"] for e in bundle["entry"]] == ["in-progress", "not-done"]
+    assert [e["resource"]["status"] for e in bundle["entry"]] == ["in-progress", "not-done", "completed", "completed"]
     altered = copy.deepcopy(bundle)
     altered["entry"][0]["resource"]["dosage"]["dose"]["value"] = 325
     audit = AuditLog(tmp_path / "j.sqlite")

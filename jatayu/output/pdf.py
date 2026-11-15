@@ -13,7 +13,7 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, Tabl
 
 from jatayu.audit import AuditRow, VerifyResult
 from jatayu.config import DISCLAIMER
-from jatayu.output.fhir import provenance
+from jatayu.output.fhir import clinical, provenance, status_reason, transcripts
 
 INK = colors.HexColor("#141210")
 MUTED = colors.HexColor("#6b6863")
@@ -72,7 +72,7 @@ def _entry_row(n: int, res: dict) -> list:
     review = prov.get("review_status", "draft")
     status_text = f"<b>{review.upper()}</b>"
     if res["status"] == "not-done":  # never shown as an administration (see output/fhir.py NOT_DONE)
-        what = "READING" if res["statusReason"][0]["text"].startswith("A reading") else "NOT GIVEN"
+        what = "READING" if (status_reason(res) or "").startswith("A reading") else "NOT GIVEN"
         status_text = f'<font color="#da291c"><b>{what}</b></font><br/>{review}'
     return [Paragraph(f"{n:02d}", MONO), Paragraph(_t(when), MONO), Paragraph(item, BODY),
             Paragraph(dose, BODY), Paragraph(route, BODY), Paragraph(status_text, BODY), Paragraph(flags, BODY)]
@@ -95,11 +95,11 @@ def render_note(incident: dict, bundle: dict, rows: list[AuditRow], verify: Veri
                             bottomMargin=18 * mm, title=f"Jatayu note {incident['id'][:8]}", author="Jatayu")
     story: list = [_label("Incident note"), Paragraph(incident.get("label") or "Unlabelled incident", TITLE),
                    Paragraph(f"Started {datetime.fromisoformat(incident['started_at']).strftime('%d %b %Y, %H:%M')}"
-                             f" · {len(bundle['entry'])} entries · {len(bundle.get('utterances', []))} utterances", BODY),
+                             f" · {len(clinical(bundle))} entries · {len(transcripts(bundle))} utterances", BODY),
                    Paragraph(f"Incident {incident['id']} · Device {incident.get('device', 'unknown')}", MONO),
                    Spacer(1, 6 * mm), _label("Entries")]
     head = [_label(h) for h in ("#", "Time", "Drug / procedure", "Dose", "Route", "Status", "Flags")]
-    entries = [_entry_row(i + 1, e["resource"]) for i, e in enumerate(bundle["entry"])]
+    entries = [_entry_row(i + 1, res) for i, res in enumerate(clinical(bundle))]
     story += [_ledger([head, *entries], [8 * mm, 12 * mm, 44 * mm, 22 * mm, 14 * mm, 22 * mm, 52 * mm]),
               Spacer(1, 6 * mm), _label("Record history (append-only)")]
     hist_head = [_label(h) for h in ("Seq", "Event", "Time", "Entry hash")]

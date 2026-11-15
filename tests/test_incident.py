@@ -66,7 +66,8 @@ def test_bundle_marks_confirmed_completed(client):
     client.post(f"/api/incidents/{inc}/confirm", json={"entry_ids": [e["id"]], "acknowledged": []})
     b = client.get(f"/api/incidents/{inc}/bundle").json()
     assert b["entry"][0]["resource"]["status"] == "completed"
-    assert b["utterances"][0]["transcript"].startswith("aspirin")
+    from jatayu.output.fhir import transcripts
+    assert transcripts(b)[0]["transcript"].startswith("aspirin")
 
 
 def test_incidents_persist_across_restart(tmp_path):
@@ -146,6 +147,6 @@ def test_rejected_entries_do_not_trigger_repeat_flags(client):
 def test_device_id_is_stable_and_in_the_bundle(client):
     inc = client.post("/api/incidents", json={}).json()["id"]
     _say(client, inc, "aspirin 300 mg PO")
-    a = client.get(f"/api/incidents/{inc}/bundle").json()["meta"]["device"]
-    b = client.get(f"/api/incidents/{inc}/bundle").json()["meta"]["device"]
-    assert a == b and len(a) >= 8
+    a = client.get(f"/api/incidents/{inc}/bundle").json()["meta"]["source"]
+    b = client.get(f"/api/incidents/{inc}/bundle").json()["meta"]["source"]
+    assert a == b and a.startswith("urn:jatayu:device:") and len(a) >= 26
