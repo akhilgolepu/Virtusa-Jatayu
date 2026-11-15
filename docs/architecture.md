@@ -1,6 +1,6 @@
 # Scribe108 — architecture
 
-Draft, updated for evaluator round 11. **Decision-support demo, not a clinical device. Adult patients only.** Every number below
+Draft, updated for evaluator round 12. **Decision-support demo, not a clinical device. Adult patients only.** Every number below
 was written by the evaluation harness (`results/`) and carries a label:
 
 - **[dev · synthetic]** — the development split, template sentences and/or computer voices (Piper TTS). We tuned on it.
@@ -136,7 +136,7 @@ weight range. Sources and every choice: `DECISIONS.md`.
 | Seeded dose errors caught (×10, ÷10, mg↔mcg, route) | 99.0% (198/200; 95% CI 96.4-99.7) — circular by construction | test · validator only |
 | Harder seeded errors (×2, ×5, digit slip, mg→g) | 78.0% (156/200; 95% CI 71.8-83.2) | test · validator only |
 | Correct gold doses flagged by the validator | dev 1.9%, test 0.3%, final_test 1.2% | dev / test · validator only |
-| PDF note (bundle + schema check + chain verify + render): 10 / 50 entries, p50 | 19.8 ms / 87.4 ms (p95 28.6 / 111.3 ms) | synthetic incidents |
+| PDF note (bundle + schema check + chain verify + render): 10 / 50 entries, p50 | 19.8 ms / 87.4 ms (p95 28.6 / 111.3 ms); round 7, logged run `r7-pdf-latency` (30 timed runs) | synthetic incidents |
 | Blind off-template set, evaluator-authored (32 typed sentences), entity F1 core / stretch: rules · hybrid · LLM-only | as-run (official): 0.840 / 0.857 · 0.805 / 0.857 · 0.747 / 0.812; converter-corrected (round 8): 0.892 / 0.857 · 0.858 / 0.857 · 0.780 / 0.812 | blind · single author, sanity check, not a headline |
 | Blind v1, dangerous errors: headline / matched-drug only, rules · hybrid · LLM-only | as-run (re-scored): **≤ 3 / 1 · ≤ 3 / 1 · ≤ 3 / 0** of 37 / 34; converter-corrected (re-scored): **2 / 1 · 2 / 1 · ≤ 2 / 0**; round-9 code (now dev data): **1 / 0 · 2 / 0 · 1 / 0**; rules at round-11 code 1 / 0 | blind, spent (dev since round 7) |
 | Full pipeline on test or final_test; any real recording | — | sealed / not yet recorded |
@@ -195,9 +195,10 @@ Rules, round-11 code, exact:
 On speech the large counts are records the recogniser lost or garbled: 96 of 420 medication records got no entry at
 all. That is the recall problem (drug-term recall 0.574), shown here so it is not mistaken for safety.
 
-The denominators grow because the headline also counts not-given records (status errors). The counts grow because a
-medium flag (low_confidence, a medium route `field_missing`, `dose_below_range`) no longer counts as a catch, and a
-wrong drug is now counted at all.
+**These are two different metrics, not a before and after.** Neither number replaces or improves on the other. The
+headline counts more kinds of error (a wrong drug, a wrong status) over more records (given and not-given). It also
+accepts as a catch only a flag that must be ticked. So a record the old metric counted as caught by a medium flag
+(low_confidence, a medium route `field_missing`, `dose_below_range`) is uncaught in the headline.
 
 The round-10 tick exemption added one: "furosenide 14 mg" for furosemide 40 mg, whose wrong dose was covered only by
 the drug's sound-alike tick. Round 11 removed the exemption, and the headline is back to 5 of 480.

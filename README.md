@@ -56,7 +56,8 @@ Why — measured on the dev split, synthetic speech (Piper voices) and our own h
 | LLM only (experimental) | 0.527 | 0.894 | ≤ 16/480 | 0/440 | 21/40 |
 
 The headline dangerous error (round 10) is a wrong drug, dose, unit, route or status recorded without a flag the medic
-must tick. The old, secondary metric only looked at records whose drug matched, so it could not see a wrong drug. The
+must tick. The old, secondary metric only looked at records whose drug matched, so it could not see a wrong drug.
+They are **different metrics**: the two columns are not a before and after, and neither is a change of the other. The
 round-4 runs did not store everything the headline needs, so these are upper bounds (`docs/architecture.md` §6c).
 
 The LLM added nothing measurable, and costs ~0.6-0.9 s per utterance and 3.35 GB of GPU memory.
@@ -82,7 +83,7 @@ pipeline has never been run on test). The full pipeline on test and final_test, 
 | End of a 10-second dictation to the confirm screen, p50 / p95 | 0.387 s / 0.422 s | dev · synthetic dictation |
 | Seeded dose errors caught / harder ones | 99.0% / 78.0% (circular by construction) | test · validator only |
 | Correct doses wrongly flagged | 0.3% test, 1.2% final_test, 1.9% dev | test / dev · validator only |
-| PDF note for a 10 / 50-entry incident, p50 | 19.8 ms / 87.4 ms | synthetic incidents |
+| PDF note for a 10 / 50-entry incident, p50 | 19.8 ms / 87.4 ms (round 7, logged run `r7-pdf-latency`, 30 timed runs) | synthetic incidents |
 | Blind evaluator-authored sentences (32), entity F1 core / stretch, rules | 0.840 / 0.857 as run; 0.892 / 0.857 converter-corrected | blind · single author, sanity check only |
 | Full pipeline on test, final_test; real speech | — | sealed |
 
