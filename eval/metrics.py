@@ -13,6 +13,12 @@
       medication of the same utterance (the drug recorded instead), which has no high flag;
     * a not_given record recorded without possible_not_given and with no other high flag.
   Note: any high flag counts, also one about another field (the evaluator's definition).
+- Not stated, per field (round 11; shown apart from the dangerous-error count), over the given and not_given gold
+  medication records that have that field in gold:
+    * drug: no entry recorded for the record at all (neither the same drug nor a drug recorded instead);
+    * dose / unit / route: the entry recorded for it (same drug, or the drug recorded instead) leaves the field empty;
+    * time: that entry's time was not stated (the device clock was used).
+  An empty field shows "not stated" on the confirm screen: an omission, not a wrong value.
 - Dangerous error, matched-drug only (pre-round-10; secondary row): a matched given-medication record whose drug, dose,
   unit or route is wrong AND carries no
   catching flag, over all given gold records, reported as count/denominator. Headline = strict: time_not_stated,
@@ -135,6 +141,7 @@ class Scorer:
         self.r10_den = 0
         self.r10_kinds = defaultdict(int)  # uncaught, by kind
         self.r10_events = defaultdict(int)  # every such error, caught or not
+        self.not_stated = defaultdict(lambda: [0, 0])  # field -> [not stated, gold records with the field]
         self._errors: list[dict] = []
 
     def add(self, utt: GoldUtterance, preds: list[Entry], meta: dict | None = None) -> None:
@@ -217,6 +224,17 @@ class Scorer:
             if g.anomaly:
                 self.anomaly_den += 1
                 self.anomaly_caught += bool(flags - NON_CATCHING)
+        # ---- round 11: not stated, per field ----
+        if g.kind == "medication" and g.context in ("given", "not_given"):
+            rec = p if p is not None else (instead[0] if instead is not None else None)
+            rv = pv if p is not None else (instead[1] if instead is not None else None)
+            self.not_stated["drug"][1] += 1
+            self.not_stated["drug"][0] += rec is None
+            if rec is not None:
+                for f in ("dose_value", "dose_unit", "route", "time"):
+                    if gv[f] is not None:
+                        self.not_stated[f][1] += 1
+                        self.not_stated[f][0] += rv[f] is None
         # ---- round 10 headline ----
         r10, r10_kind = False, None
         if g.context in ("given", "not_given"):
@@ -263,6 +281,7 @@ class Scorer:
             "record_exact_match": _rate(self.exact, self.records),
             "dangerous_error_r10": {**_rate(self.r10, self.r10_den), "uncaught_by_kind": dict(self.r10_kinds),
                                     "errors_by_kind": dict(self.r10_events)},
+            "not_stated": {f: _rate(*self.not_stated[f]) for f in ("drug", "dose_value", "dose_unit", "route", "time")},
             "dangerous_error": _rate(self.danger, self.danger_den),
             "dangerous_error_lenient": _rate(self.danger_lenient, self.danger_den),
             "context_error": _rate(self.context_err, self.context_den),

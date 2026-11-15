@@ -129,7 +129,7 @@ def main(argv: list[str] | None = None) -> int:
                 "utterances": sum(1 for t in tiers.values() if tier in (t, "all")),
                 "entity_f1": m["entity"]["micro"]["f1"], "precision": m["entity"]["micro"]["precision"],
                 "recall": m["entity"]["micro"]["recall"], "exact_match": m["record_exact_match"],
-                "dangerous_error_r10": m["dangerous_error_r10"],
+                "dangerous_error_r10": m["dangerous_error_r10"], "not_stated": m["not_stated"],
                 "dangerous_error": m["dangerous_error"], "dangerous_error_lenient": m["dangerous_error_lenient"],
                 "administration_status_error": m["administration_status_error"], "context_error": m["context_error"],
                 "flags_raised": sum(flags[tier].values()), "flags_by_code": dict(flags[tier].most_common())}

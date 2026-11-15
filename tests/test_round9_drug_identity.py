@@ -44,24 +44,16 @@ def test_sound_match_needs_acknowledgement_and_keeps_the_heard_word(lexicon, raw
     assert "low_confidence" not in codes(e)  # replaced by the stronger flag, not stacked
 
 
-@pytest.mark.parametrize("raw,heard,recorded", [  # round 10: within 2 edits of the GENERIC name -> no tick
+@pytest.mark.parametrize("raw,heard,recorded", [  # round 11: generic-name spelling variants need the tick again
     ("gave ondansatron 4 mg IV", "ondansatron", "ondansetron"),
     ("gave furosemid 40 mg IV", "furosemid", "furosemide"),
     ("gave kettamin 20 mg IV", "kettamin", "ketamine"),
 ])
-def test_spelling_variant_of_the_generic_name_needs_no_tick_but_shows_the_heard_word(lexicon, raw, heard, recorded):
+def test_spelling_variant_of_the_generic_name_needs_the_tick(lexicon, raw, heard, recorded):
     [e] = ext(lexicon, raw)
     assert e.drug.value == recorded and e.drug.raw == heard
-    [f] = [f for f in e.flags if f.code == "low_confidence"]
-    assert f.severity == "medium" and f"Heard '{heard}'" in f.message and "sound_alike_drug" not in codes(e)
-
-
-def test_the_round9_wrong_drugs_are_still_ticked(lexicon):
-    """The 4 wrong drugs matched by sound on dev speech (in-sample), as heard: none is a variant of the generic name."""
-    from jatayu.extract.rules import RulesExtractor as R
-    for heard, recorded in (("ASTEL", "salbutamol"), ("At event", "ipratropium"), ("chadrin", "amiodarone"),
-                            ("salin", "normal saline")):
-        assert not R._canonical_variant(heard, recorded), heard
+    [f] = [f for f in e.flags if f.code == "sound_alike_drug"]
+    assert f.severity == "high" and f"Heard '{heard}'" in f.message and "low_confidence" not in codes(e)
 
 
 def test_near_identical_spelling_stays_low_confidence(lexicon):

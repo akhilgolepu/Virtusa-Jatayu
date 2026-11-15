@@ -70,3 +70,20 @@ def test_offline_rescore_matches_the_scorer_on_new_rows_and_bounds_old_ones(lexi
             row.pop("high_flags"), row.pop("flags")
     old = rescore_rows(rows, 2, m["administration_status_error"], lexicon)
     assert old["new"]["is_upper_bound"] and old["uncaught_bounded_by_kind"] == {"wrong drug": 1}
+
+
+def test_not_stated_per_field_is_counted_apart_from_dangerous():
+    """Round 11: an empty field is 'not stated', never a dangerous error; a lost record is 'drug not stated'."""
+    from datetime import timedelta
+
+    from test_eval_metrics import T
+    _, m = _m(([gold()], [pred(route=None)]),                          # route empty
+              ([gold(drug="aspirin", dose=300, unit="mg", route="PO")], []),  # nothing recorded at all
+              ([gold()], [pred(t=T)]),                                  # a time, but not the gold one: not "not stated"
+              ([gold(drug="ondansetron", dose=4, unit="mg", route="IV")],
+               [pred(drug="salbutamol", dose=None, unit=None, route="NEB", flags=[HIGH])]))  # recorded instead, no dose
+    ns = m["not_stated"]
+    assert (ns["drug"]["count"], ns["drug"]["denominator"]) == (1, 4)
+    assert (ns["route"]["count"], ns["route"]["denominator"]) == (1, 3)
+    assert (ns["dose_value"]["count"], ns["dose_unit"]["count"]) == (1, 1)
+    assert m["dangerous_error_r10"]["count"] == 0

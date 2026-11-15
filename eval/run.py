@@ -235,6 +235,9 @@ def _report(o: dict, errors: list[dict]) -> str:
              f"ticked** | **{m['dangerous_error_r10']['count']} of {m['dangerous_error_r10']['denominator']}** "
              f"({m['dangerous_error_r10']['rate']:.2%}; uncaught by kind: {m['dangerous_error_r10']['uncaught_by_kind'] or 'none'}; "
              f"all such errors: {m['dangerous_error_r10']['errors_by_kind'] or 'none'}) |",
+             "| Not stated (shown apart: an empty field, not a wrong value) — drug (no entry at all) / dose / unit / route "
+             "/ time | " + " · ".join(f"{m['not_stated'][f]['count']} of {m['not_stated'][f]['denominator']}"
+                                       for f in ("drug", "dose_value", "dose_unit", "route", "time")) + " |",
              f"| Dangerous errors, matched-drug only (pre-round-10 metric, secondary; a wrong drug is not counted) | "
              f"{m['dangerous_error']['count']} of {m['dangerous_error']['denominator']} "
              f"({m['dangerous_error']['rate']:.2%}; strict: weight_based_dose and low_asr_confidence do not catch) |",
