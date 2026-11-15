@@ -9,7 +9,10 @@ Scoring is per entity type, on the SET of normalised values each system recognis
 Date/Time spans would need our time parser to become comparable). The pretrained model's spans are normalised with our
 lexicon (exact name/alias, else fuzzy >= 88), so both systems are judged on the same values:
   Medication -> drug · Dosage -> dose value (+ unit) · Administration -> route ·
-  Therapeutic_procedure / Diagnostic_procedure -> procedure."""
+  Therapeutic_procedure / Diagnostic_procedure -> procedure (the model's only two procedure labels).
+Round 8: the model's word pieces are merged per WORD (aggregation "first"); round 7 used "simple", which split "CPR"
+into "cp" + "r" and "aspirin" into "as ##pi ##rin", so the lexicon could not normalise them.
+Every table is labelled NOT FOR SLIDES."""
 from __future__ import annotations
 
 import argparse
@@ -105,6 +108,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--tag", required=True)
     ap.add_argument("--out", type=Path, default=config.ROOT / "results")
+    ap.add_argument("--aggregation", default="first", help="how the model's word pieces are merged (round 7: simple)")
     args = ap.parse_args(argv)
     from transformers import pipeline
 
@@ -112,11 +116,15 @@ def main(argv: list[str] | None = None) -> int:
     from jatayu.extract.rules import RulesExtractor
     from jatayu.lexicon import Lexicon
 
-    start = log_run(args.out, runner="eval.ner_baseline", split="dev", tag=args.tag, model=MODEL.name)
+    start = log_run(args.out, runner="eval.ner_baseline", split="dev", tag=args.tag, model=MODEL.name,
+                    aggregation=args.aggregation)
     lex = Lexicon.load()
     rules = RulesExtractor(lex)
-    ner = pipeline("token-classification", model=str(MODEL), aggregation_strategy="simple", device=0)
-    sets = {"dev template sentences": load_split("dev"), "off-template dev sentences (hand-written)": load_offtemplate()}
+    from eval.blind import convert
+
+    ner = pipeline("token-classification", model=str(MODEL), aggregation_strategy=args.aggregation, device=0)
+    sets = {"dev template sentences": load_split("dev"), "off-template dev sentences (hand-written)": load_offtemplate(),
+            "blind v1, evaluator-authored (spent; now dev)": convert()[0]}
     res, labels_seen = {}, Counter()
     for name, utts in sets.items():
         pr, pb = [], []
@@ -134,13 +142,15 @@ def main(argv: list[str] | None = None) -> int:
     out.mkdir(parents=True, exist_ok=True)
     (out / "metrics.json").write_text(json.dumps({"commit": start["commit"], "model": MODEL.name, "results": res,
                                                   "pretrained_labels_seen": dict(labels_seen.most_common())}, indent=2) + "\n")
-    L = [f"# Rules-first clinical NER vs a pretrained NER baseline (`{args.tag}`, dev, commit `{start['commit']}`)", "",
+    L = [f"# Rules-first clinical NER vs a pretrained NER baseline (`{args.tag}`, dev, commit `{start['commit']}`) — NOT FOR SLIDES", "",
+         f"Word-piece merging: `{args.aggregation}`. Procedure labels of the model: Diagnostic_procedure, "
+         "Therapeutic_procedure — both mapped.", "",
          "Baseline: `d4data/biomedical-ner-all` (DistilBERT, trained on MACCROBAT clinical case reports), used as "
          "downloaded — no fine-tuning, and nothing run on test or final_test. Its spans are normalised with our lexicon "
          "so both systems are scored on the same values. Per entity type, P / R / F1 over the values recognised in each "
          "utterance vs gold. Time is not scored here. **Typed dev sentences, synthetic or hand-written by us.**", ""]
     for name, r in res.items():
-        L += [f"## {name} ({r['utterances']} utterances)", "",
+        L += [f"## {name} ({r['utterances']} utterances) — NOT FOR SLIDES", "",
               "| Entity (gold) | rules-first NER P / R / F1 | pretrained baseline P / R / F1 |", "|---|---|---|"]
         for t in TYPES:
             a, b = r["rules"][t], r["pretrained"][t]
