@@ -1,0 +1,26 @@
+{
+  "commit": "b1a995f",
+  "clips": 480,
+  "medication_entries": 370,
+  "fields_to_fill_per_note": {
+    "notes": 480,
+    "mean": 0.808,
+    "p90": 2,
+    "max": 7,
+    "notes_with_any": 228
+  },
+  "fields_to_fill_by_field": {
+    "drug": 0,
+    "dose_value": 51,
+    "dose_unit": 155,
+    "route": 182
+  },
+  "records_with_no_entry_per_note": {
+    "notes": 480,
+    "mean": 0.2,
+    "p90": 1,
+    "max": 2,
+    "notes_with_any": 93
+  },
+  "records_with_no_entry_total": 96
+}

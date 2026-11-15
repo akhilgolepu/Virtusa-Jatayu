@@ -132,3 +132,5 @@
 {"timestamp": "2026-11-16T00:08:43.780037+05:30", "commit": "1515ea5", "dirty": false, "dirty_paths": [], "runner": "eval.run", "split": "dev", "tag": "r11-dev-text-rules", "mode": "text", "extractor": "rules", "limit": 0}
 {"timestamp": "2026-11-16T00:08:45.029543+05:30", "commit": "1515ea5", "dirty": false, "dirty_paths": [], "runner": "eval.run", "split": "offtemplate_dev", "tag": "r11-offtemplate-rules", "mode": "text", "extractor": "rules", "limit": 0}
 {"timestamp": "2026-11-16T00:15:52.893950+05:30", "commit": "4ea667c", "dirty": false, "dirty_paths": [], "runner": "eval.tick_cost", "split": "dev", "tag": "r11-tick-cost-final"}
+{"timestamp": "2026-11-16T00:24:21.826556+05:30", "commit": "b1a995f", "dirty": false, "dirty_paths": [], "runner": "eval.required_fields", "split": "dev", "tag": "r12-required-fields"}
+{"timestamp": "2026-11-16T00:28:41.884155+05:30", "commit": "52a0729", "dirty": false, "dirty_paths": [], "runner": "eval.readback_test_report", "split": "readback-test", "tag": "r12-readback-test-DUMMY", "label": "DUMMY testers (4 scripted answer policies) \u2014 a format check, NOT a result"}

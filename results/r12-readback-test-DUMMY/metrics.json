@@ -1,0 +1,53 @@
+{
+  "commit": "52a0729",
+  "label": "DUMMY testers (4 scripted answer policies) \u2014 a format check, NOT a result",
+  "testers": 4,
+  "testers_complete": 4,
+  "catch_rate": {
+    "wrong_drug": {
+      "count": 18,
+      "denominator": 24,
+      "rate": 0.75,
+      "wilson95": [
+        0.551,
+        0.88
+      ]
+    },
+    "wrong_dose": {
+      "count": 8,
+      "denominator": 16,
+      "rate": 0.5,
+      "wilson95": [
+        0.28,
+        0.72
+      ]
+    },
+    "wrong_route": {
+      "count": 4,
+      "denominator": 16,
+      "rate": 0.25,
+      "wilson95": [
+        0.1018,
+        0.495
+      ]
+    }
+  },
+  "catch_rate_all_errors": {
+    "count": 30,
+    "denominator": 56,
+    "rate": 0.5357,
+    "wilson95": [
+      0.407,
+      0.6598
+    ]
+  },
+  "false_alarm_rate": {
+    "count": 10,
+    "denominator": 40,
+    "rate": 0.25,
+    "wilson95": [
+      0.1419,
+      0.4019
+    ]
+  }
+}
