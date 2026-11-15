@@ -1,0 +1,181 @@
+# Evaluator-authored BLIND off-template set, v1 (32 cases). Written 2026-11-03 by the evaluator, NOT by the coder.
+#
+# PROTOCOL (the coder must follow it):
+#  1. Do NOT change any extractor, lexicon, validator or prompt after opening this file.
+#  2. Convert the cases to the repo's own format (script only; do not "fix" the gold).
+#  3. Run rules, hybrid and LLM-only ONCE on the typed sentences. Log each run in results/run_log.jsonl.
+#  4. Report aggregate numbers only (entity F1, exact match, dangerous-error count, administration-status
+#     errors, flags raised) per tier BEFORE reading any individual error.
+#  5. Only after that report may the set be treated as ordinary dev data.
+#  6. Single author, 32 cases: a sanity check, NOT a headline number. Do not put it on a slide as accuracy.
+#
+# Gold notation per entry: drug|procedure, dose, unit, route, time, status.
+#   status: given | not_given (refused/allergy/withheld) | measurement (reading, NOT a dose) | not_done (procedure)
+#   time: "-N min" = N minutes before capture; "HH:MM" = clock time; null = not stated (device clock + flag)
+#   expected_flags: flags a careful validator SHOULD raise. "no silent value" = it must not record a wrong value
+#   without any flag.
+# If a drug is not in the lexicon, the expected behaviour is a visible "drug not in lexicon" flag, never a drop.
+# tier: core = should work for a rules extractor; stretch = hard (Hinglish, concentrations).
+
+cases:
+- id: b01
+  tier: core
+  utterance: "gave adrenaline point three milligram IM in the left thigh"
+  expected: [{drug: epinephrine, dose: 0.3, unit: mg, route: IM, time: null, status: given}]
+- id: b02
+  tier: core
+  utterance: "pushed ondansetron four milligrams slow IV about five minutes back"
+  expected: [{drug: ondansetron, dose: 4, unit: mg, route: IV, time: "-5 min", status: given}]
+- id: b03
+  tier: core
+  utterance: "Calpol 650 given orally at ten fifteen"
+  expected: [{drug: paracetamol, dose: 650, unit: mg, route: PO, time: "10:15", status: given}]
+  notes: Calpol is a brand name; unit mg is implied, a flag for inferred unit is acceptable.
+- id: b04
+  tier: core
+  utterance: "Narcan two milligrams intranasal, no response, repeated one dose after three minutes"
+  expected:
+    - {drug: naloxone, dose: 2, unit: mg, route: IN, time: null, status: given}
+    - {drug: naloxone, dose: 2, unit: mg, route: IN, time: "+3 min after first", status: given}
+- id: b05
+  tier: core
+  utterance: "aspirin three hundred and twenty five milligrams by mouth, patient swallowed it"
+  expected: [{drug: aspirin, dose: 325, unit: mg, route: PO, time: null, status: given}]
+- id: b06
+  tier: core
+  utterance: "fentanyl fifty micrograms IV, no sorry, one hundred micrograms"
+  expected: [{drug: fentanyl, dose: 100, unit: mcg, route: IV, time: null, status: given}]
+  notes: self-correction; must NOT record 50.
+- id: b07
+  tier: core
+  utterance: "did not give morphine, patient says he is allergic"
+  expected: [{drug: morphine, dose: null, unit: null, route: null, time: null, status: not_given}]
+  expected_flags: [allergy or not_given must be visible; must never be recorded as administered]
+- id: b08
+  tier: core
+  utterance: "morphine two to four milligrams IV titrated to pain"
+  expected: [{drug: morphine, dose: "2-4 (range)", unit: mg, route: IV, time: null, status: given}]
+  expected_flags: [range spoken; no silent value]
+- id: b09
+  tier: core
+  utterance: "salbutamol five milligrams nebulised"
+  expected: [{drug: salbutamol, dose: 5, unit: mg, route: neb, time: null, status: given}]
+- id: b10
+  tier: core
+  utterance: "blood sugar fifty four, gave dextrose twenty five grams IV"
+  expected:
+    - {drug: glucose_reading, dose: 54, status: measurement}
+    - {drug: dextrose, dose: 25, unit: g, route: IV, time: null, status: given}
+  notes: 54 is a reading, not a dose.
+- id: b11
+  tier: core
+  utterance: "pulse ox eighty eight on room air, started oxygen ten litres per minute by mask"
+  expected:
+    - {drug: spo2_reading, dose: 88, status: measurement}
+    - {drug: oxygen, dose: 10, unit: L/min, route: mask/inhaled, time: null, status: given}
+- id: b12
+  tier: core
+  utterance: "adrenaline one milligram IV, and then another one milligram IV after three minutes"
+  expected:
+    - {drug: epinephrine, dose: 1, unit: mg, route: IV, time: null, status: given}
+    - {drug: epinephrine, dose: 1, unit: mg, route: IV, time: "+3 min after first", status: given}
+  expected_flags: [two administrations; repeat-dose check allowed]
+- id: b13
+  tier: core
+  utterance: "amiodarone three hundred milligrams IV at two twenty PM"
+  expected: [{drug: amiodarone, dose: 300, unit: mg, route: IV, time: "14:20", status: given}]
+- id: b14
+  tier: core
+  utterance: "gave pheniramine twenty two point seven five milligrams IM"
+  expected: [{drug: pheniramine, dose: 22.75, unit: mg, route: IM, time: null, status: given}]
+- id: b15
+  tier: core
+  utterance: "pentazocine thirty milligrams IM given ten minutes ago"
+  expected: [{drug: pentazocine, dose: 30, unit: mg, route: IM, time: "-10 min", status: given}]
+- id: b16
+  tier: core
+  utterance: "patient refused aspirin"
+  expected: [{drug: aspirin, dose: null, status: not_given}]
+  expected_flags: [must never be recorded as administered]
+- id: b17
+  tier: core
+  utterance: "magnesium sulphate four grams IV over twenty minutes"
+  expected: [{drug: magnesium_sulfate, dose: 4, unit: g, route: IV, time: null, status: given}]
+- id: b18
+  tier: core
+  utterance: "ketamine one milligram per kilo IV, patient is about seventy kilos"
+  expected: [{drug: ketamine, dose: "1 mg/kg (weight 70 kg => 70 mg)", unit: mg, route: IV, time: null, status: given}]
+  expected_flags: [no silent value: must NOT be recorded as plain "1 mg"]
+- id: b19
+  tier: core
+  utterance: "furosemide forty IV"
+  expected: [{drug: furosemide, dose: 40, unit: null, route: IV, time: null, status: given}]
+  expected_flags: [unit missing]
+- id: b20
+  tier: core
+  utterance: "IV access established, eighteen gauge, right hand"
+  expected: [{procedure: iv_cannulation, time: null, status: given}]
+- id: b21
+  tier: core
+  utterance: "no IV access obtained, two attempts failed"
+  expected: [{procedure: iv_cannulation, time: null, status: not_done}]
+  notes: negation on a procedure (known xfail on dev).
+- id: b22
+  tier: core
+  utterance: "CPR started at ten forty two, adrenaline one milligram IV at ten forty four, second dose at ten forty eight"
+  expected:
+    - {procedure: cpr, time: "10:42", status: given}
+    - {drug: epinephrine, dose: 1, unit: mg, route: IV, time: "10:44", status: given}
+    - {drug: epinephrine, dose: 1, unit: mg, route: IV, time: "10:48", status: given}
+- id: b23
+  tier: core
+  utterance: "gave ondansetron four milligram IV and also metoclopramide ten milligram IV"
+  expected:
+    - {drug: ondansetron, dose: 4, unit: mg, route: IV, time: null, status: given}
+    - {drug: metoclopramide, dose: 10, unit: mg, route: IV, time: null, status: given}
+- id: b24
+  tier: core
+  utterance: "gave adrenaline point three, no, zero point five milligram IM"
+  expected: [{drug: epinephrine, dose: 0.5, unit: mg, route: IM, time: null, status: given}]
+  expected_flags: [dose above the cited IM range (0.3 mg) must be flagged]
+- id: b25
+  tier: core
+  utterance: "naloxone point four milligram IV push"
+  expected: [{drug: naloxone, dose: 0.4, unit: mg, route: IV, time: null, status: given}]
+- id: b26
+  tier: core
+  utterance: "gave diclofenac fifty IM"
+  expected: [{drug: diclofenac, dose: 50, unit: null, route: IM, time: null, status: given}]
+  expected_flags: [drug not in lexicon (if it is not); unit missing; never silently dropped]
+- id: b27
+  tier: core
+  utterance: "paracetamol one gram IV infusion"
+  expected: [{drug: paracetamol, dose: 1, unit: g, route: IV, time: null, status: given}]
+- id: b28
+  tier: stretch
+  utterance: "adrenaline one in ten thousand, ten ml IV"
+  expected: [{drug: epinephrine, dose: "10 ml of 1:10000 (= 1 mg)", unit: ml, route: IV, time: null, status: given}]
+  expected_flags: [no silent value: must NOT be recorded as 10 mg]
+- id: b29
+  tier: stretch
+  utterance: "dextrose ten percent one hundred ml IV"
+  expected: [{drug: dextrose, dose: 100, unit: ml, route: IV, concentration: "10%", time: null, status: given}]
+  expected_flags: [no silent value: must NOT be recorded as 10 mg or 10 g]
+- id: b30
+  tier: core
+  utterance: "BP one twenty over eighty, gave nothing, just oxygen"
+  expected:
+    - {drug: bp_reading, dose: "120/80", status: measurement}
+    - {drug: oxygen, dose: null, unit: null, route: null, time: null, status: given}
+  expected_flags: [oxygen flow missing]
+- id: b31
+  tier: stretch
+  utterance: "adrenaline point three IM de diya, do minute pehle"
+  expected: [{drug: epinephrine, dose: 0.3, unit: null, route: IM, time: "-2 min", status: given}]
+  expected_flags: [unit missing or inferred]
+  notes: Hinglish ("de diya" = gave, "do minute pehle" = two minutes ago).
+- id: b32
+  tier: stretch
+  utterance: "ondansetron char milligram IV diya"
+  expected: [{drug: ondansetron, dose: 4, unit: mg, route: IV, time: null, status: given}]
+  notes: Hinglish number word ("char" = four).
