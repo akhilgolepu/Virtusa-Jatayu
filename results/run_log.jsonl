@@ -98,3 +98,4 @@
 {"timestamp": "2026-11-15T21:50:57.141031+05:30", "commit": "a1b2602", "dirty": false, "dirty_paths": [], "runner": "scripts.fhir_r4_check", "split": "none (synthetic example)", "tag": "r8-fhir-r4-check"}
 {"timestamp": "2026-11-15T21:53:02.670978+05:30", "commit": "bad026b", "dirty": false, "dirty_paths": [], "runner": "eval.flag_counts", "split": "dev", "tag": "r8-flag-counts-after"}
 {"timestamp": "2026-11-15T21:53:03.445547+05:30", "commit": "746c000-dirty", "dirty": true, "dirty_paths": ["eval/flag_counts.py"], "runner": "eval.flag_counts", "split": "dev", "tag": "r8-flag-counts-before"}
+{"timestamp": "2026-11-15T23:13:12.125206+05:30", "commit": "57d35ce", "dirty": false, "dirty_paths": [], "runner": "eval.drug_identity", "split": "dev", "tag": "r9-drug-identity-before", "transcripts": "results/r4-dev-audio-rules-no-asr-flag/transcripts.jsonl"}
