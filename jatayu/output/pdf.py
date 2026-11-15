@@ -12,8 +12,7 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, Tabl
 
 from jatayu.audit import AuditRow, VerifyResult
 from jatayu.config import DISCLAIMER
-from jatayu.incident import IncidentState
-from jatayu.models import MedicationEntry
+from jatayu.output.fhir import provenance
 
 INK = colors.HexColor("#141210")
 MUTED = colors.HexColor("#6b6863")
@@ -47,27 +46,33 @@ def _ledger(rows: list[list], widths: list[float]) -> Table:
     return table
 
 
-def _entry_row(n: int, entry, status: str) -> list:
-    if isinstance(entry, MedicationEntry):
-        item = entry.drug.value or "—"
-        dose = "—" if entry.dose_value.value is None else f"{entry.dose_value.value:g} {entry.dose_unit.value or '?'}"
-        route = entry.route.value or "—"
+def _entry_row(n: int, res: dict) -> list:
+    """One table row, read from a FHIR-lite resource of the validated bundle (the PDF has no other source)."""
+    prov = provenance(res)
+    if res["resourceType"] == "MedicationAdministration":
+        item = res["medicationCodeableConcept"]["text"]
+        d = res.get("dosage", {})
+        dose = f"{d['dose']['value']:g} {d['dose'].get('unit', '?')}" if "dose" in d else "—"
+        route = d.get("route", {}).get("text", "—")
+        when = res["effectiveDateTime"]
     else:
-        item = entry.procedure.value + (f" ({entry.detail.value})" if entry.detail and entry.detail.value else "")
+        item = res["code"]["text"] + "".join(f" ({n['text']})" for n in res.get("note", []))
         dose, route = "", ""
-    flags = "<br/>".join(f'<font color="#da291c">&#9650;</font> {f.code}' if f.severity == "high" else f"&#9651; {f.code}"
-                         for f in entry.flags) or "—"
-    status_text = f"<b>{status.upper()}</b>"
-    codes = {f.code for f in entry.flags}
-    if status != "rejected" and codes & {"possible_not_given", "possible_measurement"}:
-        # never shown as an administration (see output/fhir.py NOT_DONE)
-        what = "NOT GIVEN" if "possible_not_given" in codes else "READING"
-        status_text = f'<font color="#da291c"><b>{what}</b></font><br/>{status}'
-    return [Paragraph(f"{n:02d}", MONO), Paragraph(_t(entry.time.value), MONO), Paragraph(item, BODY),
+        when = res["performedDateTime"]
+    flags = "<br/>".join(f'<font color="#da291c">&#9650;</font> {f["code"]}' if f["severity"] == "high" else f"&#9651; {f['code']}"
+                         for f in prov["flags"]) or "—"
+    review = prov.get("review_status", "draft")
+    status_text = f"<b>{review.upper()}</b>"
+    if res["status"] == "not-done":  # never shown as an administration (see output/fhir.py NOT_DONE)
+        what = "READING" if res["statusReason"][0]["text"].startswith("A reading") else "NOT GIVEN"
+        status_text = f'<font color="#da291c"><b>{what}</b></font><br/>{review}'
+    return [Paragraph(f"{n:02d}", MONO), Paragraph(_t(when), MONO), Paragraph(item, BODY),
             Paragraph(dose, BODY), Paragraph(route, BODY), Paragraph(status_text, BODY), Paragraph(flags, BODY)]
 
 
-def render_note(incident: dict, state: IncidentState, rows: list[AuditRow], verify: VerifyResult) -> bytes:
+def render_note(incident: dict, bundle: dict, rows: list[AuditRow], verify: VerifyResult) -> bytes:
+    """The PDF note. Entries come from the FHIR-lite bundle (already schema-validated by the caller), so the PDF and
+    the JSON cannot disagree; the record history and chain verdict come from the audit log."""
     buf = io.BytesIO()
 
     def footer(canvas, doc):
@@ -82,11 +87,11 @@ def render_note(incident: dict, state: IncidentState, rows: list[AuditRow], veri
                             bottomMargin=18 * mm, title=f"Jatayu note {incident['id'][:8]}", author="Jatayu")
     story: list = [_label("Incident note"), Paragraph(incident.get("label") or "Unlabelled incident", TITLE),
                    Paragraph(f"Started {datetime.fromisoformat(incident['started_at']).strftime('%d %b %Y, %H:%M')}"
-                             f" · {len(state.entries)} entries · {len(state.utterances)} utterances", BODY),
+                             f" · {len(bundle['entry'])} entries · {len(bundle.get('utterances', []))} utterances", BODY),
                    Paragraph(f"Incident {incident['id']} · Device {incident.get('device', 'unknown')}", MONO),
                    Spacer(1, 6 * mm), _label("Entries")]
     head = [_label(h) for h in ("#", "Time", "Drug / procedure", "Dose", "Route", "Status", "Flags")]
-    entries = [_entry_row(i + 1, s.entry, s.status) for i, s in enumerate(state.entries.values())]
+    entries = [_entry_row(i + 1, e["resource"]) for i, e in enumerate(bundle["entry"])]
     story += [_ledger([head, *entries], [8 * mm, 12 * mm, 44 * mm, 22 * mm, 14 * mm, 22 * mm, 52 * mm]),
               Spacer(1, 6 * mm), _label("Record history (append-only)")]
     hist_head = [_label(h) for h in ("Seq", "Event", "Time", "Entry hash")]

@@ -32,8 +32,9 @@ def _canonical(obj) -> str:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False, default=str)
 
 
-def _prov(entry: Entry, names: tuple[str, ...], utterance_id: str | None = None) -> list[dict]:
-    record = {"entry_id": entry.id}
+def _prov(entry: Entry, names: tuple[str, ...], utterance_id: str | None = None,
+          review_status: str = "draft") -> list[dict]:
+    record = {"entry_id": entry.id, "review_status": review_status}  # draft | edited | confirmed | rejected
     if utterance_id:
         record["utterance_id"] = utterance_id
     for name in names:
@@ -47,7 +48,7 @@ def _prov(entry: Entry, names: tuple[str, ...], utterance_id: str | None = None)
 
 
 def _medication(e: MedicationEntry, lexicon: Lexicon, status: str = "in-progress",
-                utterance_id: str | None = None) -> dict:
+                utterance_id: str | None = None, review_status: str = "draft") -> dict:
     res = {
         "resourceType": "MedicationAdministration",
         "status": status,
@@ -64,12 +65,12 @@ def _medication(e: MedicationEntry, lexicon: Lexicon, status: str = "in-progress
             dosage["dose"]["unit"] = e.dose_unit.value
     if dosage:
         res["dosage"] = dosage
-    res["extension"] = _prov(e, ("drug", "dose_value", "dose_unit", "route", "time"), utterance_id)
+    res["extension"] = _prov(e, ("drug", "dose_value", "dose_unit", "route", "time"), utterance_id, review_status)
     return res
 
 
 def _procedure(e: ProcedureEntry, lexicon: Lexicon, status: str = "in-progress",
-               utterance_id: str | None = None) -> dict:
+               utterance_id: str | None = None, review_status: str = "draft") -> dict:
     code = {"text": e.procedure.value}
     snomed = lexicon.procedure(e.procedure.value).snomed
     if snomed:
@@ -78,14 +79,15 @@ def _procedure(e: ProcedureEntry, lexicon: Lexicon, status: str = "in-progress",
            "performedDateTime": e.time.value.isoformat()}
     if e.detail is not None and e.detail.value:
         res["note"] = [{"text": e.detail.value}]
-    res["extension"] = _prov(e, ("procedure", "time", "detail"), utterance_id)
+    res["extension"] = _prov(e, ("procedure", "time", "detail"), utterance_id, review_status)
     return res
 
 
-def _resource(e: Entry, lexicon: Lexicon, status: str = "in-progress", utterance_id: str | None = None) -> dict:
+def _resource(e: Entry, lexicon: Lexicon, status: str = "in-progress", utterance_id: str | None = None,
+              review_status: str = "draft") -> dict:
     build = _medication if isinstance(e, MedicationEntry) else _procedure
     status, reason = _status(e, status)
-    res = build(e, lexicon, status, utterance_id)
+    res = build(e, lexicon, status, utterance_id, review_status)
     if reason:
         res["statusReason"] = [{"text": reason}]
     return res
@@ -119,7 +121,7 @@ def to_incident_bundle(incident: dict, items: list[tuple[Entry, str, str]], utte
         "transcript": "",
         "utterances": [{"id": u["id"], "transcript": u["transcript"], "capture_time": u["capture_time"]}
                        for u in utterances],
-        "entry": [{"resource": _resource(e, lexicon, fhir_status.get(status, "in-progress"), utt)}
+        "entry": [{"resource": _resource(e, lexicon, fhir_status.get(status, "in-progress"), utt, status)}
                   for e, status, utt in items],
     }
 
@@ -132,3 +134,8 @@ def _validator() -> jsonschema.Draft202012Validator:
 
 def validate_bundle(bundle: dict) -> None:
     _validator().validate(bundle)
+
+
+def provenance(resource: dict) -> dict:
+    """The provenance record a resource carries (spans, sources, flags, review status)."""
+    return json.loads(resource["extension"][0]["valueString"])

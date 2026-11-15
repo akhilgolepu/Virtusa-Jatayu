@@ -205,22 +205,25 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
                                supersedes_seq=current.history[-1])
         return {"seq": row.seq}
 
-    @app.get("/api/incidents/{incident_id}/note.pdf")
-    def incident_pdf(incident_id: str):
-        inc = _incident(incident_id)
-        pdf = render_note({**inc, "device": device}, incident_state(audit, incident_id), audit.rows(incident_id),
-                          audit.verify())
-        return Response(pdf, media_type="application/pdf",
-                        headers={"Content-Disposition": f'inline; filename="jatayu-{incident_id[:8]}.pdf"'})
-
-    @app.get("/api/incidents/{incident_id}/bundle")
-    def incident_bundle(incident_id: str):
+    def _bundle(incident_id: str) -> dict:
+        """The incident's FHIR-lite bundle, schema-validated. The JSON endpoint and the PDF both use this one."""
         inc = _incident(incident_id)
         state = incident_state(audit, incident_id)
         items = [(s.entry, s.status, s.utterance_id) for s in state.entries.values()]
         bundle = to_incident_bundle({**inc, "device": device}, items, state.utterances, lexicon)
         validate_bundle(bundle)
         return bundle
+
+    @app.get("/api/incidents/{incident_id}/note.pdf")
+    def incident_pdf(incident_id: str):
+        inc = _incident(incident_id)
+        pdf = render_note({**inc, "device": device}, _bundle(incident_id), audit.rows(incident_id), audit.verify())
+        return Response(pdf, media_type="application/pdf",
+                        headers={"Content-Disposition": f'inline; filename="jatayu-{incident_id[:8]}.pdf"'})
+
+    @app.get("/api/incidents/{incident_id}/bundle")
+    def incident_bundle(incident_id: str):
+        return _bundle(incident_id)
 
     @app.get("/api/audit")
     def audit_rows(incident_id: str | None = None):
