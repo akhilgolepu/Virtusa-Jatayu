@@ -2,6 +2,12 @@ import { useRef, useState } from "preact/hooks";
 import { api, ApiError, type Entry, type EntryState, type Lexicon } from "../api";
 import { Flags } from "./Flags";
 
+// Units in full next to the code (round 10): "mg · milligrams".
+const UNIT_WORDS: Record<string, string> = {
+  mg: "milligrams", mcg: "micrograms", g: "grams", ml: "millilitres", "L/min": "litres per minute", units: "units",
+  puffs: "puffs", drops: "drops", mmol: "millimoles", mEq: "milliequivalents",
+};
+
 const fmtTime = (iso: string | null) =>
   iso ? new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "—";
 
@@ -80,8 +86,13 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
     <article class="card entry" data-status={state.status} aria-label={`Entry ${n}: ${title}`}>
       <div class="entry-head">
         <span class="entry-num">{String(n).padStart(2, "0")}</span>
-        <h3>{title}</h3>
-        {heard && <span class="heard label" title="the word as the recogniser heard it">heard “{heard}”</span>}
+        {/* Round 10: drug identity is the most prominent element of the card (presentation only; not claimed to catch
+            a wrong drug). */}
+        <div class="identity">
+          {e.kind === "medication" && <span class="label">Drug</span>}
+          <h3 class={e.kind === "medication" ? "drug-name" : undefined}>{title}</h3>
+          {heard && <span class="heard" title="the word as the recogniser heard it">heard “{heard}”</span>}
+        </div>
         <span class="status" data-status={state.status}>{state.status}</span>
       </div>
       {soundAlike && e.kind === "medication" && !settled && (
@@ -94,7 +105,7 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
       {e.kind === "medication" && !editing && (
         <div class="fields">
           <Field label="Dose" value={e.dose_value.value === null ? "not stated" : `${e.dose_value.value}`} user={e.dose_value.source === "user"} />
-          <Field label="Unit" value={e.dose_unit.value ?? "not stated"} user={e.dose_unit.source === "user"} />
+          <Field label="Unit" value={e.dose_unit.value ? `${e.dose_unit.value} · ${UNIT_WORDS[e.dose_unit.value] ?? e.dose_unit.value}` : "not stated"} user={e.dose_unit.source === "user"} />
           <Field label="Route" value={e.route.value ?? "not stated"} user={e.route.source === "user"} />
           <Field label="Time" value={fmtTime(e.time.value)} user={e.time.source === "user"} />
         </div>
@@ -155,7 +166,10 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
           <h3 id={`ack-${e.id}`}>Check before confirming</h3>
           <p class="muted">This entry has {highCodes.length} high-severity check{highCodes.length === 1 ? "" : "s"}. Confirm only if each one is understood.</p>
           {e.kind === "medication" && (
-            <p class="heard-vs-recorded"><span class="label">Heard</span> “{e.drug.raw ?? "—"}” <span class="label">Recorded</span> <b>{e.drug.value ?? "—"}</b></p>
+            <div class="identity-check">
+              <div><span class="label">Drug</span> <span class="drug-name">{e.drug.value ?? "—"}</span></div>
+              <div><span class="label">Heard</span> “{e.drug.raw ?? "—"}”</div>
+            </div>
           )}
           {highCodes.map((code) => (
             <label class="check" key={code}>
@@ -165,7 +179,7 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
             </label>
           ))}
           <div class="row">
-            <button class="btn btn-primary" disabled={highCodes.some((c) => !ack.includes(c)) || busy !== ""} onClick={() => confirm(ack)}>Confirm with checks</button>
+            <button class="btn btn-primary" disabled={highCodes.some((c) => !ack.includes(c)) || busy !== ""} onClick={() => confirm(ack)}>{e.kind === "medication" && e.drug.value ? `Confirm ${e.drug.value}` : "Confirm with checks"}</button>
             <button class="btn btn-ghost" onClick={() => dialog.current?.close()}>Back</button>
           </div>
         </div>

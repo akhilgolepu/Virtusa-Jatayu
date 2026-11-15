@@ -59,6 +59,11 @@ ADMIN_VERBS = {"gave", "given", "give", "administered", "pushed", "push", "start
 # heard word's SPELLING against the drug's nearest name or alias, so only a near-identical spelling ("furosmide") passes
 # without it. Stated, not tuned: 0.95 is the existing LOW_CONFIDENCE line (eval/drug_identity.py has the dev numbers).
 SOUND_ACK_BELOW = 0.95
+# Round 10 exemption (IN-SAMPLE, dev speech): a sound match within this many letter edits of the drug's GENERIC name is a
+# spelling variant of that name ("furosmide", "hydroportisone"): medium low_confidence, heard word still shown, no tick.
+# Not extended to aliases and brand names: on dev speech 2 of the 4 wrong drugs were within 2 edits of another drug's
+# brand or alias ("salin" ~ saline, "at event" ~ Atrovent), so that exemption would hide them (eval/tick_cost.py).
+CANONICAL_VARIANT_EDITS = 2
 # Round 9 junk guard for the unknown-drug rule. A word this similar (rapidfuzz ratio, letters only) to a route or unit
 # term is a misheard route or unit, not a drug ("evipush" ~ "iv push", "intramascula"); misheard drugs on dev score <= 59.
 ROUTE_LIKE = 75
@@ -254,6 +259,13 @@ class RulesExtractor:
         joined = "".join(t.text for t in toks[i:best[2]])
         return Mention("drug", best[1], i, best[2], min(best[0] / 100.0, FUZZY_CONFIDENCE_CAP),
                        score=self._spelling(joined, best[1]))
+
+    @staticmethod
+    def _canonical_variant(heard: str | None, canon: str) -> bool:
+        from rapidfuzz.distance import Levenshtein
+
+        letters = lambda w: "".join(c for c in (w or "").lower() if c.isalpha())  # noqa: E731
+        return Levenshtein.distance(letters(heard), letters(canon)) <= CANONICAL_VARIANT_EDITS
 
     def _spelling(self, heard: str, canon: str) -> float:
         """How alike the heard letters are to the recorded drug's nearest name or alias as WRITTEN (0-1). A phonetic
@@ -458,8 +470,13 @@ class RulesExtractor:
         if ambiguous:
             flags.append(Flag(code="ambiguous_dose", field="dose_value", severity="high",
                               message=f"Several numbers near {anchor.canon} and none has a unit; check the dose."))
-        if anchor.known and anchor.score is not None and anchor.score < SOUND_ACK_BELOW:
+        if anchor.known and anchor.score is not None and anchor.score < SOUND_ACK_BELOW \
+                and not self._canonical_variant(drug.raw, anchor.canon):
             flags.append(sound_alike_flag(drug.raw, anchor.canon, anchor.score))
+        elif anchor.known and anchor.score is not None and anchor.score < SOUND_ACK_BELOW:
+            flags.append(Flag(code="low_confidence", field="drug", severity="medium",
+                              message=f"Heard '{drug.raw}', recorded {anchor.canon}: a spelling variant of the generic name "
+                                      f"(similarity {anchor.score:.2f})."))
         elif anchor.known and anchor.confidence < LOW_CONFIDENCE:
             flags.append(Flag(code="low_confidence", field="drug", severity="medium",
                               message=f"Drug name matched approximately ({anchor.confidence:.2f})."))

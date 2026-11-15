@@ -30,10 +30,10 @@ def _client(tmp_path):
 
 
 # ---- 1. matched by sound -------------------------------------------------------------------------------------------
-@pytest.mark.parametrize("raw,heard,recorded", [
-    ("gave ondansatron 4 mg IV", "ondansatron", "ondansetron"),
-    ("gave furosemid 40 mg IV", "furosemid", "furosemide"),
-    ("gave kettamin 20 mg IV", "kettamin", "ketamine"),
+@pytest.mark.parametrize("raw,heard,recorded", [  # round 10: brand / alias variants and look-alikes keep the tick
+    ("gave zofren 4 mg IV", "zofren", "ondansetron"),
+    ("gave lasicks 40 mg IV", "lasicks", "furosemide"),
+    ("gave ketalor 20 mg IV", "ketalor", "ketamine"),
     ("adrenelin 0.3 mg IM given", "adrenelin", "epinephrine"),
 ])
 def test_sound_match_needs_acknowledgement_and_keeps_the_heard_word(lexicon, raw, heard, recorded):
@@ -42,6 +42,26 @@ def test_sound_match_needs_acknowledgement_and_keeps_the_heard_word(lexicon, raw
     [f] = [f for f in e.flags if f.code == "sound_alike_drug"]
     assert f.severity == "high" and f"Heard '{heard}'" in f.message and f"did you mean {recorded}?" in f.message
     assert "low_confidence" not in codes(e)  # replaced by the stronger flag, not stacked
+
+
+@pytest.mark.parametrize("raw,heard,recorded", [  # round 10: within 2 edits of the GENERIC name -> no tick
+    ("gave ondansatron 4 mg IV", "ondansatron", "ondansetron"),
+    ("gave furosemid 40 mg IV", "furosemid", "furosemide"),
+    ("gave kettamin 20 mg IV", "kettamin", "ketamine"),
+])
+def test_spelling_variant_of_the_generic_name_needs_no_tick_but_shows_the_heard_word(lexicon, raw, heard, recorded):
+    [e] = ext(lexicon, raw)
+    assert e.drug.value == recorded and e.drug.raw == heard
+    [f] = [f for f in e.flags if f.code == "low_confidence"]
+    assert f.severity == "medium" and f"Heard '{heard}'" in f.message and "sound_alike_drug" not in codes(e)
+
+
+def test_the_round9_wrong_drugs_are_still_ticked(lexicon):
+    """The 4 wrong drugs matched by sound on dev speech (in-sample), as heard: none is a variant of the generic name."""
+    from jatayu.extract.rules import RulesExtractor as R
+    for heard, recorded in (("ASTEL", "salbutamol"), ("At event", "ipratropium"), ("chadrin", "amiodarone"),
+                            ("salin", "normal saline")):
+        assert not R._canonical_variant(heard, recorded), heard
 
 
 def test_near_identical_spelling_stays_low_confidence(lexicon):
@@ -63,17 +83,17 @@ def test_sound_match_blocks_confirm_until_ticked_and_shows_everywhere(tmp_path):
 
     c = _client(tmp_path)
     inc = c.post("/api/incidents", json={}).json()["id"]
-    [e] = c.post("/api/utterances", data={"incident_id": inc, "text": "gave ondansatron 4 mg IV"}).json()["entries"]
-    assert e["drug"] == {**e["drug"], "value": "ondansetron", "raw": "ondansatron"}
+    [e] = c.post("/api/utterances", data={"incident_id": inc, "text": "gave zofren 4 mg IV"}).json()["entries"]
+    assert e["drug"] == {**e["drug"], "value": "ondansetron", "raw": "zofren"}
     r = c.post(f"/api/incidents/{inc}/confirm", json={"entry_ids": [e["id"]], "acknowledged": []})
     assert r.status_code == 409 and "sound_alike_drug" in r.text
     high = [f["code"] for f in e["flags"] if f["severity"] == "high"]
     assert c.post(f"/api/incidents/{inc}/confirm", json={"entry_ids": [e["id"]], "acknowledged": high}).status_code == 200
     res = next(x["resource"] for x in c.get(f"/api/incidents/{inc}/bundle").json()["entry"]
                if x["resource"]["resourceType"] == "MedicationAdministration")
-    assert provenance(res)["drug"]["raw"] == "ondansatron"  # the heard word travels with the record
+    assert provenance(res)["drug"]["raw"] == "zofren"  # the heard word travels with the record
     text = "\n".join(p.extract_text() for p in PdfReader(io.BytesIO(c.get(f"/api/incidents/{inc}/note.pdf").content)).pages)
-    assert "heard “ondansatron”" in text and "ondansetron" in text
+    assert "heard “zofren”" in text and "ondansetron" in text
 
 
 def test_correcting_the_drug_clears_the_sound_flag(tmp_path):
@@ -93,7 +113,7 @@ def test_hybrid_keeps_the_sound_flag(lexicon):
             return {"entries": [{"drug": 1, "dose": 2, "unit": 3, "route": 4}]}
 
     rules = RulesExtractor(lexicon)
-    [e] = HybridExtractor(lexicon, lambda: Stub(), rules).extract("gave furosemid 40 mg IV", CAP)
+    [e] = HybridExtractor(lexicon, lambda: Stub(), rules).extract("gave lasicks 40 mg IV", CAP)
     assert e.drug.value == "furosemide" and "sound_alike_drug" in codes(e) and "low_confidence" not in codes(e)
 
 

@@ -133,8 +133,11 @@ kbd { font: 400 var(--text-xs) var(--font-mono); padding: 1px 6px; border-radius
 /* ---------- entries ---------- */
 .entry { display: grid; gap: var(--space-3); }
 .entry-head { display: flex; gap: var(--space-3); align-items: baseline; flex-wrap: wrap; }
-.entry-head h3 { flex: 1; min-width: 0; }
-.entry-head .heard { font-style: italic; }
+.entry-head .identity { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2); }
+.entry-head .identity .label { flex-basis: 100%; }
+.drug-name { font: 600 var(--text-xl) / 1.1 var(--font-display); text-transform: uppercase; letter-spacing: 0.01em; overflow-wrap: anywhere; }
+.entry-head .heard { font-style: italic; color: var(--color-ink-2); }
+.identity-check { display: grid; gap: var(--space-1); padding: var(--space-3); border: 2px solid var(--color-ink); border-radius: var(--radius-cell); }
 .did-you-mean b { font-weight: 600; }
 .heard-vs-recorded { display: flex; gap: var(--space-2); align-items: baseline; flex-wrap: wrap; }
 .entry-num { font: 400 var(--text-sm) var(--font-mono); color: var(--color-ink-3); }

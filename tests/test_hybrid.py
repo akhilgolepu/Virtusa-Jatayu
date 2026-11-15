@@ -147,8 +147,8 @@ def test_one_time_phrase_can_cover_two_drugs(lexicon):
 def test_exact_drug_match_is_not_low_confidence(lexicon):
     [e] = hybrid(lexicon, StubRunner({"entries": [{"drug": 1, "dose": 2, "unit": 3, "route": 4}]})).extract("morphine 5 mg IV", CAP)
     assert not any(f.code == "low_confidence" for f in e.flags)
-    [f] = hybrid(lexicon, StubRunner({"entries": [{"drug": 1, "dose": 2, "unit": 3, "route": 4}]})).extract("ondansatron 4 mg IV", CAP)
-    assert any(x.code == "sound_alike_drug" and x.severity == "high" for x in f.flags)  # round 9: approximate = sound-alike
+    [f] = hybrid(lexicon, StubRunner({"entries": [{"drug": 1, "dose": 2, "unit": 3, "route": 4}]})).extract("zofren 4 mg IV", CAP)
+    assert any(x.code == "sound_alike_drug" and x.severity == "high" for x in f.flags)  # round 9: a brand variant = sound-alike
 
 
 def test_fields_outside_the_entry_kind_are_ignored_not_consumed(lexicon):

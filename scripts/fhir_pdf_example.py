@@ -18,7 +18,7 @@ from jatayu import config
 SENTENCES = ["gave 0.3 mg adrenaline IM two minutes ago", "aspirin 300 mg PO at 10 40", "patient allergic to morphine",
              "blood glucose 3.2 mmol", "started CPR", "ondansetron 4, no sorry, 2 mg IV",
              # round 9: a drug matched by sound, a drug not in the lexicon, a concentration, a procedure not done
-             "gave furosemid 40 mg IV", "gave levetiracetam 500 mg IV", "atropine 0.6 mg per ml", "unable to get IV access"]
+             "gave lasicks 40 mg IV", "gave levetiracetam 500 mg IV", "atropine 0.6 mg per ml", "unable to get IV access"]
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -68,7 +68,7 @@ def main(argv: list[str] | None = None) -> int:
     checks["glucose_reading_status"] = next(r["fhir_status"] for r in rows if r["item"] == "dextrose")
     checks["every_resource_has_subject"] = all("subject" in r for r in clinical(bundle))
     checks["transcripts_as_communications"] = len(transcripts(bundle)) == len(SENTENCES)
-    checks["sound_alike_heard_word_in_pdf"] = "heard “furosemid”" in text
+    checks["sound_alike_heard_word_in_pdf"] = "heard “lasicks”" in text
     checks["unknown_drug_kept"] = any(r["item"] == "levetiracetam" and "drug_not_in_lexicon" in r["flags"] for r in rows)
     checks["concentration_has_no_dose"] = any(r["item"] == "atropine" and not r["dose"] for r in rows)
     checks["procedure_not_done"] = any(r["item"] == "iv cannulation" and r["fhir_status"] == "not-done" for r in rows)

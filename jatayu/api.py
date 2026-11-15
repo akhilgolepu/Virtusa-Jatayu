@@ -26,7 +26,7 @@ from jatayu.output.fhir import to_incident_bundle, validate_bundle
 from jatayu.output.pdf import render_note
 from jatayu.lexicon import Lexicon
 from jatayu.pipeline import Pipeline, PipelineResult
-from jatayu.readback import readback_text, synthesize_readback
+from jatayu.readback import readback_text, synthesize_entry
 from jatayu.validate import validate_all
 
 
@@ -204,7 +204,7 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
 
     @app.get("/api/incidents/{incident_id}/entries/{entry_id}/readback.wav")
     def readback_wav(incident_id: str, entry_id: str):
-        return Response(synthesize_readback(readback_text(_entry(incident_id, entry_id))), media_type="audio/wav")
+        return Response(synthesize_entry(_entry(incident_id, entry_id)), media_type="audio/wav")
 
     @app.post("/api/incidents/{incident_id}/entries/{entry_id}/reject")
     def reject_entry(incident_id: str, entry_id: str, body: RejectIn):

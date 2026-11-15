@@ -86,7 +86,7 @@ def test_readback_text_endpoint(client):
     e = _say(client, inc, "aspirin 300 mg PO at 10:42")["entries"][0]
     r = client.get(f"/api/incidents/{inc}/entries/{e['id']}/readback.txt")
     # "at 10:42" without am/pm resolves to the most recent 10:42 or 22:42, so only the clock-free parts are asserted
-    assert r.status_code == 200 and r.text.startswith("Aspirin, three hundred milligrams, by mouth, at ")
+    assert r.status_code == 200 and r.text.startswith("Drug: Aspirin. Three hundred milligrams, by mouth, at ")
     assert r.text.endswith(":42. Confirm?")
     assert client.get(f"/api/incidents/{inc}/entries/nope/readback.txt").status_code == 404
 
