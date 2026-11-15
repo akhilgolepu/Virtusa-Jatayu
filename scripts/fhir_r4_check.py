@@ -30,7 +30,10 @@ def check(kind, obj):
 out["bundle"] = check("Bundle", bundle)
 for i, e in enumerate(bundle["entry"]):
     r = e["resource"]
-    out["resources"].append({"index": i, "type": r["resourceType"], "status": r["status"], **check(r["resourceType"], r)})
+    with_subject = check(r["resourceType"], {**r, "subject": {"display": "unidentified patient (placeholder)"}})
+    out["resources"].append({"index": i, "type": r["resourceType"], "status": r["status"], **check(r["resourceType"], r),
+                             "valid_with_placeholder_subject": with_subject["valid"],
+                             "errors_with_placeholder_subject": with_subject["errors"]})
 print(json.dumps(out))
 '''
 
@@ -58,8 +61,10 @@ def main(argv: list[str] | None = None) -> int:
          "only shows how far FHIR-lite is from strict R4.", "",
          f"**Whole bundle as R4 Bundle: {'valid' if res['bundle']['valid'] else 'NOT valid'}.** "
          f"**Resources valid as R4 on their own: {valid} of {len(res['resources'])}.**", "",
-         "| # | Resource | Status | Valid R4 | First errors |", "|---|---|---|---|---|"]
-    L += [f"| {r['index']} | {r['type']} | {r['status']} | {r['valid']} | {'; '.join(r['errors'][:3]) or '—'} |"
+         "| # | Resource | Status | Valid R4 | First errors | Valid with a placeholder `subject` added |",
+         "|---|---|---|---|---|---|"]
+    L += [f"| {r['index']} | {r['type']} | {r['status']} | {r['valid']} | {'; '.join(r['errors'][:3]) or '—'} | "
+          f"{r['valid_with_placeholder_subject']} {'; '.join(r['errors_with_placeholder_subject'][:2])} |"
           for r in res["resources"]]
     L += ["", "Bundle errors: " + ("; ".join(res["bundle"]["errors"]) or "none")]
     (out / "report.md").write_text("\n".join(L) + "\n", encoding="utf-8")
