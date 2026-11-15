@@ -76,3 +76,4 @@
 {"timestamp": "2026-11-03T13:16:15.807925+05:30", "commit": "258d10a", "dirty": false, "dirty_paths": [], "runner": "scripts.e2e_latency", "split": "none (synthetic dictation)", "tag": "r5-e2e-latency", "runs": 30, "extractor": "rules"}
 {"timestamp": "2026-11-03T13:16:25.812641+05:30", "commit": "66587ab", "dirty": false, "dirty_paths": [], "runner": "scripts.e2e_latency", "split": "none (synthetic dictation)", "tag": "r5-e2e-latency", "runs": 30, "extractor": "rules"}
 {"timestamp": "2026-11-03T13:16:45.929928+05:30", "commit": "02e6fb0", "dirty": false, "dirty_paths": [], "runner": "scripts.e2e_latency", "split": "none (synthetic dictation)", "tag": "r5-e2e-latency", "runs": 30, "extractor": "rules"}
+{"timestamp": "2026-11-15T19:49:38.223386+05:30", "commit": "4ef5de6", "dirty": false, "dirty_paths": [], "runner": "scripts.recording_dry_run", "split": "none (dummy clip)", "tag": "r6-recording-dry-run"}

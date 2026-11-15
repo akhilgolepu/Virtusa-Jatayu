@@ -1,0 +1,80 @@
+# Commit hash map, 2026-11-03: Claude co-author trailers stripped from commit messages (git filter-branch
+# --msg-filter). Only messages changed: every commit's TREE (the code) is identical, shown in column 3.
+# Old hashes still appear in harness-written files (run_log.jsonl, metrics.json commit_at_start, report.md).
+# old_short new_short tree_short subject
+ce40378 13dbf34 c01ef38 packets(round3): evidence packet for evaluator round 3 items 1-13
+dc29f79 81abb48 e5594fb packets: M1 rebuilt at one commit (760ebd2: commit.txt, samples, verify/tamper, worst failures, pytest 343 passed + 13 xfailed); G0 re-run at 760ebd2 (LLM offline, CUDA versions)
+760ebd2 9bfa6c3 dc9e65f results(r3): speech hybrid/rules/LLM on the same transcripts, paired noise curve, text and off-template runs, dangerous breakdown; DECISIONS ASR rows; scripts/m1_packet.sh rebuilds M1 evidence at one commit
+c0ff23e 479a600 c3d8170 results(r3): ASR diagnosis after the TTS fix; dev text rules and off-template rules; DECISIONS round-3 rows
+f0ae275 83b49f5 1b8ef51 eval: dangerous-error breakdown by field and by why no flag fired; ASR diagnosis BEFORE the TTS fix; breakdown of the round-2 dev runs (round 3 items 1, 5)
+4351849 660ca13 8f9f95d g0: LLM smoke test inside the socket-blocked offline check; CUDA driver and runtime versions in setup_check.json (round 3 item 8)
+988e764 103b3b5 9aeb055 fhir/pdf: a not-given or measurement entry is never a completed administration (status not-done + reason; PDF 'NOT GIVEN'/'READING') (round 3 item 10)
+54f5e29 8d2c5f3 abceb52 extract: measurement lab cues, dose-range flag, 'then another' second entry, borrowed-time flag; hybrid caps entries at one per anchor and reports truncation (round 3 items 4, 6, 11)
+b56be0a 1359226 7db208e eval: normalised WER + lexicon drug-term recall, ASR one-variable diagnosis, transcript reuse, paired noise curve, administration-status error, off-template dev split; aggregate-only sealed runs; TTS spells route abbreviations (round 3 items 1-4, 11)
+104a0b7 01fb0f9 b72f85f repro: run log records the dirty flag; test/final_test refused on a dirty tree; stop tracking results/m3-dev-evals.log (round 3 item 7)
+cb82312 1b7c3fd 3442751 packets(round2): dev rerun table
+2f485c1 b1be174 007f38e results(m3): dev reruns on regenerated data (rules, hybrid, llm text; hybrid audio; hybrid noise), strict + lenient dangerous rows
+cb16546 47d6aa4 ab88378 packets: M1 pytest output (292 passed) and refreshed worst failures; round-2 evidence packet
+c68ae8d 9b2c5c6 850da6c results(m3): step 5 seeded re-measure on regenerated test (seeds 2028 fresh, 2029 harder), validator frozen
+2cbb9a7 69d1a38 45adc79 validate: weight-derived sanity range for uncapped per-kg rows (per_kg x 45-130 kg); developed on dev
+cbb435c 2002447 d243fe4 datagen: gold doses only from the lexicon's ranges; regenerate dev/test/final_test
+a7c787a d0e7147 951b017 eval: strict dangerous-error rate (weight_based_dose is not a catch) + lenient row; seeded new-flag catch definition
+0f8f983 7beb5d5 f5742bf results(m3): seeded reports with 95% CIs and aggregate breakdowns; test folders aggregate-only
+f76155b 9daf823 26a4e85 eval(seeded): Wilson 95% CIs, aggregate miss/false-flag breakdowns; test-split runs expose no records
+99e4126 91fcfd1 bed4085 results: G0 and M1 evidence packets; superseded dev runs kept with notes
+3e1ebc6 88a03c9 6376988 docs: DECISIONS entries from evaluator round 1
+0f1b65e 3214196 2fc95b1 results(m3): seeded-error evidence — first run, tuned-on-dev, fresh test set, harder test set
+bce5504 97fa1c6 fae72cf chore: M3 eval script runs dev only (test held until the M3 code freeze)
+34553bf f67a7c5 2063776 test: read-back endpoint assertion no longer depends on the wall clock
+1d29cb4 48c5591 fb119d0 eval: run log, start commit, source labels; not-range-checked never catches; seeded-error rework
+b966e83 ac339c6 adfbbc2 fix(eval): measurement records judged by drug + flag only (spec §13)
+360f243 91f950f 3b74d32 feat(m4): reject action, device ID on PDF/bundle, read-back 'at 14:32 ... Confirm?'
+263fc6b 3d7cb42 9fe71be fix(cli): f2r eval/setup-check pass their options through
+1d28b10 690675d b31112f feat(m3): seeded-error test — 197/200 corrupted records flagged (98.5%)
+d05ea05 a422cea 16632a5 fix(datagen): final_test gets fold-5 noise and three voices, like test
+8bc3a75 b82edfe 4ab00d6 feat(m2): evaluation harness — one command writes results/<tag>/{metrics.json,report.md,errors.jsonl}
+dc6c5e1 fb1ff6a bc88411 feat(m2): sealed final_test split (by template) and committed SHA-256 hash file
+761bba4 6898600 2f3c483 feat(m1): f2r CLI — add, verify (exit 1 when broken), eval, setup-check
+57927ce 8337b2c 31d5d9e test(m1): 12 tamper mutation types detected; tail deletion pinned as the documented blind spot
+38ccb2a ad0f505 e74acf1 feat(m1): record schema gains time_source and the raw transcript words per field
+5f8e231 c6b5563 13b7574 feat(g0): setup_check writes results/g0/setup_check.json; requirements.lock
+99d63d2 5713056 f4fe1c1 chore: ignore planning docx, Virtusa materials and egg-info
+cd1b72d d771992 c1a4eaf fix: Phase 3 final-review findings
+e67d4e2 4424ef3 25ffe35 test: offline demo-flow gate (real models) + browser e2e script
+3c44ceb 4751444 284023d fix(ui): nav gets its own row on phones (no squeezed vertical stack)
+975c30b 191baf9 f77a1d5 feat(ui): DOT-styled app — capture, review, incidents, audit ledger, record
+2fdf692 fd8a069 a770ec9 feat: PDF incident note (Mecha ledger style) with history and chain head
+287cd2e cd1bfcd 3912902 fix(extract): per-utterance enum schema; kind inferred from the anchor
+547e34b 2b00c92 03a1165 feat: hybrid extractor (default) — LLM links rules candidates only
+d502474 b3db7e3 12cc743 feat: LLM extractor — quotes only, values derived by code
+b0d5157 38f6bd5 dde4e90 feat: validator — cited dose ranges, mg/mcg slips, route/unit, repeats
+c11c9b9 1077f8c 6e7cde4 feat: cited adult dose ranges (NASEMSO v3.0, 2022) for the validator
+c6fdd67 7e0ef61 d6bcd5d feat: llama.cpp LLM runner on the RTX 5060 and a model manager
+5f80d79 b58a08f f26c772 feat: persisted incidents, state folded from the audit chain, edit/confirm API
+01094ab 16c8e1f f53bc36 feat: spoken read-back text and Piper synthesis; shared number words
+b840248 0084f01 035fef6 feat: rules candidate API for hybrid linking; Whisper dotted clock times
+d0731d6 540ad9f a47e4bd chore: ignore local research notes and reports
+09465f5 3c2c556 be6d409 fix(datagen,corpus): final-review findings
+1b7edbd 7fda453 3fc38d0 docs(datagen): rebuild guide; render --noise builds noisy dev/test
+807a9aa d6263b6 83e0bc3 fix(datagen): render leading-dot decimals as 'point one five' for TTS
+189a16d dc83013 612d2ab feat: keyboard-driven record-corpus page at /record
+a54c8b1 7d7bef1 5cc645e feat: record-corpus backend with ASR prompt check and gold realignment
+36845ce df29e97 d0dac4f feat: normalised WER (number forms and unit/route synonyms compare equal)
+d1e7a1e 9484913 c3365a6 feat(datagen): ESC-50 noise mixing at 20/10/5 dB with fold-separated banks
+7177e88 b00310a 13a9278 feat(datagen): Piper TTS rendering with 14 voices incl. Indian-accented
+87f1b78 ef1d04c 2d6d7d9 feat(datagen): family-stratified splits, frozen test set, build CLI
+872c4a2 aaf1084 cab7225 feat(datagen): 60 template families, dose table, seeded generator
+cdfd6b6 76709c5 6af76ab feat(datagen): span-tracking composer and gold schema
+2e2e89a 57ecb12 9e899af feat(datagen): spoken number renderer with normaliser round-trip
+0e8a7fb 9de03b8 4d3679c fix: dangerous dose misreads found in final review
+58bc079 24aaec3 a423129 feat: minimal API and throwaway capture page (Phase 1 gate)
+dec27b7 8632aaf 28814af feat: end-to-end pipeline with offline audio test
+bd180e9 3a735bc 5c295f8 feat: audio decoding and faster-whisper transcriber with vocab prompt
+8906998 a1b1c4c 6ad9bdd feat: append-only hash-chained audit log with tamper demo
+6230fb5 f2e0a12 8c303d9 feat: FHIR-lite bundle output with JSON schema
+d98f587 bff7420 c7a602c feat: lexicon+regex rules extractor with source spans
+af9274e 906955d 70ab361 feat: relative and clock time anchoring
+f8b923a a91af4e 7661f07 feat: normaliser with spoken numbers and raw offset map
+43c0723 5b13e1f f44c7c7 feat: EMS drug/procedure/unit/route lexicon
+b6db29c 007a9d2 352eecd feat: core data model with spans and flags
+8790ca1 c8b12f1 dabb157 chore: package skeleton, offline config, GPU smoke test

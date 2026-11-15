@@ -20,26 +20,47 @@ export TZ=Asia/Kolkata                   # WSL's clock is UTC; times are read re
 uvicorn jatayu.api:app --port 8000       # then open http://localhost:8000 in the Windows browser
 ```
 
-## Extractor: rules by default
+## Extractor: rules-first, LLM optional
 
-Three extractors turn a transcript into records: `rules` (lexicon + patterns), `hybrid` (rules find the spans, a
-local Qwen3-4B links them) and `llm` (LLM only, quotes checked against the transcript). **`rules` is the default**
-(`JATAYU_EXTRACTOR`, the selector on the capture screen); the other two stay selectable.
+The extractor that turns a transcript into records is **rules-first**: lexicon phrases and patterns, with every value
+pointing at the transcript words it came from. A local LLM (Qwen3-4B via llama.cpp) is **optional**: `hybrid` lets it
+link the spans the rules layer found, `llm` lets it quote the transcript directly (quotes are checked). `rules` is the
+default (`JATAYU_EXTRACTOR`, the selector on the capture screen); the other two stay selectable as ablations.
 
-Why (measured on dev, evaluator round 4; DECISIONS 2026-11-03):
+Why — measured on the dev split, synthetic speech (Piper voices) and our own hand-written sentences, evaluator round 4
+(DECISIONS 2026-11-03). Labels: **[dev · synthetic]**, **[dev · hand-written]**.
 
-| Extractor | Speech entity F1 | Off-template F1 | Speech dangerous errors | Speech "not given" recorded as given |
+| Extractor | Speech entity F1 [dev · synthetic] | Off-template F1 [dev · hand-written] | Speech dangerous errors [dev · synthetic] | Speech "not given" recorded as given [dev · synthetic] |
 |---|---|---|---|---|
-| rules | 0.673 | 0.948 | 1/440 | 4/40 |
+| rules | 0.673 | 0.948 | 1/440 | 4/40 (2/40 after round 5) |
 | hybrid | 0.673 | 0.950 | 1/440 | 4/40 |
 | LLM only | 0.527 | 0.894 | 0/440 | 21/40 |
 
-The LLM added nothing measurable, and costs ~0.6-0.9 s per utterance and 3.35 GB of GPU memory. The LLM remains as an
-optional linker and is reported as an ablation.
+The LLM added nothing measurable, and costs ~0.6-0.9 s per utterance and 3.35 GB of GPU memory.
 
 ```bash
 JATAYU_EXTRACTOR=hybrid uvicorn jatayu.api:app --port 8000   # to run with the LLM linker instead
 ```
+
+## What has been measured
+
+All numbers so far are labelled **[dev · synthetic]** (template sentences, Piper voices; we tuned on dev),
+**[dev · hand-written]** (our own sentences), or **[test · validator only]** (the dose checker on gold labels; the full
+pipeline has never been run on test). The full pipeline on test and final_test, and every real recording, are
+**[sealed]**: not measured yet.
+
+| Measure | Result | Label |
+|---|---|---|
+| Speech: normalised word error rate | 0.406 (US 0.26, GB 0.26, Indian-accented 0.53) | dev · synthetic |
+| Speech: drug names heard (target 0.90) | 0.574 — target not met | dev · synthetic |
+| Speech, rules: entity F1 / dangerous errors | 0.673 / 1 of 440 | dev · synthetic |
+| Off-template sentences, rules: entity F1 | 0.952 (59 records) | dev · hand-written |
+| End of a 10-second dictation to the confirm screen, p50 / p95 | 0.387 s / 0.422 s | dev · synthetic dictation |
+| Seeded dose errors caught / harder ones | 99.0% / 78.0% (circular by construction) | test · validator only |
+| Correct doses wrongly flagged | 0.3% test, 1.2% final_test, 1.9% dev | test / dev · validator only |
+| Full pipeline on test, final_test; real speech | — | sealed |
+
+How it works and the full table: `docs/architecture.md`.
 
 ## Recording real speech (dev and test)
 
