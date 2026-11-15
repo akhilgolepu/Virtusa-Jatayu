@@ -56,13 +56,13 @@ pipeline has never been run on test). The full pipeline on test and final_test, 
 |---|---|---|
 | Speech: normalised word error rate | 0.406 (US 0.26, GB 0.26, Indian-accented 0.53) | dev · synthetic |
 | Speech: drug names heard (target 0.90) | 0.574 — target not met | dev · synthetic |
-| Speech, rules: entity F1 / dangerous errors | 0.673 / 1 of 440 | dev · synthetic |
+| Speech, rules: entity F1 / dangerous errors | 0.640 / 1 of 440 (0.673 before the round-8 unknown-drug fix) | dev · synthetic |
 | Off-template sentences, rules: entity F1 | 0.952 (59 records) | dev · hand-written |
 | End of a 10-second dictation to the confirm screen, p50 / p95 | 0.387 s / 0.422 s | dev · synthetic dictation |
 | Seeded dose errors caught / harder ones | 99.0% / 78.0% (circular by construction) | test · validator only |
 | Correct doses wrongly flagged | 0.3% test, 1.2% final_test, 1.9% dev | test / dev · validator only |
 | PDF note for a 10 / 50-entry incident, p50 | 19.8 ms / 87.4 ms | synthetic incidents |
-| Blind evaluator-authored sentences (32), entity F1 core / stretch, rules | 0.840 / 0.857 | blind · single author, sanity check only |
+| Blind evaluator-authored sentences (32), entity F1 core / stretch, rules | 0.840 / 0.857 as run; 0.892 / 0.857 converter-corrected | blind · single author, sanity check only |
 | Full pipeline on test, final_test; real speech | — | sealed |
 
 How it works, per-entity-type scores, the FHIR-lite/PDF example and the full table: `docs/architecture.md`.

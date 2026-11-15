@@ -112,7 +112,7 @@ weight range. Sources and every choice: `DECISIONS.md`.
 | Off-template sentences (59), rules: entity F1 / dangerous | 0.952 / 2 of 59 (both route corrections) | dev · hand-written |
 | Speech (480 Piper clips): normalised WER | 0.406 (US 0.257, GB 0.260, Indian-accented 0.532) | dev · synthetic |
 | Speech: drug-term recall | 0.574 (plan target 0.90: not met) | dev · synthetic |
-| Speech, rules: entity F1 / dangerous / "not given" recorded as given | 0.673 / 1 of 440 / 2 of 40 | dev · synthetic |
+| Speech, rules: entity F1 / dangerous / "not given" recorded as given | 0.673 / 1 of 440 / 2 of 40 (round 5); 0.640 / 1 of 440 / 2 of 40 after the round-8 unknown-drug fix (precision 0.928 → 0.811: misheard drug names now kept and flagged instead of dropped) | dev · synthetic |
 | Speech, same transcripts: rules / hybrid / LLM-only entity F1 | 0.673 / 0.673 / 0.527 | dev · synthetic |
 | Noise, same 160 utterances (hybrid): clean / 20 / 10 / 5 dB entity F1 | 0.653 / 0.633 / 0.624 / 0.567 | dev · synthetic |
 | ASR options (100 clips): drug-term recall small.en / large-v3-turbo / distil-large-v3 | 0.648 / 0.523 / 0.318 | dev · synthetic |
@@ -121,12 +121,15 @@ weight range. Sources and every choice: `DECISIONS.md`.
 | Harder seeded errors (×2, ×5, digit slip, mg→g) | 78.0% (156/200; 95% CI 71.8-83.2) | test · validator only |
 | Correct gold doses flagged by the validator | dev 1.9%, test 0.3%, final_test 1.2% | dev / test · validator only |
 | PDF note (bundle + schema check + chain verify + render): 10 / 50 entries, p50 | 19.8 ms / 87.4 ms (p95 28.6 / 111.3 ms) | synthetic incidents |
-| Blind off-template set, evaluator-authored (32 typed sentences), entity F1 core / stretch: rules · hybrid · LLM-only | 0.840 / 0.857 · 0.805 / 0.857 · 0.747 / 0.812 | blind · single author, sanity check, not a headline |
+| Blind off-template set, evaluator-authored (32 typed sentences), entity F1 core / stretch: rules · hybrid · LLM-only | as-run (official): 0.840 / 0.857 · 0.805 / 0.857 · 0.747 / 0.812; converter-corrected (round 8): 0.892 / 0.857 · 0.858 / 0.857 · 0.780 / 0.812 | blind · single author, sanity check, not a headline |
 | Full pipeline on test or final_test; any real recording | — | sealed / not yet recorded |
 
 ## 6a. Per entity type, dev
 
 Precision / recall / F1 per entity type, from the existing dev runs (nothing re-run). "gold" = number of gold values.
+These runs predate the round-8 safety fixes: the typed results are unchanged by them (round-8 before/after runs are
+identical), but on speech the rules NER now keeps misheard drug names as flagged "not in lexicon" entries (entity F1
+0.673 → 0.640, precision 0.928 → 0.811).
 
 **Typed template sentences [dev · synthetic]** — 480 utterances (generator and NER share a lexicon: not a headline)
 
@@ -171,11 +174,16 @@ entity on speech (rules recall 0.381). Not fixed this round.
 
 ## 6b. FHIR-lite record and the PDF
 
-- **How the JSON is checked.** Every bundle is validated against `jatayu/schemas/fhir_lite.schema.json` (JSON Schema
-  2020-12, with format checking) by `jatayu/output/fhir.py::validate_bundle`, every time one is built: per utterance in
+- **How the JSON is checked.** Every bundle is validated against **our FHIR-lite JSON Schema**
+  (`jatayu/schemas/fhir_lite.schema.json`, JSON Schema 2020-12, with format checking) by `jatayu/output/fhir.py::validate_bundle`, every time one is built: per utterance in
   the pipeline, and per incident at `/api/incidents/<id>/bundle`. A bundle that fails is never returned or logged.
   Tests: `tests/test_fhir.py` (validity, omitted-not-null fields, provenance spans, rejects garbage),
   `tests/test_fhir_safety.py`, `tests/test_demo_flow.py`.
+- **Strict FHIR R4 (optional check, round 8).** Validated offline with the FHIR R4 data models of `fhir.resources`
+  6.5.0 (`results/r8-fhir-r4-check/`): the example bundle is **not** strict R4. Every resource lacks `subject` (the
+  patient reference — FHIR-lite records no patient identity); with a placeholder subject added, all 6 resources validate
+  as R4. The bundle wrapper also carries our extra fields (`incident`, `meta.device`, ...). This is a data-model check,
+  not the official HL7 validator (no terminology or profile checks).
 - **One JSON, one PDF.** Since round 7 the PDF's entries are rendered **from that same validated bundle** (one helper
   builds it for both endpoints); the PDF adds the audit-log history and the chain verdict, which are not clinical
   record. `tests/test_pdf.py::test_pdf_entries_come_from_the_fhir_bundle` alters a dose in the JSON and checks the PDF
@@ -187,14 +195,32 @@ entity on speech (rules recall 0.381). Not fixed this round.
   it): adrenaline (draft), aspirin (confirmed → `completed`), **morphine allergy (confirmed → `not-done`, "NOT GIVEN")**,
   a blood glucose reading (`not-done`, "READING"), CPR (draft) and a self-corrected ondansetron dose (draft, 2 mg).
 
-## 7. Known limits (each pinned by an expected-failure test or a DECISIONS row)
+## 7. Known limits (each pinned by an expected-failure test, a DECISIONS row or an evaluation report)
 
-- A drug that is not in the lexicon is not recognised at all, and nothing flags it (blind set: "diclofenac" was
-  dropped silently; the expected behaviour is a visible "drug not in lexicon" flag).
-- Speech is the weak link: the recogniser misses drug names (57% heard exactly) and is much weaker on the
+Fixed in round 8 (general rules, unit-tested on new sentences; `tests/test_safety_fixes.py`):
+- a drug-like word that is not in the lexicon, followed by a dose, unit or route, is kept with its spoken name and a
+  visible `drug_not_in_lexicon` flag (high) on the confirm screen — it is no longer dropped;
+- a concentration ("x mg per ml", "x mg/ml", "1 in 10000") is never recorded as the dose: `concentration_not_dose`
+  (high), and the entry cannot be confirmed until the responder enters the dose.
+
+Still open:
+- **Time is the weakest entity on speech** (rules recall 0.38; dev, synthetic).
+- **The procedure detail** (e.g. a tube size) is extracted but **not scored**.
+- Speech is the weak link overall: the recogniser misses drug names (57% heard exactly) and is much weaker on the
   Indian-accented synthetic voices. Whether this holds for real speakers is unknown until real recordings exist.
-- Negation said after the drug ("naloxone was not given", "morphine nahi diya"); route corrections ("IM, sorry, IV");
-  Hindi numbers and times ("ek", "do minute pehle"); per-kg doses ("1 mg per kg").
+- **Sound-alike substitution:** a drug the lexicon does not know can be matched by sound to one it does know
+  ("tramadol" → ketorolac). It is flagged `low_confidence` and the spoken word is kept as the field's source text, but
+  the recorded drug is the wrong one until the medic corrects it.
+- **Unknown-drug entries on speech:** since round 8 a misheard drug name followed by a dose becomes a visible
+  "not in lexicon" entry (right for safety), but some ordinary misheard words do too ("fine", "rise"): on dev speech
+  51 more flagged entries, precision 0.928 → 0.811.
+- Readings said as values ("blood sugar 54", "pulse ox 88", "BP 120 over 80") are not recorded as readings; a reading
+  cue near a drug can mark that drug as a possible measurement ("blood sugar 54, gave dextrose").
+- "second dose at 10 48" is not read as a repeat dose; negation said after the drug ("naloxone was not given",
+  "morphine nahi diya"); route corrections ("IM, sorry, IV"); Hindi numbers and times ("ek", "char", "do minute
+  pehle"); "about five minutes back"; per-kg doses ("1 mg per kg").
+- The two round-8 fixes are in the rules NER and the hybrid; the LLM-only mode (an ablation) does not have them.
+- FHIR-lite is not strict FHIR R4 (no patient `subject`; see 6b).
 - A wrong dose that is still a legal dose cannot be caught by a range check; the residual risk depends on read-back
   confirmation, whose effectiveness we have not measured.
 

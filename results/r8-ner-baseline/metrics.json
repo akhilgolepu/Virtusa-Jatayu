@@ -1,0 +1,230 @@
+{
+  "commit": "c391366",
+  "model": "biomedical-ner-all",
+  "results": {
+    "dev template sentences": {
+      "utterances": 480,
+      "rules": {
+        "drug": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "gold": 460
+        },
+        "dose_value": {
+          "precision": 0.9048,
+          "recall": 1.0,
+          "f1": 0.95,
+          "gold": 380
+        },
+        "dose_unit": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "gold": 380
+        },
+        "route": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "gold": 360
+        },
+        "procedure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "gold": 60
+        }
+      },
+      "pretrained": {
+        "drug": {
+          "precision": 0.7234,
+          "recall": 0.6652,
+          "f1": 0.6931,
+          "gold": 460
+        },
+        "dose_value": {
+          "precision": 0.6723,
+          "recall": 0.6263,
+          "f1": 0.6485,
+          "gold": 380
+        },
+        "dose_unit": {
+          "precision": 1.0,
+          "recall": 0.7053,
+          "f1": 0.8272,
+          "gold": 380
+        },
+        "route": {
+          "precision": 0.6987,
+          "recall": 0.3028,
+          "f1": 0.4225,
+          "gold": 360
+        },
+        "procedure": {
+          "precision": 0.2282,
+          "recall": 0.9167,
+          "f1": 0.3654,
+          "gold": 60
+        }
+      }
+    },
+    "off-template dev sentences (hand-written)": {
+      "utterances": 56,
+      "rules": {
+        "drug": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "gold": 65
+        },
+        "dose_value": {
+          "precision": 0.8889,
+          "recall": 0.96,
+          "f1": 0.9231,
+          "gold": 50
+        },
+        "dose_unit": {
+          "precision": 0.9815,
+          "recall": 0.9636,
+          "f1": 0.9725,
+          "gold": 55
+        },
+        "route": {
+          "precision": 0.9608,
+          "recall": 0.9245,
+          "f1": 0.9423,
+          "gold": 53
+        },
+        "procedure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "gold": 6
+        }
+      },
+      "pretrained": {
+        "drug": {
+          "precision": 0.7237,
+          "recall": 0.8462,
+          "f1": 0.7801,
+          "gold": 65
+        },
+        "dose_value": {
+          "precision": 0.7308,
+          "recall": 0.76,
+          "f1": 0.7451,
+          "gold": 50
+        },
+        "dose_unit": {
+          "precision": 0.9783,
+          "recall": 0.8182,
+          "f1": 0.8911,
+          "gold": 55
+        },
+        "route": {
+          "precision": 0.85,
+          "recall": 0.3208,
+          "f1": 0.4658,
+          "gold": 53
+        },
+        "procedure": {
+          "precision": 0.0909,
+          "recall": 0.1667,
+          "f1": 0.1176,
+          "gold": 6
+        }
+      }
+    },
+    "blind v1, evaluator-authored (spent; now dev)": {
+      "utterances": 32,
+      "rules": {
+        "drug": {
+          "precision": 0.8919,
+          "recall": 0.8919,
+          "f1": 0.8919,
+          "gold": 37
+        },
+        "dose_value": {
+          "precision": 0.8125,
+          "recall": 0.8667,
+          "f1": 0.8387,
+          "gold": 30
+        },
+        "dose_unit": {
+          "precision": 1.0,
+          "recall": 0.8214,
+          "f1": 0.902,
+          "gold": 28
+        },
+        "route": {
+          "precision": 1.0,
+          "recall": 0.9032,
+          "f1": 0.9492,
+          "gold": 31
+        },
+        "procedure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "gold": 3
+        }
+      },
+      "pretrained": {
+        "drug": {
+          "precision": 0.8,
+          "recall": 0.5405,
+          "f1": 0.6452,
+          "gold": 37
+        },
+        "dose_value": {
+          "precision": 0.65,
+          "recall": 0.4333,
+          "f1": 0.52,
+          "gold": 30
+        },
+        "dose_unit": {
+          "precision": 0.9375,
+          "recall": 0.5357,
+          "f1": 0.6818,
+          "gold": 28
+        },
+        "route": {
+          "precision": 0.7143,
+          "recall": 0.1613,
+          "f1": 0.2632,
+          "gold": 31
+        },
+        "procedure": {
+          "precision": 0.0556,
+          "recall": 0.3333,
+          "f1": 0.0952,
+          "gold": 3
+        }
+      }
+    }
+  },
+  "pretrained_labels_seen": {
+    "Medication": 524,
+    "Dosage": 499,
+    "Lab_value": 332,
+    "Diagnostic_procedure": 197,
+    "Administration": 183,
+    "Detailed_description": 154,
+    "Time": 124,
+    "Therapeutic_procedure": 73,
+    "Biological_structure": 69,
+    "Sign_symptom": 21,
+    "Date": 17,
+    "Quantitative_concept": 5,
+    "Duration": 3,
+    "Nonbiological_location": 3,
+    "Clinical_event": 2,
+    "Coreference": 2,
+    "Disease_disorder": 2,
+    "Frequency": 2,
+    "Activity": 2,
+    "Other_entity": 1,
+    "History": 1
+  }
+}
