@@ -101,6 +101,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--tag", required=True)
     ap.add_argument("--out", type=Path, default=config.ROOT / "results")
+    ap.add_argument("--extractors", nargs="+", default=["rules", "hybrid", "llm"],
+                    help="the blind set is ordinary dev data since round 7, so a re-score may run a subset")
     args = ap.parse_args(argv)
     from eval.run import _extract, _extractor
 
@@ -108,7 +110,7 @@ def main(argv: list[str] | None = None) -> int:
     out = args.out / args.tag
     out.mkdir(parents=True, exist_ok=True)
     results = {}
-    for name in ("rules", "hybrid", "llm"):  # ONCE each
+    for name in args.extractors:  # the protocol run (round 7) ran each ONCE; later runs are dev re-scores
         start = log_run(args.out, runner="eval.blind", split="offtemplate_blind_v1", tag=f"{args.tag}-{name}",
                         extractor=name, mode="text", note="evaluator-authored blind set; run once per protocol")
         lex, x = _extractor(name)
@@ -127,6 +129,7 @@ def main(argv: list[str] | None = None) -> int:
                 "utterances": sum(1 for t in tiers.values() if tier in (t, "all")),
                 "entity_f1": m["entity"]["micro"]["f1"], "precision": m["entity"]["micro"]["precision"],
                 "recall": m["entity"]["micro"]["recall"], "exact_match": m["record_exact_match"],
+                "dangerous_error_r10": m["dangerous_error_r10"],
                 "dangerous_error": m["dangerous_error"], "dangerous_error_lenient": m["dangerous_error_lenient"],
                 "administration_status_error": m["administration_status_error"], "context_error": m["context_error"],
                 "flags_raised": sum(flags[tier].values()), "flags_by_code": dict(flags[tier].most_common())}
@@ -141,12 +144,12 @@ def main(argv: list[str] | None = None) -> int:
     L += [f"| {k} | {v} |" for k, v in sorted(conv.items())]
     for tier in ("core", "stretch", "all"):
         L += ["", f"## Tier: {tier}", "",
-              "| Extractor | Entity F1 (P / R) | Exact match | Dangerous (strict / lenient) | Admin-status errors | Context errors | Flags raised |",
-              "|---|---|---|---|---|---|---|"]
+              "| Extractor | Entity F1 (P / R) | Exact match | Dangerous, headline (round 10) | Dangerous, matched-drug only (strict / lenient) | Admin-status errors | Context errors | Flags raised |",
+              "|---|---|---|---|---|---|---|---|"]
         for name, res in results.items():
             t = res["tiers"][tier]
             L.append(f"| {name} (`{res['commit']}`) | {t['entity_f1']:.3f} ({t['precision']:.3f} / {t['recall']:.3f}) | "
-                     f"{r(t['exact_match'])} | {r(t['dangerous_error'])} / {r(t['dangerous_error_lenient'])} | "
+                     f"{r(t['exact_match'])} | {r(t['dangerous_error_r10'])} | {r(t['dangerous_error'])} / {r(t['dangerous_error_lenient'])} | "
                      f"{r(t['administration_status_error'])} | {r(t['context_error'])} | {t['flags_raised']} |")
     L += ["", "## Flags raised, by code (all tiers)", "", "| Code | rules | hybrid | llm |", "|---|---|---|---|"]
     codes = sorted({c for res in results.values() for c in res["tiers"]["all"]["flags_by_code"]})

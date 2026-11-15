@@ -188,6 +188,7 @@ def run(args, start: dict) -> dict:
         "groups": {k: {"entity_f1": v.metrics()["entity"]["micro"]["f1"],
                        "record_exact_match": v.metrics()["record_exact_match"]["rate"],
                        "dangerous_error": v.metrics()["dangerous_error"],
+                       "dangerous_error_r10": {k: v.metrics()["dangerous_error_r10"][k] for k in ("count", "denominator", "rate")},
                        "administration_status_error": v.metrics()["administration_status_error"]} for k, v in sorted(scorers.items()) if k != "all"},
         "latency_s": _lat(latencies),
         "leakage": _leakage(root),
@@ -230,7 +231,12 @@ def _report(o: dict, errors: list[dict]) -> str:
              f"R {m['entity']['micro']['recall']:.3f}) |",
              f"| Record exact match | {m['record_exact_match']['count']}/{m['record_exact_match']['denominator']} "
              f"= {m['record_exact_match']['rate']:.3f} |",
-             f"| **Dangerous errors** | **{m['dangerous_error']['count']} of {m['dangerous_error']['denominator']}** "
+             f"| **Dangerous errors (headline, round 10): wrong drug, dose, unit, route or status with no flag that must be "
+             f"ticked** | **{m['dangerous_error_r10']['count']} of {m['dangerous_error_r10']['denominator']}** "
+             f"({m['dangerous_error_r10']['rate']:.2%}; uncaught by kind: {m['dangerous_error_r10']['uncaught_by_kind'] or 'none'}; "
+             f"all such errors: {m['dangerous_error_r10']['errors_by_kind'] or 'none'}) |",
+             f"| Dangerous errors, matched-drug only (pre-round-10 metric, secondary; a wrong drug is not counted) | "
+             f"{m['dangerous_error']['count']} of {m['dangerous_error']['denominator']} "
              f"({m['dangerous_error']['rate']:.2%}; strict: weight_based_dose and low_asr_confidence do not catch) |",
              f"| Dangerous errors, lenient (weight_based_dose and low_asr_confidence count as catches) | "
              f"{m['dangerous_error_lenient']['count']} of {m['dangerous_error_lenient']['denominator']} |",
@@ -254,8 +260,10 @@ def _report(o: dict, errors: list[dict]) -> str:
     lines += ["", "## Per field", "", "| Field | P | R | F1 | gold |", "|---|---|---|---|---|"]
     lines += [f"| {f} | {v['precision']:.3f} | {v['recall']:.3f} | {v['f1']:.3f} | {v['gold']} |"
               for f, v in m["entity"]["per_field"].items() if v["gold"] or v["pred"]]
-    lines += ["", "## Groups", "", "| Group | Entity F1 | Exact match | Dangerous |", "|---|---|---|---|"]
+    lines += ["", "## Groups", "", "| Group | Entity F1 | Exact match | Dangerous (headline) | Dangerous, matched-drug only |",
+              "|---|---|---|---|---|"]
     lines += [f"| {g} | {v['entity_f1']:.3f} | {v['record_exact_match']:.3f} | "
+              f"{v['dangerous_error_r10']['count']}/{v['dangerous_error_r10']['denominator']} | "
               f"{v['dangerous_error']['count']}/{v['dangerous_error']['denominator']} |" for g, v in o["groups"].items()]
     lines += ["", "## Leakage checks", "", f"- test families in train/dev: {o['leakage']['test_families_in_train_or_dev']}",
               f"- test patterns in final_test: {o['leakage']['test_patterns_in_final_test']}", "",
@@ -303,7 +311,8 @@ def main(argv: list[str] | None = None) -> int:
     (out / "report.md").write_text(_report(o, errors), encoding="utf-8")
     m = o["metrics"]
     print(f"{args.tag}: entity F1 {m['entity']['micro']['f1']:.3f} · exact {m['record_exact_match']['rate']:.3f} · "
-          f"dangerous {m['dangerous_error']['count']}/{m['dangerous_error']['denominator']} → {out}")
+          f"dangerous {m['dangerous_error_r10']['count']}/{m['dangerous_error_r10']['denominator']} "
+          f"(matched-drug only {m['dangerous_error']['count']}/{m['dangerous_error']['denominator']}) → {out}")
     return 0
 
 
