@@ -105,7 +105,7 @@ def main(argv: list[str] | None = None) -> int:
             out.append(n)
         return out
 
-    options = {"current rule (round 9/10 code)": set(), "exempt canonical spelling variants": {CLASSES[0]},
+    options = {"current rule (every sound match below 0.95 ticked)": set(), "exempt canonical spelling variants": {CLASSES[0]},
                "exempt canonical + alias/brand spelling variants": {CLASSES[0], CLASSES[1]}}
     correct = [s for s in sound if s["correct"]]
     wrong = [s for s in sound if not s["correct"]]

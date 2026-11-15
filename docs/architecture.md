@@ -1,6 +1,6 @@
 # Scribe108 — architecture
 
-Draft, updated for evaluator round 10. **Decision-support demo, not a clinical device. Adult patients only.** Every number below
+Draft, updated for evaluator round 11. **Decision-support demo, not a clinical device. Adult patients only.** Every number below
 was written by the evaluation harness (`results/`) and carries a label:
 
 - **[dev · synthetic]** — the development split, template sentences and/or computer voices (Piper TTS). We tuned on it.
@@ -120,17 +120,17 @@ weight range. Sources and every choice: `DECISIONS.md`.
 | Measure | Result | Label |
 |---|---|---|
 | Typed template sentences, rules: entity F1 / dangerous errors (headline; matched-drug only) | 1.000 / **0 of 480**; 0 of 440 | dev · synthetic (generator and extractor share a lexicon: not a headline) |
-| Off-template sentences, rules: entity F1 / dangerous errors (headline; matched-drug only) | 0.952 / **3 of 71** (round-10 code); 2 of 59 (both route corrections) | dev · hand-written |
+| Off-template sentences, rules: entity F1 / dangerous errors (headline; matched-drug only) | 0.952 / **3 of 71** (round-11 code); 2 of 59 (both route corrections) | dev · hand-written |
 | Speech (480 Piper clips): normalised WER | 0.406 (US 0.257, GB 0.260, Indian-accented 0.532) | dev · synthetic |
 | Speech: drug-term recall | 0.574 (plan target 0.90: not met) | dev · synthetic |
 | Speech, rules: entity F1 / "not given" recorded as given | 0.673 / 2 of 40 (round 5); 0.640 after the round-8 unknown-drug fix (precision 0.928 → 0.811: misheard drug names now kept and flagged instead of dropped); **0.644** / 2 of 40 after the round-9 junk guard (precision 0.825) | dev · synthetic |
-| Speech, rules: **dangerous errors (headline)** / matched-drug only (secondary) | **6 of 480** (round-10 code: 5 wrong doses/units/routes and 1 wrong drug with no high flag; 5 of 480 at round-9 code) / 1 of 440 | dev · synthetic |
+| Speech, rules: **dangerous errors (headline)** / matched-drug only (secondary) | **5 of 480** (round-11 code: 4 wrong doses/units/routes and 1 wrong drug with no high flag; 6 of 480 with the round-10 exemption, now removed) / 1 of 440 | dev · synthetic |
 | Speech, rules: wrong drug recorded as a known drug | 10 entries (4 matched by sound, 6 a wrong drug word from the recogniser). Round 8: all 10 carried no identity flag stronger than low_confidence / low_asr_confidence. Round 9: the 4 sound matches need a "did you mean" tick; the 6 exact-word ones are unchanged (open) | dev · synthetic |
 | Speech, rules: `drug_not_in_lexicon` precision / recall (hand labels, 49 round-8 flags) | round 8: 0.776 / 1.000 (49 flags: 38 misheard drugs, 7 junk, 4 other); round 9: **0.881 / 0.974** (42 flags: 37 / 2 / 3) | **dev · synthetic · IN-SAMPLE**: the labels and the guard were made on these same clips; one labeller (the AI coding assistant used on this project), not reviewed by a second person, no agreement measured |
-| Speech, rules: sound-alike ticks per note (one note = one clip) mean / p90 / max | round 9: 0.11 / 1 / 2 (49 correct matches ticked); round 10 (generic-name spelling variants exempt): **0.069 / 0 / 2** (29), all 4 wrong sound matches still ticked. All high-flag ticks per note: 0.76 / 2 / 5 → 0.72 / 2 / 5 | dev · synthetic · IN-SAMPLE |
+| Speech, rules: sound-alike ticks per note (one note = one clip) mean / p90 / max | round 11 (every sound match below 0.95 ticked, generic-name variants included): **0.11 / 1 / 2** (49 correct and 4 wrong matches ticked); round 10's exemption gave 0.069 / 0 / 2 and was removed. All high-flag ticks per note: 0.76 / 2 / 5 | dev · synthetic · IN-SAMPLE |
 | Speech, same transcripts: rules / hybrid / LLM-only (experimental) entity F1 | 0.673 / 0.673 / 0.527 (round 5) | dev · synthetic |
 | Noise, same 160 utterances (hybrid): clean / 20 / 10 / 5 dB entity F1 | 0.653 / 0.633 / 0.624 / 0.567 | dev · synthetic |
-| Noisy speech (20/10/5 dB), dangerous errors: headline / matched-drug only | rules, round-10 code: **6 of 360** / 3 of 240; hybrid (round 3, re-scored): **≤ 10 of 360** / 3 of 240 | dev · synthetic |
+| Noisy speech (20/10/5 dB), dangerous errors: headline / matched-drug only | rules, round-11 code: **6 of 360** / 3 of 240; hybrid (round 3, re-scored): **≤ 10 of 360** / 3 of 240 | dev · synthetic |
 | ASR options (100 clips): drug-term recall small.en / large-v3-turbo / distil-large-v3 | 0.648 / 0.523 / 0.318 | dev · synthetic |
 | End of a 10-second dictation → confirm-screen payload: p50 / p95 | 0.387 s / 0.422 s (RTX 5060) | dev · synthetic dictation |
 | Seeded dose errors caught (×10, ÷10, mg↔mcg, route) | 99.0% (198/200; 95% CI 96.4-99.7) — circular by construction | test · validator only |
@@ -138,7 +138,7 @@ weight range. Sources and every choice: `DECISIONS.md`.
 | Correct gold doses flagged by the validator | dev 1.9%, test 0.3%, final_test 1.2% | dev / test · validator only |
 | PDF note (bundle + schema check + chain verify + render): 10 / 50 entries, p50 | 19.8 ms / 87.4 ms (p95 28.6 / 111.3 ms) | synthetic incidents |
 | Blind off-template set, evaluator-authored (32 typed sentences), entity F1 core / stretch: rules · hybrid · LLM-only | as-run (official): 0.840 / 0.857 · 0.805 / 0.857 · 0.747 / 0.812; converter-corrected (round 8): 0.892 / 0.857 · 0.858 / 0.857 · 0.780 / 0.812 | blind · single author, sanity check, not a headline |
-| Blind v1, dangerous errors: headline / matched-drug only, rules · hybrid · LLM-only | as-run (re-scored): **≤ 3 / 1 · ≤ 3 / 1 · ≤ 3 / 0** of 37 / 34; converter-corrected (re-scored): **2 / 1 · 2 / 1 · ≤ 2 / 0**; round-10 code (now dev data): **1 / 0 · 2 / 0 · 1 / 0** | blind, spent (dev since round 7) |
+| Blind v1, dangerous errors: headline / matched-drug only, rules · hybrid · LLM-only | as-run (re-scored): **≤ 3 / 1 · ≤ 3 / 1 · ≤ 3 / 0** of 37 / 34; converter-corrected (re-scored): **2 / 1 · 2 / 1 · ≤ 2 / 0**; round-9 code (now dev data): **1 / 0 · 2 / 0 · 1 / 0**; rules at round-11 code 1 / 0 | blind, spent (dev since round 7) |
 | Full pipeline on test or final_test; any real recording | — | sealed / not yet recorded |
 
 ## 6c. Dangerous errors: the round-10 headline next to the old metric
@@ -153,20 +153,54 @@ counted as uncaught. Those numbers are upper bounds (≤). Runs scored by the ro
 | Dev speech, 480 clips | rules, round 5 (`r5-dev-audio-rules`) | 1 / 440 | ≤ 6 / 480 |
 | | rules, round 9 (`r9-dev-audio-rules-after`) | 1 / 440 | ≤ 5 / 480 |
 | | rules, round-9 code, round-10 scorer (`r10a-dev-audio-rules`) | 1 / 440 | **5 / 480** (exact) |
-| | rules, round-10 code (`r10b-dev-audio-rules`) | 1 / 440 | **6 / 480** (exact) |
+| | rules, round-10 code with the generic-name exemption (`r10b-dev-audio-rules`) | 1 / 440 | 6 / 480 (exact) |
+| | **rules, round-11 code** (`r11-dev-audio-rules`) | 1 / 440 | **5 / 480** (exact) |
 | | hybrid / LLM-only, round 4 | 3 / 440 · 0 / 440 | ≤ 11 / 480 · ≤ 16 / 480 |
 | Noisy speech, 480 clips (160 utterances × 20/10/5 dB) | hybrid, round 3 | 3 / 240 | ≤ 10 / 360 |
-| | rules, round-10 code (`r10b-dev-noise-rules`) | 3 / 240 | **6 / 360** (exact) |
+| | **rules, round-11 code** (`r11-dev-noise-rules`) | 3 / 240 | **6 / 360** (exact) |
 | Blind v1, 32 sentences | as-run, rules · hybrid · LLM-only | 1 · 1 · 0 / 34 | ≤ 3 · ≤ 3 · ≤ 3 / 37 |
 | | converter-corrected | 1 · 1 · 0 / 34 | 2 · 2 · ≤ 2 / 37 |
-| | round-10 code (rules) | 0 / 34 | **1 / 37** (exact) |
+| | **round-11 code (rules)** (`r11-blind-v1-rules`) | 0 / 34 | **1 / 37** (exact) |
+
+**Why the denominators differ.** The old metric counts only gold records whose context is *given*. It asks whether a
+dose that was given was recorded wrong, so a record that says "not given" cannot be in it. The headline adds every
+*not-given* record, because a "not given" recorded as given is a wrong status.
+
+| Set | Old: given records | Headline: given + not-given records |
+|---|---|---|
+| Dev speech | 440 (380 medications and 60 procedures) | 480 = 440 + 40 not-given medications (the 40 measurement readings are in neither; they are scored as context errors) |
+| Noisy speech | 240 | 360 = 240 + 120 not-given |
+| Blind v1 | 34 | 37 = 34 + 3 not-given |
+
+**Not stated, per field** (round 11; shown apart from the dangerous-error count). An empty field shows "not stated" on
+the confirm screen, so it is an omission, not a wrong value. The counts cover the given and not-given *medication*
+records (procedures have no dose, unit or route), so the drug row's denominator is 420 on dev speech, not 480.
+
+- **Drug:** no entry recorded for the record at all, neither the same drug nor one recorded instead.
+- **Dose, unit and route:** the recorded entry leaves the field empty. Counted only over records with an entry and with
+  that field in gold.
+- **Time:** the recorded entry used the device clock (no time stated).
+
+Rules, round-11 code, exact:
+
+| Not stated | Dev speech (`r11-dev-audio-rules`) | Noisy speech (`r11-dev-noise-rules`) | Blind v1 (`r11-blind-v1-rules`) | Dev typed text (`r11-dev-text-rules`) |
+|---|---|---|---|---|
+| Drug (no entry at all) | 96 of 420 | 102 of 360 | 1 of 34 | 0 of 420 |
+| Dose | 25 of 299 | 30 of 258 | 1 of 27 | 0 of 380 |
+| Unit | 84 of 299 | 85 of 258 | 5 of 27 | 0 of 380 |
+| Route | 89 of 276 | 64 of 122 | 3 of 30 | 0 of 360 |
+| Time | 67 of 169 | 38 of 75 | 2 of 6 | 0 of 213 |
+| *Dangerous errors (headline), for comparison* | *5 of 480* | *6 of 360* | *1 of 37* | *0 of 480* |
+
+On speech the large counts are records the recogniser lost or garbled: 96 of 420 medication records got no entry at
+all. That is the recall problem (drug-term recall 0.574), shown here so it is not mistaken for safety.
 
 The denominators grow because the headline also counts not-given records (status errors). The counts grow because a
 medium flag (low_confidence, a medium route `field_missing`, `dose_below_range`) no longer counts as a catch, and a
 wrong drug is now counted at all.
 
-The round-10 tick exemption adds one: "furosenide 14 mg" for furosemide 40 mg. Before, the drug's sound-alike tick
-also covered the wrong dose; now the drug is exempt and the dose has only medium flags.
+The round-10 tick exemption added one: "furosenide 14 mg" for furosemide 40 mg, whose wrong dose was covered only by
+the drug's sound-alike tick. Round 11 removed the exemption, and the headline is back to 5 of 480.
 
 ## 6a. Per entity type, dev
 
@@ -277,10 +311,10 @@ Changed in round 10:
 - **Headline metric.** The dangerous-error headline now counts a wrong drug, dose, unit, route or status recorded
   without a flag that must be ticked (section 5, section 6c). The old figure (matched-drug only) is a labelled
   secondary row and is never quoted alone.
-- **Tick exemption (in-sample).** A sound match within 2 letter edits of the drug's generic name ("furosmide") gets a
-  medium flag and needs no tick; the heard word is still shown. Aliases and brands are not exempt: on dev speech 2 of
-  the 4 wrong sound matches were 1-2 edits from another drug's alias or brand ("salin" ~ saline, "at event" ~
-  Atrovent).
+- **Tick exemption (in-sample), removed in round 11.** In round 10, a sound match within 2 letter edits of the drug's
+  generic name got a medium flag and no tick. The evaluator ruled it out in round 11: every sound match below 0.95
+  needs the tick again, generic-name and alias/brand variants alike. Sound ticks per note on dev speech: 0.11 / p90 1 /
+  max 2.
 - **Drug first.** The confirm screen shows the drug as the largest element: labelled, with the heard word beside it,
   units in full, and "Confirm <drug>" on the button. The read-back says "Drug: X." first, alone and slowly, then
   "Heard as Y." if different, with units in full. This is presentation only: **not claimed to catch anything**, and not

@@ -77,7 +77,7 @@ pipeline has never been run on test). The full pipeline on test and final_test, 
 | Speech: normalised word error rate | 0.406 (US 0.26, GB 0.26, Indian-accented 0.53) | dev · synthetic |
 | Speech: drug names heard (target 0.90) | 0.574 — target not met | dev · synthetic |
 | Speech, rules: entity F1 | 0.644 after the round-9 junk guard (0.640 after the round-8 unknown-drug fix, 0.673 before it) | dev · synthetic |
-| Speech, rules: dangerous errors, **headline** / matched-drug only (secondary) | **6 of 480** / 1 of 440 (round-10 code). Of the 10 wrong drugs recorded as known drugs, 6 came from an exact wrong word and are not flagged as to identity | dev · synthetic |
+| Speech, rules: dangerous errors, **headline** / matched-drug only (secondary) | **5 of 480** / 1 of 440 (round-11 code). Of the 10 wrong drugs recorded as known drugs, 6 came from an exact wrong word and are not flagged as to identity. Shown apart: fields left "not stated" (e.g. 96 of 420 medication records got no entry at all), see `docs/architecture.md` §6c | dev · synthetic |
 | Off-template sentences, rules: entity F1 | 0.952 (59 records) | dev · hand-written |
 | End of a 10-second dictation to the confirm screen, p50 / p95 | 0.387 s / 0.422 s | dev · synthetic dictation |
 | Seeded dose errors caught / harder ones | 99.0% / 78.0% (circular by construction) | test · validator only |
