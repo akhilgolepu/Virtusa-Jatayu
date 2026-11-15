@@ -33,6 +33,13 @@ def _f(v) -> GoldField:
     return GoldField(value=v, surface=str(v), span=(0, 0))  # scoring compares values; spans are not used
 
 
+def _name(v) -> str:
+    """The file writes multi-word names with underscores ("magnesium_sulfate"); the lexicon uses spaces. Added AFTER
+    the once-only run of 2026-11-15, which used the names unmapped (3 gold records scored as misses; see the round-7
+    packet). Format mapping only, not a gold change."""
+    return str(v).replace("_", " ")
+
+
 def convert(path: Path = PATH):
     """-> (GoldUtterances, per-case tier, conversion report). Mechanical only."""
     from jatayu.lexicon import Lexicon
@@ -46,11 +53,11 @@ def convert(path: Path = PATH):
             kind = "procedure" if e.get("procedure") and not e.get("drug") else "medication"
             drug = proc = dose = unit = route = None
             if kind == "medication":
-                drug = lex.lookup_drug(str(e["drug"])) or str(e["drug"]).lower()
-                report["drug: in lexicon" if lex.lookup_drug(str(e["drug"])) else "drug: NOT in lexicon (kept as written)"] += 1
+                drug = lex.lookup_drug(_name(e["drug"])) or str(e["drug"]).lower()
+                report["drug: in lexicon" if lex.lookup_drug(_name(e["drug"])) else "drug: NOT in lexicon (kept as written)"] += 1
             else:
-                proc = lex.lookup_procedure(str(e["procedure"])) or str(e["procedure"]).lower()
-                report["procedure: in lexicon" if lex.lookup_procedure(str(e["procedure"])) else "procedure: NOT in lexicon (kept as written)"] += 1
+                proc = lex.lookup_procedure(_name(e["procedure"])) or str(e["procedure"]).lower()
+                report["procedure: in lexicon" if lex.lookup_procedure(_name(e["procedure"])) else "procedure: NOT in lexicon (kept as written)"] += 1
             d = e.get("dose")
             if isinstance(d, (int, float)):
                 dose = float(d)
