@@ -1,0 +1,50 @@
+{
+  "created": "2026-11-16T00:03:00.741517+05:30",
+  "all_pass": true,
+  "checks": {
+    "tree": {
+      "pass": true,
+      "detail": "HEAD 28cd431 on f2r-evidence; dirty: none; commits not pushed: 0"
+    },
+    "frozen": {
+      "pass": true,
+      "detail": "test + final_test text and audio match eval/frozen.sha256"
+    },
+    "lock": {
+      "pass": true,
+      "detail": "86 pins match the installed packages"
+    },
+    "models": {
+      "pass": true,
+      "detail": "whisper, llm and voice match eval/models.sha256",
+      "sha256": {
+        "whisper": "62b2a45b05ee59acb4a5341b33ee35e041395d378d418a18acfe4c9e768ee37a",
+        "llm": "3605803b982cb64aead44f6c1b2ae36e3acdb41d8e46c8a94c6533bc4c67e597",
+        "voice": "5efe09e69902187827af646e1a6e9d269dee769f9877d17b16b1b46eeaaf019f"
+      }
+    },
+    "config": {
+      "pass": true,
+      "detail": "extractor=rules, asr_model=faster-whisper-small.en, asr_device=cuda, asr_compute=int8_float16, asr_word_p=0.2, asr_prompt_aliases=False, llm=Qwen3-4B-Instruct-2507-Q4_K_M.gguf, keep_models=True, experimental=False",
+      "config": {
+        "extractor": "rules",
+        "asr_model": "faster-whisper-small.en",
+        "asr_device": "cuda",
+        "asr_compute": "int8_float16",
+        "asr_word_p": 0.2,
+        "asr_prompt_aliases": false,
+        "llm": "Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "keep_models": true,
+        "experimental": false
+      }
+    },
+    "run_log": {
+      "pass": true,
+      "detail": "126 rows; 12 on test/final_test, 0 of them dirty"
+    },
+    "tests": {
+      "pass": true,
+      "detail": "460 passed, 12 xfailed, 1 warning in 73.37s (0:01:13)"
+    }
+  }
+}

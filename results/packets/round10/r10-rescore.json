@@ -1,0 +1,1678 @@
+{
+  "m3-dev-audio-hybrid": {
+    "old_matched_drug_only": {
+      "count": 4,
+      "denominator": 440
+    },
+    "new": {
+      "count": 13,
+      "denominator": 440,
+      "exact_part": 13,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 13
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 2,
+      "status (not given recorded as given)": -2
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 46,
+      "omitted dose/unit/route (shown as not stated; not counted)": 107,
+      "wrong drug": 6,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": false,
+    "recorded_old": {
+      "count": 4,
+      "denominator": 440,
+      "rate": 0.0091
+    },
+    "run": "dev \u00b7 audio \u00b7 hybrid"
+  },
+  "m3-dev-audio-hybrid_SUPERSEDED": {
+    "old_matched_drug_only": {
+      "count": 6,
+      "denominator": 440
+    },
+    "new": {
+      "count": 12,
+      "denominator": 440,
+      "exact_part": 14,
+      "bounded_part": -2,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 13,
+      "status (not given recorded as given)": 1
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1,
+      "status (not given recorded as given)": -3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 40,
+      "omitted dose/unit/route (shown as not stated; not counted)": 108,
+      "wrong drug": 3,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": false,
+    "recorded_old": {
+      "count": 6,
+      "denominator": 440,
+      "rate": 0.0136
+    },
+    "run": "dev \u00b7 audio \u00b7 hybrid"
+  },
+  "m3-dev-noise-hybrid": {
+    "old_matched_drug_only": {
+      "count": 2,
+      "denominator": 240
+    },
+    "new": {
+      "count": -4,
+      "denominator": 240,
+      "exact_part": 5,
+      "bounded_part": -9,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 5
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1,
+      "status (not given recorded as given)": -10
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 16,
+      "omitted dose/unit/route (shown as not stated; not counted)": 86,
+      "wrong drug": 6,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": false,
+    "recorded_old": {
+      "count": 2,
+      "denominator": 240,
+      "rate": 0.0083
+    },
+    "run": "dev \u00b7 noisy \u00b7 hybrid"
+  },
+  "m3-dev-noise-hybrid_SUPERSEDED": {
+    "old_matched_drug_only": {
+      "count": 2,
+      "denominator": 240
+    },
+    "new": {
+      "count": -1,
+      "denominator": 240,
+      "exact_part": 5,
+      "bounded_part": -6,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 4,
+      "status (not given recorded as given)": 1
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 2,
+      "status (not given recorded as given)": -8
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 9,
+      "omitted dose/unit/route (shown as not stated; not counted)": 87,
+      "wrong drug": 5,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": false,
+    "recorded_old": {
+      "count": 2,
+      "denominator": 240,
+      "rate": 0.0083
+    },
+    "run": "dev \u00b7 noisy \u00b7 hybrid"
+  },
+  "m3-dev-text-hybrid": {
+    "old_matched_drug_only": {
+      "count": 5,
+      "denominator": 440
+    },
+    "new": {
+      "count": 5,
+      "denominator": 440,
+      "exact_part": 5,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 5
+    },
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "wrong dose/unit/route": 7,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": false,
+    "recorded_old": {
+      "count": 5,
+      "denominator": 440,
+      "rate": 0.0114
+    },
+    "run": "dev \u00b7 text \u00b7 hybrid"
+  },
+  "m3-dev-text-hybrid_SUPERSEDED": {
+    "old_matched_drug_only": {
+      "count": 3,
+      "denominator": 440
+    },
+    "new": {
+      "count": 3,
+      "denominator": 440,
+      "exact_part": 3,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "wrong dose/unit/route": 5,
+      "omitted dose/unit/route (shown as not stated; not counted)": 1,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": false,
+    "recorded_old": {
+      "count": 3,
+      "denominator": 440,
+      "rate": 0.0068
+    },
+    "run": "dev \u00b7 text \u00b7 hybrid"
+  },
+  "m3-dev-text-llm": {
+    "old_matched_drug_only": {
+      "count": 3,
+      "denominator": 440
+    },
+    "new": {
+      "count": 4,
+      "denominator": 440,
+      "exact_part": 3,
+      "bounded_part": 1,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 12,
+      "omitted dose/unit/route (shown as not stated; not counted)": 3,
+      "wrong drug": 1,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": false,
+    "recorded_old": {
+      "count": 3,
+      "denominator": 440,
+      "rate": 0.0068
+    },
+    "run": "dev \u00b7 text \u00b7 llm"
+  },
+  "m3-dev-text-llm_SUPERSEDED": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 440,
+      "exact_part": 1,
+      "bounded_part": -1,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 1
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1,
+      "status (not given recorded as given)": -2
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 8,
+      "omitted dose/unit/route (shown as not stated; not counted)": 9,
+      "wrong drug": 1,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": false,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 440,
+      "rate": 0.0023
+    },
+    "run": "dev \u00b7 text \u00b7 llm"
+  },
+  "m3-dev-text-rules": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 440,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": false,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 rules"
+  },
+  "m3-dev-text-rules_SUPERSEDED": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 440,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": false,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 rules"
+  },
+  "m3-dev-text-rules_SUPERSEDED-pre-regeneration": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 440,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": false,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 rules"
+  },
+  "r3-dev-audio-hybrid": {
+    "old_matched_drug_only": {
+      "count": 3,
+      "denominator": 440
+    },
+    "new": {
+      "count": 13,
+      "denominator": 480,
+      "exact_part": 9,
+      "bounded_part": 4,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 9
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 2,
+      "status (not given recorded as given)": 2
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 41,
+      "omitted dose/unit/route (shown as not stated; not counted)": 96,
+      "wrong drug": 6,
+      "status (not given recorded as given)": 4
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 3,
+      "denominator": 440,
+      "rate": 0.0068
+    },
+    "run": "dev \u00b7 audio \u00b7 hybrid"
+  },
+  "r3-dev-audio-llm": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 16,
+      "denominator": 480,
+      "exact_part": 2,
+      "bounded_part": 14,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 2
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 2,
+      "status (not given recorded as given)": 12
+    },
+    "errors_by_kind": {
+      "omitted dose/unit/route (shown as not stated; not counted)": 139,
+      "wrong dose/unit/route": 34,
+      "wrong drug": 9,
+      "status (not given recorded as given)": 21
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 audio \u00b7 llm"
+  },
+  "r3-dev-audio-rules": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 440
+    },
+    "new": {
+      "count": 9,
+      "denominator": 480,
+      "exact_part": 5,
+      "bounded_part": 4,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 5
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 2,
+      "status (not given recorded as given)": 2
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 35,
+      "omitted dose/unit/route (shown as not stated; not counted)": 103,
+      "wrong drug": 6,
+      "status (not given recorded as given)": 4
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 440,
+      "rate": 0.0023
+    },
+    "run": "dev \u00b7 audio \u00b7 rules"
+  },
+  "r3-dev-noise-paired-hybrid": {
+    "old_matched_drug_only": {
+      "count": 3,
+      "denominator": 240
+    },
+    "new": {
+      "count": 10,
+      "denominator": 360,
+      "exact_part": 5,
+      "bounded_part": 5,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 5
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 2,
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 17,
+      "omitted dose/unit/route (shown as not stated; not counted)": 67,
+      "wrong drug": 7,
+      "status (not given recorded as given)": 13
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 3,
+      "denominator": 240,
+      "rate": 0.0125
+    },
+    "run": "dev \u00b7 noisy \u00b7 hybrid"
+  },
+  "r3-dev-text-hybrid": {
+    "old_matched_drug_only": {
+      "count": 5,
+      "denominator": 440
+    },
+    "new": {
+      "count": 5,
+      "denominator": 480,
+      "exact_part": 5,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 5
+    },
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "wrong dose/unit/route": 7,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 5,
+      "denominator": 440,
+      "rate": 0.0114
+    },
+    "run": "dev \u00b7 text \u00b7 hybrid"
+  },
+  "r3-dev-text-llm": {
+    "old_matched_drug_only": {
+      "count": 3,
+      "denominator": 440
+    },
+    "new": {
+      "count": 41,
+      "denominator": 480,
+      "exact_part": 3,
+      "bounded_part": 38,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1,
+      "status (not given recorded as given)": 37
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 12,
+      "omitted dose/unit/route (shown as not stated; not counted)": 3,
+      "wrong drug": 1,
+      "status (not given recorded as given)": 37
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 3,
+      "denominator": 440,
+      "rate": 0.0068
+    },
+    "run": "dev \u00b7 text \u00b7 llm"
+  },
+  "r3-dev-text-rules": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 480,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 rules"
+  },
+  "r3-offtemplate-hybrid": {
+    "old_matched_drug_only": {
+      "count": 2,
+      "denominator": 42
+    },
+    "new": {
+      "count": 6,
+      "denominator": 51,
+      "exact_part": 3,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 8,
+      "omitted dose/unit/route (shown as not stated; not counted)": 5,
+      "status (not given recorded as given)": 3
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 2,
+      "denominator": 42,
+      "rate": 0.0476
+    },
+    "run": "offtemplate_dev \u00b7 text \u00b7 hybrid"
+  },
+  "r3-offtemplate-llm": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 42
+    },
+    "new": {
+      "count": 4,
+      "denominator": 51,
+      "exact_part": 1,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 1
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 4,
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "status (not given recorded as given)": 3
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 42,
+      "rate": 0.0238
+    },
+    "run": "offtemplate_dev \u00b7 text \u00b7 llm"
+  },
+  "r3-offtemplate-rules": {
+    "old_matched_drug_only": {
+      "count": 2,
+      "denominator": 42
+    },
+    "new": {
+      "count": 6,
+      "denominator": 51,
+      "exact_part": 3,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 8,
+      "omitted dose/unit/route (shown as not stated; not counted)": 5,
+      "status (not given recorded as given)": 3
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 2,
+      "denominator": 42,
+      "rate": 0.0476
+    },
+    "run": "offtemplate_dev \u00b7 text \u00b7 rules"
+  },
+  "r4-dev-audio-hybrid": {
+    "old_matched_drug_only": {
+      "count": 3,
+      "denominator": 440
+    },
+    "new": {
+      "count": 11,
+      "denominator": 480,
+      "exact_part": 7,
+      "bounded_part": 4,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 7
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 2,
+      "status (not given recorded as given)": 2
+    },
+    "errors_by_kind": {
+      "omitted dose/unit/route (shown as not stated; not counted)": 111,
+      "wrong dose/unit/route": 38,
+      "wrong drug": 7,
+      "status (not given recorded as given)": 4
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 3,
+      "denominator": 440,
+      "rate": 0.0068
+    },
+    "run": "dev \u00b7 audio \u00b7 hybrid"
+  },
+  "r4-dev-audio-hybrid-v2": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 440
+    },
+    "new": {
+      "count": 10,
+      "denominator": 480,
+      "exact_part": 6,
+      "bounded_part": 4,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 6
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 2,
+      "status (not given recorded as given)": 2
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 37,
+      "omitted dose/unit/route (shown as not stated; not counted)": 111,
+      "wrong drug": 7,
+      "status (not given recorded as given)": 4
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 440,
+      "rate": 0.0023
+    },
+    "run": "dev \u00b7 audio \u00b7 hybrid"
+  },
+  "r4-dev-audio-llm": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 16,
+      "denominator": 480,
+      "exact_part": 2,
+      "bounded_part": 14,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 2
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 2,
+      "status (not given recorded as given)": 12
+    },
+    "errors_by_kind": {
+      "omitted dose/unit/route (shown as not stated; not counted)": 138,
+      "wrong dose/unit/route": 33,
+      "wrong drug": 9,
+      "status (not given recorded as given)": 21
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 audio \u00b7 llm"
+  },
+  "r4-dev-audio-rules": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 440
+    },
+    "new": {
+      "count": 8,
+      "denominator": 480,
+      "exact_part": 5,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 5
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1,
+      "status (not given recorded as given)": 2
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 32,
+      "omitted dose/unit/route (shown as not stated; not counted)": 119,
+      "wrong drug": 7,
+      "status (not given recorded as given)": 4
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 440,
+      "rate": 0.0023
+    },
+    "run": "dev \u00b7 audio \u00b7 rules"
+  },
+  "r4-dev-audio-rules-no-asr-flag": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 440
+    },
+    "new": {
+      "count": 8,
+      "denominator": 480,
+      "exact_part": 5,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 5
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1,
+      "status (not given recorded as given)": 2
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 32,
+      "omitted dose/unit/route (shown as not stated; not counted)": 119,
+      "wrong drug": 7,
+      "status (not given recorded as given)": 4
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 440,
+      "rate": 0.0023
+    },
+    "run": "dev \u00b7 audio \u00b7 rules"
+  },
+  "r4-dev-audio-rules-v2": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 440
+    },
+    "new": {
+      "count": 8,
+      "denominator": 480,
+      "exact_part": 5,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 5
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1,
+      "status (not given recorded as given)": 2
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 31,
+      "omitted dose/unit/route (shown as not stated; not counted)": 119,
+      "wrong drug": 7,
+      "status (not given recorded as given)": 4
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 440,
+      "rate": 0.0023
+    },
+    "run": "dev \u00b7 audio \u00b7 rules"
+  },
+  "r4-dev-text-hybrid": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 480,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 hybrid"
+  },
+  "r4-dev-text-hybrid-v2": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 480,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 hybrid"
+  },
+  "r4-dev-text-rules": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 480,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 rules"
+  },
+  "r4-dev-text-rules-v2": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 480,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 rules"
+  },
+  "r4-offtemplate-hybrid": {
+    "old_matched_drug_only": {
+      "count": 2,
+      "denominator": 57
+    },
+    "new": {
+      "count": 6,
+      "denominator": 66,
+      "exact_part": 3,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 9,
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "status (not given recorded as given)": 3
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 2,
+      "denominator": 57,
+      "rate": 0.0351
+    },
+    "run": "offtemplate_dev \u00b7 text \u00b7 hybrid"
+  },
+  "r4-offtemplate-hybrid-v2": {
+    "old_matched_drug_only": {
+      "count": 2,
+      "denominator": 57
+    },
+    "new": {
+      "count": 6,
+      "denominator": 66,
+      "exact_part": 3,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 9,
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "status (not given recorded as given)": 3
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 2,
+      "denominator": 57,
+      "rate": 0.0351
+    },
+    "run": "offtemplate_dev \u00b7 text \u00b7 hybrid"
+  },
+  "r4-offtemplate-llm": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 57
+    },
+    "new": {
+      "count": 4,
+      "denominator": 66,
+      "exact_part": 1,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 1
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 4,
+      "omitted dose/unit/route (shown as not stated; not counted)": 5,
+      "status (not given recorded as given)": 3
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 57,
+      "rate": 0.0175
+    },
+    "run": "offtemplate_dev \u00b7 text \u00b7 llm"
+  },
+  "r4-offtemplate-rules": {
+    "old_matched_drug_only": {
+      "count": 2,
+      "denominator": 57
+    },
+    "new": {
+      "count": 6,
+      "denominator": 66,
+      "exact_part": 3,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 8,
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "status (not given recorded as given)": 3
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 2,
+      "denominator": 57,
+      "rate": 0.0351
+    },
+    "run": "offtemplate_dev \u00b7 text \u00b7 rules"
+  },
+  "r4-offtemplate-rules-v2": {
+    "old_matched_drug_only": {
+      "count": 2,
+      "denominator": 57
+    },
+    "new": {
+      "count": 6,
+      "denominator": 66,
+      "exact_part": 3,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 8,
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "status (not given recorded as given)": 3
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 2,
+      "denominator": 57,
+      "rate": 0.0351
+    },
+    "run": "offtemplate_dev \u00b7 text \u00b7 rules"
+  },
+  "r5-dev-audio-rules": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 440
+    },
+    "new": {
+      "count": 6,
+      "denominator": 480,
+      "exact_part": 5,
+      "bounded_part": 1,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 5
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 31,
+      "omitted dose/unit/route (shown as not stated; not counted)": 119,
+      "wrong drug": 7,
+      "status (not given recorded as given)": 2
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 440,
+      "rate": 0.0023
+    },
+    "run": "dev \u00b7 audio \u00b7 rules"
+  },
+  "r5-dev-text-rules": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 480,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 rules"
+  },
+  "r5-offtemplate-rules": {
+    "old_matched_drug_only": {
+      "count": 2,
+      "denominator": 59
+    },
+    "new": {
+      "count": 6,
+      "denominator": 71,
+      "exact_part": 3,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 8,
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "status (not given recorded as given)": 3
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 2,
+      "denominator": 59,
+      "rate": 0.0339
+    },
+    "run": "offtemplate_dev \u00b7 text \u00b7 rules"
+  },
+  "r7-blind-v1:rules": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 34
+    },
+    "new": {
+      "count": 3,
+      "denominator": 37,
+      "exact_part": 2,
+      "bounded_part": 1,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 2
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 5,
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "wrong drug": 1,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 34,
+      "rate": 0.0294
+    },
+    "run": "blind v1 \u00b7 text \u00b7 rules"
+  },
+  "r7-blind-v1:hybrid": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 34
+    },
+    "new": {
+      "count": 3,
+      "denominator": 37,
+      "exact_part": 2,
+      "bounded_part": 1,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 2
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 7,
+      "omitted dose/unit/route (shown as not stated; not counted)": 5,
+      "wrong drug": 1,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 34,
+      "rate": 0.0294
+    },
+    "run": "blind v1 \u00b7 text \u00b7 hybrid"
+  },
+  "r7-blind-v1:llm": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 34
+    },
+    "new": {
+      "count": 3,
+      "denominator": 37,
+      "exact_part": 1,
+      "bounded_part": 2,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 1
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1,
+      "status (not given recorded as given)": 1
+    },
+    "errors_by_kind": {
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "wrong dose/unit/route": 3,
+      "wrong drug": 1,
+      "status (not given recorded as given)": 1
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 34,
+      "rate": 0.0
+    },
+    "run": "blind v1 \u00b7 text \u00b7 llm"
+  },
+  "r8-blind-v1-converter-corrected:rules": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 34
+    },
+    "new": {
+      "count": 2,
+      "denominator": 37,
+      "exact_part": 2,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 2
+    },
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "wrong dose/unit/route": 5,
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 34,
+      "rate": 0.0294
+    },
+    "run": "blind v1 \u00b7 text \u00b7 rules"
+  },
+  "r8-blind-v1-converter-corrected:hybrid": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 34
+    },
+    "new": {
+      "count": 2,
+      "denominator": 37,
+      "exact_part": 2,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 2
+    },
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "wrong dose/unit/route": 7,
+      "omitted dose/unit/route (shown as not stated; not counted)": 5,
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 34,
+      "rate": 0.0294
+    },
+    "run": "blind v1 \u00b7 text \u00b7 hybrid"
+  },
+  "r8-blind-v1-converter-corrected:llm": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 34
+    },
+    "new": {
+      "count": 2,
+      "denominator": 37,
+      "exact_part": 1,
+      "bounded_part": 1,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 1
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 1
+    },
+    "errors_by_kind": {
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "wrong dose/unit/route": 3,
+      "status (not given recorded as given)": 1
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 34,
+      "rate": 0.0
+    },
+    "run": "blind v1 \u00b7 text \u00b7 llm"
+  },
+  "r8-dev-audio-rules-after": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 440
+    },
+    "new": {
+      "count": 6,
+      "denominator": 480,
+      "exact_part": 5,
+      "bounded_part": 1,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 5
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 30,
+      "omitted dose/unit/route (shown as not stated; not counted)": 120,
+      "wrong drug": 49,
+      "status (not given recorded as given)": 2
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 440,
+      "rate": 0.0023
+    },
+    "run": "dev \u00b7 audio \u00b7 rules"
+  },
+  "r8-dev-text-hybrid-after": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 480,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 hybrid"
+  },
+  "r8-dev-text-hybrid-before": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 480,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 hybrid"
+  },
+  "r8-dev-text-rules-after": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 480,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 rules"
+  },
+  "r8-dev-text-rules-before": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 480,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 rules"
+  },
+  "r8-offtemplate-rules-after": {
+    "old_matched_drug_only": {
+      "count": 2,
+      "denominator": 59
+    },
+    "new": {
+      "count": 6,
+      "denominator": 71,
+      "exact_part": 3,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 8,
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "status (not given recorded as given)": 3
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 2,
+      "denominator": 59,
+      "rate": 0.0339
+    },
+    "run": "offtemplate_dev \u00b7 text \u00b7 rules"
+  },
+  "r8-offtemplate-rules-before": {
+    "old_matched_drug_only": {
+      "count": 2,
+      "denominator": 59
+    },
+    "new": {
+      "count": 6,
+      "denominator": 71,
+      "exact_part": 3,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 8,
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "status (not given recorded as given)": 3
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 2,
+      "denominator": 59,
+      "rate": 0.0339
+    },
+    "run": "offtemplate_dev \u00b7 text \u00b7 rules"
+  },
+  "r9-dev-audio-rules-after": {
+    "old_matched_drug_only": {
+      "count": 1,
+      "denominator": 440
+    },
+    "new": {
+      "count": 5,
+      "denominator": 480,
+      "exact_part": 4,
+      "bounded_part": 1,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 4
+    },
+    "uncaught_bounded_by_kind": {
+      "wrong drug": 1
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 30,
+      "omitted dose/unit/route (shown as not stated; not counted)": 120,
+      "wrong drug": 43,
+      "status (not given recorded as given)": 2
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 1,
+      "denominator": 440,
+      "rate": 0.0023
+    },
+    "run": "dev \u00b7 audio \u00b7 rules"
+  },
+  "r9-dev-text-hybrid-after": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 480,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 hybrid"
+  },
+  "r9-dev-text-rules-after": {
+    "old_matched_drug_only": {
+      "count": 0,
+      "denominator": 440
+    },
+    "new": {
+      "count": 0,
+      "denominator": 480,
+      "exact_part": 0,
+      "bounded_part": 0,
+      "is_upper_bound": false
+    },
+    "uncaught_exact_by_kind": {},
+    "uncaught_bounded_by_kind": {},
+    "errors_by_kind": {
+      "status (not given recorded as given)": 0
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 0,
+      "denominator": 440,
+      "rate": 0.0
+    },
+    "run": "dev \u00b7 text \u00b7 rules"
+  },
+  "r9-offtemplate-rules-after": {
+    "old_matched_drug_only": {
+      "count": 2,
+      "denominator": 59
+    },
+    "new": {
+      "count": 6,
+      "denominator": 71,
+      "exact_part": 3,
+      "bounded_part": 3,
+      "is_upper_bound": true
+    },
+    "uncaught_exact_by_kind": {
+      "wrong dose/unit/route": 3
+    },
+    "uncaught_bounded_by_kind": {
+      "status (not given recorded as given)": 3
+    },
+    "errors_by_kind": {
+      "wrong dose/unit/route": 8,
+      "omitted dose/unit/route (shown as not stated; not counted)": 4,
+      "status (not given recorded as given)": 3
+    },
+    "status_measured": true,
+    "recorded_old": {
+      "count": 2,
+      "denominator": 59,
+      "rate": 0.0339
+    },
+    "run": "offtemplate_dev \u00b7 text \u00b7 rules"
+  }
+}
