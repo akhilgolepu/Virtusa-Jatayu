@@ -82,3 +82,4 @@
 {"timestamp": "2026-11-15T20:16:45.445153+05:30", "commit": "3b7be15", "dirty": false, "dirty_paths": [], "runner": "eval.blind", "split": "offtemplate_blind_v1", "tag": "r7-blind-v1-llm", "extractor": "llm", "mode": "text", "note": "evaluator-authored blind set; run once per protocol"}
 {"timestamp": "2026-11-15T20:22:07.500956+05:30", "commit": "cb1de5e", "dirty": false, "dirty_paths": [], "runner": "scripts.fhir_pdf_example", "split": "none (synthetic example)", "tag": "r7-fhir-pdf-example"}
 {"timestamp": "2026-11-15T20:22:08.429676+05:30", "commit": "cb1de5e", "dirty": false, "dirty_paths": [], "runner": "scripts.pdf_latency", "split": "none (synthetic incidents)", "tag": "r7-pdf-latency", "runs": 30}
+{"timestamp": "2026-11-15T20:26:19.581089+05:30", "commit": "472e627", "dirty": false, "dirty_paths": [], "runner": "eval.ner_baseline", "split": "dev", "tag": "r7-ner-baseline", "model": "biomedical-ner-all"}
