@@ -39,8 +39,9 @@ result measured on the old one.
   phrasings never appear in training.
 - **Contexts**: `not_given` (allergy, refused, held, home medication) and `measurement` (blood glucose, O2 sats,
   magnesium/calcium levels; the reading is in `measured_value`) entries must be *flagged* by the extractor, not
-  recorded as administrations. Scoring (spec §9): they are excluded from the dangerous-error denominator and
-  scored as the context-error rate — emitted as an administration without a `possible_not_given` /
+  recorded as administrations. Scoring (spec §9): they are excluded from the old (matched-drug only) dangerous-error
+  denominator; the round-10 headline dangerous error counts not_given records too (a "not given" recorded as given
+  with no flag that must be ticked). They are also scored as the context-error rate — emitted as an administration without a `possible_not_given` /
   `possible_measurement` flag = error; dropped entirely = correct.
 - **Anomalies**: ~5% of given doses are deliberately out of range (`10x`, mg↔mcg swap), tagged `out_of_range_case`;
   an anomaly is kept only if the result really is outside the drug's range on every route.

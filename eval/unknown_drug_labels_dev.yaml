@@ -1,6 +1,7 @@
 # Hand labels (by us, round 9) for the 49 drug_not_in_lexicon entries the round-8 rules NER raised on the saved dev
 # speech transcripts (results/r4-dev-audio-rules-no-asr-flag/transcripts.jsonl). DEV ONLY.
-# Labelled from the gold sentence and the transcript, before the round-9 junk guard was written.
+# Labelled from the gold sentence and the transcript, before the round-9 junk guard was written. One labeller (the AI
+# coding assistant used on this project); not reviewed by a second person; no agreement measured. IN-SAMPLE.
 #   drug  = a misheard drug name (the gold drug of that utterance was lost by the recogniser and this word stands for it)
 #   junk  = an ordinary or misheard non-drug word (a route, a time, a filler)
 #   other = neither cleanly: a misheard lab reading ("serum magnesium") or a fragment of a drug name with a wrong dose

@@ -49,11 +49,15 @@ transcript directly (`llm`; quotes are checked).
 Why — measured on the dev split, synthetic speech (Piper voices) and our own hand-written sentences, evaluator round 4
 (DECISIONS 2026-11-03). Labels: **[dev · synthetic]**, **[dev · hand-written]**.
 
-| Extractor | Speech entity F1 [dev · synthetic] | Off-template F1 [dev · hand-written] | Speech dangerous errors [dev · synthetic] | Speech "not given" recorded as given [dev · synthetic] |
-|---|---|---|---|---|
-| rules | 0.673 | 0.948 | 1/440 | 4/40 (2/40 after round 5) |
-| hybrid | 0.673 | 0.950 | 1/440 | 4/40 |
-| LLM only (experimental) | 0.527 | 0.894 | 0/440 | 21/40 |
+| Extractor | Speech entity F1 [dev · synthetic] | Off-template F1 [dev · hand-written] | Speech dangerous errors, **headline** (round-10 definition, re-scored, upper bound) [dev · synthetic] | Speech dangerous errors, matched-drug only (old, secondary) | Speech "not given" recorded as given [dev · synthetic] |
+|---|---|---|---|---|---|
+| rules | 0.673 | 0.948 | ≤ 8/480 | 1/440 | 4/40 (2/40 after round 5) |
+| hybrid | 0.673 | 0.950 | ≤ 11/480 | 1/440 | 4/40 |
+| LLM only (experimental) | 0.527 | 0.894 | ≤ 16/480 | 0/440 | 21/40 |
+
+The headline dangerous error (round 10) is a wrong drug, dose, unit, route or status recorded without a flag the medic
+must tick. The old, secondary metric only looked at records whose drug matched, so it could not see a wrong drug. The
+round-4 runs did not store everything the headline needs, so these are upper bounds (`docs/architecture.md` §6c).
 
 The LLM added nothing measurable, and costs ~0.6-0.9 s per utterance and 3.35 GB of GPU memory.
 
@@ -72,7 +76,8 @@ pipeline has never been run on test). The full pipeline on test and final_test, 
 |---|---|---|
 | Speech: normalised word error rate | 0.406 (US 0.26, GB 0.26, Indian-accented 0.53) | dev · synthetic |
 | Speech: drug names heard (target 0.90) | 0.574 — target not met | dev · synthetic |
-| Speech, rules: entity F1 / dangerous errors | 0.644 / 1 of 440 after the round-9 junk guard (0.640 after the round-8 unknown-drug fix, 0.673 before it) | dev · synthetic |
+| Speech, rules: entity F1 | 0.644 after the round-9 junk guard (0.640 after the round-8 unknown-drug fix, 0.673 before it) | dev · synthetic |
+| Speech, rules: dangerous errors, **headline** / matched-drug only (secondary) | **6 of 480** / 1 of 440 (round-10 code). Of the 10 wrong drugs recorded as known drugs, 6 came from an exact wrong word and are not flagged as to identity | dev · synthetic |
 | Off-template sentences, rules: entity F1 | 0.952 (59 records) | dev · hand-written |
 | End of a 10-second dictation to the confirm screen, p50 / p95 | 0.387 s / 0.422 s | dev · synthetic dictation |
 | Seeded dose errors caught / harder ones | 99.0% / 78.0% (circular by construction) | test · validator only |

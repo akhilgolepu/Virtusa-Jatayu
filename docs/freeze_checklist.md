@@ -24,6 +24,7 @@ python -m scripts.freeze_check --pytest --out results/<freeze-tag>/freeze_check.
 | A5 | Model files | Whisper `model.bin`, the Qwen3-4B GGUF and the read-back voice match `eval/models.sha256`, which was recorded in round 9 with `--record-models`. Re-record only if a model is deliberately changed **before** the freeze. | `models` |
 | A6 | Config | The committed defaults are in force: no `JATAYU_*` variable in the environment, extractor `rules`, LLM-only experimental switch off. The snapshot (ASR model, device, compute type, word-probability threshold, LLM file) is written to the JSON. | `config` |
 | A7 | run_log | No row of `results/run_log.jsonl` on test or final_test comes from a dirty tree. `eval/runlog.py` already refuses such a run. | `run_log` |
+| A8 | Headline metric | The reported dangerous error is the round-10 headline (`dangerous_error_r10`: wrong drug, dose, unit, route or status without a flag that must be ticked), with the matched-drug-only figure as a labelled secondary row. | by review |
 
 The thresholds frozen with the code are in code, not in the environment:
 
@@ -43,8 +44,8 @@ The thresholds frozen with the code are in code, not in the environment:
 | # | Item | Must be true | Status in round 9 |
 |---|---|---|---|
 | B1 | Real recordings | Takes are recorded on `/record` and imported with `python -m scripts.import_real --from-recordings --speaker S0x` (anonymous ids). The real test takes land in `data/real/test`, which is sealed. | **Open.** No real clips have been imported yet (`data/real` does not exist). |
-| B2 | Real test frozen | The real test manifest's SHA-256 is added to `eval/frozen.sha256`. Today `load_real` checks clips against their manifest, but nothing pins the manifest itself. | **Open.** Add it at import time, before the freeze commit. |
-| B3 | Real test scoring path | `load_real("test")` refuses without `sealed_ok`, and no runner passes it yet. A reviewed runner (aggregate output only, dirty-tree refusal, run_log row) must exist **in the freeze commit**. | **Open.** Code, so it must land before the freeze. |
+| B2 | Real test frozen | After the last real test take is imported, `python -m eval.real_test --freeze-manifest` writes the real test manifest's SHA-256 into `eval/frozen.sha256`. It never overwrites a different hash. | **Open.** The mechanism exists (round 10); there is nothing to freeze until B1. |
+| B3 | Real test scoring path | `eval/real_test.py` refuses unless the tree is clean, the manifest hash is frozen (B2), and the evaluator's release file `eval/real_test_release.json` names that hash. It writes aggregates only (no transcript, no per-clip result) and one run_log row. | **Built and unit-tested on dummy clips in a throwaway folder** (round 10, `tests/test_real_test_runner.py`). Never run on real test clips. |
 | B4 | No tuning on sealed data | No real clip's transcript has been read for tuning. No test or final_test record has been printed. Dev, off-template and blind v1 (spent) are the only data that informed the code. | Holds. |
 | B5 | Evaluator sign-off | The evaluator has the freeze commit hash and has said to run. | Pending. |
 | B6 | Docs | Every number in `README.md`, `docs/architecture.md` and the slides is labelled (synthetic / dev / hand-written / blind / sealed) and traces to a clean run_log row. The known limits are current. | Round-9 docs updated. |
@@ -66,7 +67,8 @@ run_log row with the commit.
 python -m eval.run --split test --tag freeze-v1-test-text-rules  --extractor rules --mode text
 python -m eval.run --split test --tag freeze-v1-test-audio-rules --extractor rules --mode audio
 # hybrid only if agreed with the evaluator beforehand; LLM-only is experimental and is not run on test
-# real test clips: only through the B3 runner, once B1-B3 are closed
+# real test clips, once B1-B3 are closed and the evaluator's release file is committed:
+python -m eval.real_test --tag freeze-v1-real-test --extractor rules
 ```
 
 Rules for the run:

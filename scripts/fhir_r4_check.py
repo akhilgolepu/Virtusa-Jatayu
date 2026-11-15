@@ -48,6 +48,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--bundle", type=Path, default=config.ROOT / "results/r9-fhir-pdf-example/example.json")
     ap.add_argument("--out", type=Path, default=config.ROOT / "results")
     args = ap.parse_args(argv)
+    args.bundle = args.bundle.resolve()  # a relative --bundle used to crash after logging (round 10)
     start = log_run(args.out, runner="scripts.fhir_r4_check", split="none (synthetic example)", tag=args.tag)
     ver = subprocess.run([args.python, "-c", "import fhir.resources as f, pydantic; print(f.__version__, pydantic.VERSION)"],
                          capture_output=True, text=True).stdout.strip()
