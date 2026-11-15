@@ -17,8 +17,20 @@ conda activate anpr
 bash scripts/download_assets.sh          # once, online: models, voices, noise
 python -m scripts.setup_check            # every line must say PASS (GPU, ASR, LLM, TTS, offline)
 export TZ=Asia/Kolkata                   # WSL's clock is UTC; times are read relative to the device clock
-uvicorn jatayu.api:app --port 8000       # then open http://localhost:8000 in the Windows browser
+./start_demo.sh                          # pre-flight (fails loudly), then the server on 127.0.0.1:8000, then the browser
 ```
+
+`./start_demo.sh --check-only` runs only the pre-flight. It checks:
+- the GPU;
+- that the Whisper model, the LLM file and the read-back voice are present;
+- that Whisper transcribes a clip on the GPU and the voice speaks, both with the network blocked;
+- the offline variables;
+- the demo config;
+- the audit chain;
+- the port.
+
+The server alone is still `uvicorn jatayu.api:app --host 127.0.0.1 --port 8000`. Before the one test run, follow
+`docs/freeze_checklist.md`.
 
 ## NER: rules-first clinical NER, with optional LLM-assisted NER
 
@@ -27,8 +39,12 @@ entity types are **drug, dose value, dose unit, route, time and procedure** (plu
 which is extracted but not scored); each recognised drug or procedure also gets an administration status (given / not
 given / measurement). Every value points at the transcript words it came from. There is no trained NER model. In the
 optional modes a local LLM (Qwen3-4B via llama.cpp) either links the spans the rules found (`hybrid`) or quotes the
-transcript directly (`llm`; quotes are checked). `rules` is the default (`JATAYU_EXTRACTOR`, the selector on the capture
-screen); the other two stay selectable as ablations.
+transcript directly (`llm`; quotes are checked).
+- `rules` is the default (`JATAYU_EXTRACTOR`, the selector on the capture screen).
+- `hybrid` stays selectable.
+- **LLM-only (`llm`) is experimental.** It is off the demo path and the app offers it only when started with
+  `JATAYU_EXPERIMENTAL=1`; the UI then labels it "experimental". It has none of the round-8/9 safety fixes. It is
+  still scored on dev for comparison.
 
 Why — measured on the dev split, synthetic speech (Piper voices) and our own hand-written sentences, evaluator round 4
 (DECISIONS 2026-11-03). Labels: **[dev · synthetic]**, **[dev · hand-written]**.
@@ -37,7 +53,7 @@ Why — measured on the dev split, synthetic speech (Piper voices) and our own h
 |---|---|---|---|---|
 | rules | 0.673 | 0.948 | 1/440 | 4/40 (2/40 after round 5) |
 | hybrid | 0.673 | 0.950 | 1/440 | 4/40 |
-| LLM only | 0.527 | 0.894 | 0/440 | 21/40 |
+| LLM only (experimental) | 0.527 | 0.894 | 0/440 | 21/40 |
 
 The LLM added nothing measurable, and costs ~0.6-0.9 s per utterance and 3.35 GB of GPU memory.
 
@@ -56,7 +72,7 @@ pipeline has never been run on test). The full pipeline on test and final_test, 
 |---|---|---|
 | Speech: normalised word error rate | 0.406 (US 0.26, GB 0.26, Indian-accented 0.53) | dev · synthetic |
 | Speech: drug names heard (target 0.90) | 0.574 — target not met | dev · synthetic |
-| Speech, rules: entity F1 / dangerous errors | 0.640 / 1 of 440 (0.673 before the round-8 unknown-drug fix) | dev · synthetic |
+| Speech, rules: entity F1 / dangerous errors | 0.644 / 1 of 440 after the round-9 junk guard (0.640 after the round-8 unknown-drug fix, 0.673 before it) | dev · synthetic |
 | Off-template sentences, rules: entity F1 | 0.952 (59 records) | dev · hand-written |
 | End of a 10-second dictation to the confirm screen, p50 / p95 | 0.387 s / 0.422 s | dev · synthetic dictation |
 | Seeded dose errors caught / harder ones | 99.0% / 78.0% (circular by construction) | test · validator only |

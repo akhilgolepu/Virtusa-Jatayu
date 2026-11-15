@@ -1,6 +1,6 @@
 # Scribe108 — architecture
 
-Draft, evaluator round 6. **Decision-support demo, not a clinical device. Adult patients only.** Every number below
+Draft, updated for evaluator round 9. **Decision-support demo, not a clinical device. Adult patients only.** Every number below
 was written by the evaluation harness (`results/`) and carries a label:
 
 - **[dev · synthetic]** — the development split, template sentences and/or computer voices (Piper TTS). We tuned on it.
@@ -35,10 +35,13 @@ appended to a hash-chained audit log.
  normalise: spoken numbers → digits, every token keeps its offset in the transcript  (jatayu/normalise/)
                      ▼
  NER — rules-first clinical NER (lexicon and patterns), with optional LLM-assisted NER  (jatayu/extract/)
-   rules (default): lexicon phrases + patterns; fuzzy/phonetic drug match (always flagged);
-                    context cues (not given / measurement), self-corrections, ranges, repeat doses
+   rules (default): lexicon phrases + patterns; fuzzy/phonetic drug match (always flagged; below 0.95 spelling
+                    similarity it is high, "heard X — did you mean Y?", and must be ticked); a drug not in the
+                    lexicon is kept as spoken (flagged); context cues (not given / measurement), self-corrections,
+                    concentrations, ranges, repeat doses
    hybrid (optional): the rules layer finds candidate spans, a local LLM (Qwen3-4B, llama.cpp) only LINKS them
-   llm (optional, ablation): the LLM quotes the transcript; any quote not in the transcript is rejected
+   llm (EXPERIMENTAL, off the demo path): the LLM quotes the transcript; any quote not in the transcript is rejected.
+        Offered only with JATAYU_EXPERIMENTAL=1; none of the round-8/9 safety fixes; scored on dev for comparison
                      ▼
  low_asr_confidence (informational): a drug/dose/unit from a word Whisper heard with p < 0.2  (jatayu/asr_confidence.py)
                      ▼
@@ -49,7 +52,8 @@ appended to a hash-chained audit log.
  confirm screen (web/, DOT UI)  — high flags must be acknowledged before confirming
                      ▼
  FHIR-lite bundle (jatayu/output/fhir.py) + PDF note (jatayu/output/pdf.py)
-   a "not given" or measurement entry is always status not-done, never a completed administration
+   a "not given" or measurement entry is always status not-done, never a completed administration;
+   every resource names an unidentified patient; transcripts are Communication resources (passes the R4 models)
                      ▼
  audit log (jatayu/audit.py): append-only SQLite, each row hashes the previous; verify() names the first broken row
 ```
@@ -66,14 +70,16 @@ appended to a hash-chained audit log.
 - **Offline.** Models load from disk; the setup check re-runs the speech recogniser, the LLM and the read-back voice with
   every outbound socket blocked.
 - **Rules-first clinical NER (lexicon and patterns), with optional LLM-assisted NER.** On dev the LLM-assisted modes
-  added nothing measurable (tables below), so `rules` is the default; `hybrid` and `llm` stay selectable and are reported
-  as ablations. There is no trained NER model: entity recognition is the lexicon, the patterns and, optionally, the LLM.
+  added nothing measurable (tables below), so `rules` is the default and `hybrid` stays selectable. **LLM-only is
+  experimental** (round 9): it is not on the demo path, the app offers it only when started with `JATAYU_EXPERIMENTAL=1`
+  (the UI then labels it "experimental"), and it has none of the round-8/9 safety fixes; it is still scored on dev as a
+  comparison. There is no trained NER model: entity recognition is the lexicon, the patterns and, optionally, the LLM.
 
 ## 3a. Entity types (what the NER recognises)
 
 | Entity | What is recognised | Normalised to |
 |---|---|---|
-| drug | generic or brand name, ASR misspellings by sound (always flagged) | one of 36 generic names in the lexicon |
+| drug | generic or brand name; ASR misspellings by sound (always flagged; "did you mean" and a forced tick below 0.95 spelling similarity); a drug-like word not in the lexicon (kept as spoken, flagged) | one of 36 generic names in the lexicon, or the word as spoken |
 | dose value | the number of the dose, spoken or written ("point three", ".5", "1,000"), the corrected value after "no, sorry" | a number |
 | dose unit | mg, mcg, g, ml, L/min, units, puffs, drops, mmol, mEq and their spellings | one of 10 unit codes |
 | route | IV, IM, IO, SC, PO, SL, IN, NEB, INH, ET, PR and their phrasings ("into the vein", "under the tongue") | one of 11 route codes |
@@ -112,8 +118,10 @@ weight range. Sources and every choice: `DECISIONS.md`.
 | Off-template sentences (59), rules: entity F1 / dangerous | 0.952 / 2 of 59 (both route corrections) | dev · hand-written |
 | Speech (480 Piper clips): normalised WER | 0.406 (US 0.257, GB 0.260, Indian-accented 0.532) | dev · synthetic |
 | Speech: drug-term recall | 0.574 (plan target 0.90: not met) | dev · synthetic |
-| Speech, rules: entity F1 / dangerous / "not given" recorded as given | 0.673 / 1 of 440 / 2 of 40 (round 5); 0.640 / 1 of 440 / 2 of 40 after the round-8 unknown-drug fix (precision 0.928 → 0.811: misheard drug names now kept and flagged instead of dropped) | dev · synthetic |
-| Speech, same transcripts: rules / hybrid / LLM-only entity F1 | 0.673 / 0.673 / 0.527 | dev · synthetic |
+| Speech, rules: entity F1 / dangerous / "not given" recorded as given | 0.673 / 1 of 440 / 2 of 40 (round 5); 0.640 / 1 of 440 / 2 of 40 after the round-8 unknown-drug fix (precision 0.928 → 0.811: misheard drug names now kept and flagged instead of dropped); **0.644** / 1 of 440 / 2 of 40 after the round-9 junk guard (precision 0.825) | dev · synthetic |
+| Speech, rules: wrong drug recorded as a known drug | 10 entries (4 matched by sound, 6 a wrong drug word from the recogniser). Round 8: all 10 carried no identity flag stronger than low_confidence / low_asr_confidence. Round 9: the 4 sound matches need a "did you mean" tick; the 6 exact-word ones are unchanged (open) | dev · synthetic |
+| Speech, rules: `drug_not_in_lexicon` precision / recall (hand labels, 49 round-8 flags) | round 8: 0.776 / 1.000 (49 flags: 38 misheard drugs, 7 junk, 4 other); round 9: **0.881 / 0.974** (42 flags: 37 / 2 / 3) | dev · synthetic, labelled by us |
+| Speech, same transcripts: rules / hybrid / LLM-only (experimental) entity F1 | 0.673 / 0.673 / 0.527 (round 5) | dev · synthetic |
 | Noise, same 160 utterances (hybrid): clean / 20 / 10 / 5 dB entity F1 | 0.653 / 0.633 / 0.624 / 0.567 | dev · synthetic |
 | ASR options (100 clips): drug-term recall small.en / large-v3-turbo / distil-large-v3 | 0.648 / 0.523 / 0.318 | dev · synthetic |
 | End of a 10-second dictation → confirm-screen payload: p50 / p95 | 0.387 s / 0.422 s (RTX 5060) | dev · synthetic dictation |
@@ -179,11 +187,22 @@ entity on speech (rules recall 0.381). Not fixed this round.
   the pipeline, and per incident at `/api/incidents/<id>/bundle`. A bundle that fails is never returned or logged.
   Tests: `tests/test_fhir.py` (validity, omitted-not-null fields, provenance spans, rejects garbage),
   `tests/test_fhir_safety.py`, `tests/test_demo_flow.py`.
-- **Strict FHIR R4 (optional check, round 8).** Validated offline with the FHIR R4 data models of `fhir.resources`
-  6.5.0 (`results/r8-fhir-r4-check/`): the example bundle is **not** strict R4. Every resource lacks `subject` (the
-  patient reference — FHIR-lite records no patient identity); with a placeholder subject added, all 6 resources validate
-  as R4. The bundle wrapper also carries our extra fields (`incident`, `meta.device`, ...). This is a data-model check,
-  not the official HL7 validator (no terminology or profile checks).
+- **Strict FHIR R4 (optional check).** Round 8 found the example was not strict R4 (no `subject`; extra wrapper
+  fields). Since round 9 the app emits:
+  - a `subject` on every resource: "Unidentified patient", a logical reference keyed by the incident
+    (`identifier.system urn:jatayu:incident-patient`), because no patient identity is captured in the field;
+  - the incident id as `Bundle.identifier` and the device as `meta.source`;
+  - each utterance's transcript as a `Communication` resource (provenance spans index into it);
+  - a single `statusReason` on a not-done `Procedure` (R4 cardinality 0..1).
+
+  **What was checked** (`results/r9-fhir-r4-check/`, `scripts/fhir_r4_check.py`): the round-9 example bundle, exactly
+  as the app emitted it (nothing added or patched), parsed by the FHIR R4 models of `fhir.resources` 6.5.0 (pydantic
+  1.10, separate virtual environment). The whole Bundle and each of its 20 resources on its own (6 given/draft and
+  4 not-done or reading administrations and procedures, 10 Communications) are valid. The models enforce: required
+  elements, cardinality, datatypes, required-binding status codes, choice-type names, extension shape.
+  **What was not checked:** HL7 validator invariants beyond those models, terminology (ATC and SNOMED codes are not
+  looked up), any profile (no US Core / IPS), reference resolution (the patient is a logical reference, not a Patient
+  resource in the bundle). Our own check on every bundle remains our FHIR-lite JSON Schema.
 - **One JSON, one PDF.** Since round 7 the PDF's entries are rendered **from that same validated bundle** (one helper
   builds it for both endpoints); the PDF adds the audit-log history and the chain verdict, which are not clinical
   record. `tests/test_pdf.py::test_pdf_entries_come_from_the_fhir_bundle` alters a dose in the JSON and checks the PDF
@@ -191,9 +210,14 @@ entity on speech (rules recall 0.381). Not fixed this round.
   paths.)
 - **Not given = not-done.** An entry flagged not given (or a measurement) is `status: not-done` with a `statusReason`
   in the JSON, and "NOT GIVEN" / "READING" in the PDF, even after the medic confirms it.
-- **Synthetic example:** `results/r7-fhir-pdf-example/` — `example.json` (the bundle) and `example.pdf` (rendered from
-  it): adrenaline (draft), aspirin (confirmed → `completed`), **morphine allergy (confirmed → `not-done`, "NOT GIVEN")**,
-  a blood glucose reading (`not-done`, "READING"), CPR (draft) and a self-corrected ondansetron dose (draft, 2 mg).
+- **Synthetic example:** `results/r9-fhir-pdf-example/` (round 7: `results/r7-fhir-pdf-example/`) — `example.json`
+  (the bundle) and `example.pdf` (rendered from it): adrenaline (draft), aspirin (confirmed → `completed`), **morphine
+  allergy (confirmed → `not-done`, "NOT GIVEN")**, a blood glucose reading (`not-done`, "READING"), CPR (draft), a
+  self-corrected ondansetron dose (draft, 2 mg), and since round 9: "furosemid" matched by sound (the PDF shows
+  heard "furosemid" under furosemide), levetiracetam (not in the lexicon, no code), atropine said as a concentration
+  (no dose) and IV access that failed (`not-done`).
+- **The heard word is never hidden.** Each field keeps the transcript words it came from (`raw` in the provenance); the
+  confirm screen and the PDF show the heard word next to the recorded drug whenever they differ.
 
 ## 7. Known limits (each pinned by an expected-failure test, a DECISIONS row or an evaluation report)
 
@@ -203,29 +227,45 @@ Fixed in round 8 (general rules, unit-tested on new sentences; `tests/test_safet
 - a concentration ("x mg per ml", "x mg/ml", "1 in 10000") is never recorded as the dose: `concentration_not_dose`
   (high), and the entry cannot be confirmed until the responder enters the dose.
 
+Fixed in round 9 (general rules, unit-tested on new sentences; `tests/test_round9_drug_identity.py`):
+- a drug matched **only by sound** with a spelling similarity below 0.95 to the recorded drug's nearest name gets
+  `sound_alike_drug` (high): "heard X — did you mean Y?" on the confirm screen, with the heard word next to the
+  recorded one, and it cannot be confirmed without ticking it. On dev speech this covers the 4 wrong drugs that were
+  matched by sound; it also asks for a tick on 49 correct sound matches (the cost);
+- junk guard for `drug_not_in_lexicon`: an ordinary English word (one of the 24,493 whole-word tokens of Whisper's
+  own vocabulary, lexicon words removed) counts as an unknown drug only with a number and a unit after it, and a word
+  shaped like a route or unit (similarity >= 75) never does. Dev speech: precision 0.776 → 0.881, recall 1.000 → 0.974.
+
 Still open:
 - **Time is the weakest entity on speech** (rules recall 0.38; dev, synthetic).
 - **The procedure detail** (e.g. a tube size) is extracted but **not scored**.
 - Speech is the weak link overall: the recogniser misses drug names (57% heard exactly) and is much weaker on the
   Indian-accented synthetic voices. Whether this holds for real speakers is unknown until real recordings exist.
-- **Sound-alike substitution:** a drug the lexicon does not know can be matched by sound to one it does know
-  ("tramadol" → ketorolac). It is flagged `low_confidence` and the spoken word is kept as the field's source text, but
-  the recorded drug is the wrong one until the medic corrects it.
-- **Unknown-drug entries on speech:** since round 8 a misheard drug name followed by a dose becomes a visible
-  "not in lexicon" entry (right for safety), but some ordinary misheard words do too ("fine", "rise"): on dev speech
-  51 more flagged entries, precision 0.928 → 0.811.
+- **Sound-alike substitution** is now caught at the confirm screen, not prevented: "tramadol" is still recorded as
+  ketorolac, with a high "heard 'tramadol' — did you mean ketorolac?" that must be ticked or the entry rejected.
+- **A wrong drug word from the recogniser** (it wrote "salbutamol" for "solumedrol", "atropine" for "epipen"): an
+  exact lexicon word, so no sound flag; on dev speech 6 of the 10 wrong-drug entries, guarded only by
+  `low_asr_confidence` (informational) and whatever dose / route flags apply.
+- **Unknown-drug entries on speech:** 42 on dev speech after the round-9 guard; 2 are still junk (a word run into a
+  clock time: "tivendat 957"), 3 are misheard lab readings ("serum magnesium"), and one true misheard drug is now
+  dropped ("equals 10" for "ecosprin": an English word with no unit after it).
 - Readings said as values ("blood sugar 54", "pulse ox 88", "BP 120 over 80") are not recorded as readings; a reading
   cue near a drug can mark that drug as a possible measurement ("blood sugar 54, gave dextrose").
 - "second dose at 10 48" is not read as a repeat dose; negation said after the drug ("naloxone was not given",
   "morphine nahi diya"); route corrections ("IM, sorry, IV"); Hindi numbers and times ("ek", "char", "do minute
   pehle"); "about five minutes back"; per-kg doses ("1 mg per kg").
-- The two round-8 fixes are in the rules NER and the hybrid; the LLM-only mode (an ablation) does not have them.
-- FHIR-lite is not strict FHIR R4 (no patient `subject`; see 6b).
+- The round-8 and round-9 fixes are in the rules NER and the hybrid; LLM-only is experimental, off the demo path, and
+  does not have them.
+- FHIR: the bundle passes the R4 data models, but it is not checked by the official HL7 validator, codes are not
+  looked up, and the patient is only a logical "unidentified patient" reference (see 6b).
 - A wrong dose that is still a legal dose cannot be caught by a range check; the residual risk depends on read-back
   confirmation, whose effectiveness we have not measured.
 
 ## 8. Deployment
 
 WSL2 (Ubuntu) on the Windows laptop with an NVIDIA GPU; the browser runs on the Windows side at
-`http://localhost:8000`. Whisper small.en and Qwen3-4B fit together in 8 GB. Clean-install steps are in
+`http://localhost:8000`. **One command:** `./start_demo.sh` runs a pre-flight that fails loudly (GPU; Whisper, LLM file
+and voice present; Whisper transcribes a clip on the GPU and the voice speaks, both with outbound sockets blocked;
+offline variables; demo-path config with LLM-only off; audit chain; port), then starts the server on 127.0.0.1 and
+opens the browser; `--check-only` runs the pre-flight alone. Before the one test run: `docs/freeze_checklist.md`. Whisper small.en and Qwen3-4B fit together in 8 GB. Clean-install steps are in
 `DECISIONS.md` (2026-11-02); they have not yet been run on a clean machine.
