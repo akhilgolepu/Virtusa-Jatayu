@@ -1,0 +1,56 @@
+# Hand labels (by us, round 9) for the 49 drug_not_in_lexicon entries the round-8 rules NER raised on the saved dev
+# speech transcripts (results/r4-dev-audio-rules-no-asr-flag/transcripts.jsonl). DEV ONLY.
+# Labelled from the gold sentence and the transcript, before the round-9 junk guard was written.
+#   drug  = a misheard drug name (the gold drug of that utterance was lost by the recogniser and this word stands for it)
+#   junk  = an ordinary or misheard non-drug word (a route, a time, a filler)
+#   other = neither cleanly: a misheard lab reading ("serum magnesium") or a fragment of a drug name with a wrong dose
+labels:
+  - {utt: mb07-0-011, heard: vomicind, label: drug, why: "vomikind (ondansetron)"}
+  - {utt: mb07-0-014, heard: tixa, label: drug, why: "dexa (dexamethasone)"}
+  - {utt: mb07-0-017, heard: matbok, label: drug, why: "medrol"}
+  - {utt: mb07-1-002, heard: fine, label: junk, why: "'five' misheard; the drug was lost elsewhere"}
+  - {utt: mb07-1-013, heard: evipush, label: junk, why: "the route 'iv push'"}
+  - {utt: mm02-0-003, heard: rise, label: junk, why: "filler between dose and route"}
+  - {utt: mm02-1-000, heard: thaxia, label: drug, why: "TXA"}
+  - {utt: mm02-2-015, heard: averse, label: drug, why: "versed (midazolam)"}
+  - {utt: mx07-0-001, heard: glucetin, label: drug, why: "glucagen"}
+  - {utt: mx07-0-004, heard: cackle, label: drug, why: "CaCl"}
+  - {utt: mx07-0-015, heard: epitropion, label: drug, why: "ipratropium"}
+  - {utt: mx07-0-018, heard: ringless, label: drug, why: "lactated ringers"}
+  - {utt: mx07-1-000, heard: nacin, label: drug, why: "narcan"}
+  - {utt: mx07-1-002, heard: linolectate, label: drug, why: "ringer lactate"}
+  - {utt: mx07-1-005, heard: metrolizarin, label: drug, why: "nitroglycerin"}
+  - {utt: mx07-1-006, heard: naco, label: drug, why: "NaHCO3 (dose misheard)"}
+  - {utt: mx07-1-009, heard: signed, label: other, why: "fragment of 'adenosine'; the dose read is a misheard time"}
+  - {utt: mx07-1-011, heard: valion, label: drug, why: "valium"}
+  - {utt: mx07-1-013, heard: drumming, label: drug, why: "end of 'diphenhydramine'"}
+  - {utt: mx07-1-015, heard: adenogenic, label: drug, why: "adenoject (dose misheard)"}
+  - {utt: mx07-1-019, heard: catalyzed, label: drug, why: "ketalar"}
+  - {utt: mc01-0-008, heard: nesolam, label: drug, why: "mezolam (midazolam)"}
+  - {utt: mc01-0-011, heard: thalumidiol, label: drug, why: "solumedrol"}
+  - {utt: mc01-0-012, heard: heterol, label: drug, why: "ketorol"}
+  - {utt: mc01-1-011, heard: vomitine, label: drug, why: "vomikind"}
+  - {utt: mc01-2-001, heard: benetryl, label: drug, why: "benadryl"}
+  - {utt: mc01-2-019, heard: equals, label: drug, why: "ecosprin"}
+  - {utt: mi02-1-018, heard: tivendat, label: junk, why: "'given at' run together; the number is the time"}
+  - {utt: hi01-0-007, heard: chloron, label: drug, why: "cordarone"}
+  - {utt: hi01-0-008, heard: benatev, label: drug, why: "benadryl"}
+  - {utt: hi01-0-008, heard: intramascula, label: junk, why: "the route 'intramuscular'"}
+  - {utt: hi01-0-011, heard: slows, label: drug, why: "dextrose"}
+  - {utt: hi01-1-016, heard: textures, label: drug, why: "dextrose"}
+  - {utt: hi01-2-012, heard: kefelol, label: drug, why: "ketorol"}
+  - {utt: cn04-0-000, heard: nopy, label: drug, why: "norepi"}
+  - {utt: cn04-0-004, heard: koehler, label: drug, why: "ketalar"}
+  - {utt: cn04-0-010, heard: perinol, label: drug, why: "perinorm"}
+  - {utt: cn04-0-015, heard: spring, label: drug, why: "disprin"}
+  - {utt: cn04-1-003, heard: larco, label: drug, why: "NaHCO3"}
+  - {utt: cn04-1-012, heard: noregenerant, label: drug, why: "noradrenaline"}
+  - {utt: cn04-1-016, heard: homefuls, label: drug, why: "'home fulsed' (midazolam)"}
+  - {utt: cm05-1-002, heard: deromegnesium, label: other, why: "'serum magnesium' reading"}
+  - {utt: cm05-1-006, heard: ceramachinesium, label: other, why: "'serum magnesium' reading"}
+  - {utt: cm05-1-012, heard: ceramagnesian, label: other, why: "'serum magnesium' reading"}
+  - {utt: tc01-0-002, heard: adenergic, label: drug, why: "adenoject"}
+  - {utt: tc01-0-005, heard: attend, label: junk, why: "'at ten'; the number is the time"}
+  - {utt: tc01-0-016, heard: adenogenic, label: drug, why: "adenoject"}
+  - {utt: tc01-1-006, heard: vucose, label: drug, why: "glucose"}
+  - {utt: tc01-1-013, heard: elida, label: junk, why: "a misheard word before the time 10 43; no drug lost"}

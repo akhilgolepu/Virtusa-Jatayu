@@ -1,0 +1,11 @@
+Scribe108 demo pre-flight — Decision-support demo, not a clinical device.
+PASS  gpu      NVIDIA GeForce RTX 5060, 3958/8151 MiB used; torch CUDA True, CTranslate2 CUDA devices 1
+PASS  models   all present; lexicon 36 drugs
+FAIL  CONFIG   JATAYU_EXPERIMENTAL=1: LLM-only would be offered; unset it for the demo
+FAIL  OFFLINE  not set to 1: HF_HUB_OFFLINE
+PASS  asr      cuda: “Gave 0.3 mg of adrenaline IM two minutes ago.” (2.2 s incl. load)
+PASS  voice    3.2 s of speech from en_US-lessac-medium.onnx
+PASS  audit    chain verified, 5 rows
+PASS  port     127.0.0.1:8000 free
+PRE-FLIGHT FAILED: config, offline. The demo was NOT started.
+exit=1

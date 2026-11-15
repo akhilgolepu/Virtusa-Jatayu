@@ -1,0 +1,48 @@
+{
+  "created": "2026-11-15T23:28:42.455121+05:30",
+  "commit": "183bfac-dirty",
+  "all_pass": true,
+  "checks": {
+    "gpu": {
+      "pass": true,
+      "detail": "NVIDIA GeForce RTX 5060, 3958/8151 MiB used; torch CUDA True, CTranslate2 CUDA devices 1"
+    },
+    "models": {
+      "pass": true,
+      "detail": "all present; lexicon 36 drugs",
+      "files": {
+        "whisper": "models/asr/faster-whisper-small.en/model.bin",
+        "llm (hybrid)": "models/llm/Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+        "read-back voice": "models/tts/en/en_US/lessac/medium/en_US-lessac-medium.onnx",
+        "voice config": "models/tts/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json",
+        "word list": "jatayu/lexicon/common_words.txt",
+        "built UI": "jatayu/web/dist/index.html",
+        "fixture clip": "tests/fixtures/adrenaline.wav"
+      }
+    },
+    "config": {
+      "pass": true,
+      "detail": "extractor rules, LLM-only off, ASR cuda/int8_float16"
+    },
+    "offline": {
+      "pass": true,
+      "detail": "HF_HUB_OFFLINE=1, TRANSFORMERS_OFFLINE=1; ASR and voice checks run with outbound sockets blocked"
+    },
+    "asr": {
+      "pass": true,
+      "detail": "cuda: \u201cGave 0.3 mg of adrenaline IM two minutes ago.\u201d (2.1 s incl. load)"
+    },
+    "voice": {
+      "pass": true,
+      "detail": "3.4 s of speech from en_US-lessac-medium.onnx"
+    },
+    "audit": {
+      "pass": true,
+      "detail": "chain verified, 5 rows"
+    },
+    "port": {
+      "pass": true,
+      "detail": "127.0.0.1:8000 free"
+    }
+  }
+}

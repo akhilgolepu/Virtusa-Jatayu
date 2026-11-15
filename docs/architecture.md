@@ -258,6 +258,9 @@ Still open:
   does not have them.
 - FHIR: the bundle passes the R4 data models, but it is not checked by the official HL7 validator, codes are not
   looked up, and the patient is only a logical "unidentified patient" reference (see 6b).
+- **The dangerous-error metric does not see a wrong drug.** The scorer pairs a prediction with gold only on the same
+  drug, so a wrong drug counts as a miss plus an extra prediction, not as a dangerous error. Wrong drugs are counted
+  separately by `eval/drug_identity.py` (10 on dev speech; see section 6).
 - A wrong dose that is still a legal dose cannot be caught by a range check; the residual risk depends on read-back
   confirmation, whose effectiveness we have not measured.
 

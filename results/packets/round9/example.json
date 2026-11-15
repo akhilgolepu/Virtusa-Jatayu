@@ -1,0 +1,612 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "identifier": {
+    "system": "urn:jatayu:incident",
+    "value": "b0086b0484274f8793032c3a872a9214"
+  },
+  "timestamp": "2026-11-15T23:27:26.022148+05:30",
+  "meta": {
+    "tag": [
+      {
+        "code": "demo",
+        "display": "Decision-support demo, not a clinical device."
+      }
+    ],
+    "source": "urn:jatayu:device:jatayu-87df0626352a"
+  },
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "in-progress",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "medicationCodeableConcept": {
+          "text": "epinephrine",
+          "coding": [
+            {
+              "system": "http://www.whocc.no/atc",
+              "code": "C01CA24"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-11-15T23:25:26.037905+05:30",
+        "dosage": {
+          "route": {
+            "text": "IM"
+          },
+          "dose": {
+            "value": 0.3,
+            "unit": "mg"
+          }
+        },
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":1.0,\"raw\":\"mg\",\"source\":\"rules\",\"span\":[9,11]},\"dose_value\":{\"confidence\":1.0,\"raw\":\"0.3\",\"source\":\"rules\",\"span\":[5,8]},\"drug\":{\"confidence\":1.0,\"raw\":\"adrenaline\",\"source\":\"rules\",\"span\":[12,22]},\"entry_id\":\"28aa49734ee742eeb2d65f74559c7e3c\",\"flags\":[],\"review_status\":\"draft\",\"route\":{\"confidence\":1.0,\"raw\":\"IM\",\"source\":\"rules\",\"span\":[23,25]},\"time\":{\"confidence\":1.0,\"raw\":\"two minutes ago\",\"source\":\"rules\",\"span\":[26,41]},\"time_source\":\"spoken\",\"utterance_id\":\"06fbdc08b3994937b0d16d384e7ecb7f\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "medicationCodeableConcept": {
+          "text": "aspirin",
+          "coding": [
+            {
+              "system": "http://www.whocc.no/atc",
+              "code": "B01AC06"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-11-15T22:40:00+05:30",
+        "dosage": {
+          "route": {
+            "text": "PO"
+          },
+          "dose": {
+            "value": 300.0,
+            "unit": "mg"
+          }
+        },
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":1.0,\"raw\":\"mg\",\"source\":\"rules\",\"span\":[12,14]},\"dose_value\":{\"confidence\":1.0,\"raw\":\"300\",\"source\":\"rules\",\"span\":[8,11]},\"drug\":{\"confidence\":1.0,\"raw\":\"aspirin\",\"source\":\"rules\",\"span\":[0,7]},\"entry_id\":\"8a353cf3147b4715b7d2f59b11093d4a\",\"flags\":[],\"review_status\":\"confirmed\",\"route\":{\"confidence\":1.0,\"raw\":\"PO\",\"source\":\"rules\",\"span\":[15,17]},\"time\":{\"confidence\":1.0,\"raw\":\"at 10 40\",\"source\":\"rules\",\"span\":[18,26]},\"time_source\":\"spoken\",\"utterance_id\":\"18cdf6635f894f058bb414d9121648d6\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "not-done",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "medicationCodeableConcept": {
+          "text": "morphine",
+          "coding": [
+            {
+              "system": "http://www.whocc.no/atc",
+              "code": "N02AA01"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-11-15T23:27:26.071723+05:30",
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":0.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"dose_value\":{\"confidence\":0.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"drug\":{\"confidence\":1.0,\"raw\":\"morphine\",\"source\":\"rules\",\"span\":[20,28]},\"entry_id\":\"efa8acc3a9d64d8ba367e9b22daeb644\",\"flags\":[{\"code\":\"time_not_stated\",\"field\":\"time\",\"message\":\"No time stated; using capture time.\",\"severity\":\"low\"},{\"code\":\"field_missing\",\"field\":\"dose_value\",\"message\":\"No dose stated for morphine.\",\"severity\":\"high\"},{\"code\":\"field_missing\",\"field\":\"route\",\"message\":\"No route stated for morphine.\",\"severity\":\"medium\"},{\"code\":\"possible_not_given\",\"field\":\"drug\",\"message\":\"Context suggests morphine may not have been given now (negation, allergy or regular medication).\",\"severity\":\"high\"}],\"review_status\":\"confirmed\",\"route\":{\"confidence\":0.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time\":{\"confidence\":1.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time_source\":\"device_clock\",\"utterance_id\":\"02c2b605fc3341bb9af3747b20132ef9\"}"
+          }
+        ],
+        "statusReason": [
+          {
+            "text": "Not given: the utterance states a negation, allergy, refusal or regular medication."
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "not-done",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "medicationCodeableConcept": {
+          "text": "dextrose",
+          "coding": [
+            {
+              "system": "http://www.whocc.no/atc",
+              "code": "V06DC01"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-11-15T23:27:26.088248+05:30",
+        "dosage": {
+          "dose": {
+            "value": 3.2,
+            "unit": "mmol"
+          }
+        },
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":1.0,\"raw\":\"mmol\",\"source\":\"rules\",\"span\":[18,22]},\"dose_value\":{\"confidence\":1.0,\"raw\":\"3.2\",\"source\":\"rules\",\"span\":[14,17]},\"drug\":{\"confidence\":1.0,\"raw\":\"glucose\",\"source\":\"rules\",\"span\":[6,13]},\"entry_id\":\"8e09c8080d2044c5b7bad482314e8238\",\"flags\":[{\"code\":\"time_not_stated\",\"field\":\"time\",\"message\":\"No time stated; using capture time.\",\"severity\":\"low\"},{\"code\":\"field_missing\",\"field\":\"route\",\"message\":\"No route stated for dextrose.\",\"severity\":\"medium\"},{\"code\":\"possible_measurement\",\"field\":\"drug\",\"message\":\"'dextrose' looks like a measurement, not a dose given.\",\"severity\":\"high\"}],\"review_status\":\"draft\",\"route\":{\"confidence\":0.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time\":{\"confidence\":1.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time_source\":\"device_clock\",\"utterance_id\":\"a806423e55894fa4858cad998072163c\"}"
+          }
+        ],
+        "statusReason": [
+          {
+            "text": "A reading, not an administration."
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "in-progress",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "code": {
+          "text": "cpr",
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "89666000"
+            }
+          ]
+        },
+        "performedDateTime": "2026-11-15T23:27:26.104471+05:30",
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"entry_id\":\"e52aae1b8e464344a825a35e9779e72b\",\"flags\":[{\"code\":\"time_not_stated\",\"field\":\"time\",\"message\":\"No time stated; using capture time.\",\"severity\":\"low\"}],\"procedure\":{\"confidence\":1.0,\"raw\":\"CPR\",\"source\":\"rules\",\"span\":[8,11]},\"review_status\":\"draft\",\"time\":{\"confidence\":1.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time_source\":\"device_clock\",\"utterance_id\":\"329f2815d32744b7a56ba72b644daf8f\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "in-progress",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "medicationCodeableConcept": {
+          "text": "ondansetron",
+          "coding": [
+            {
+              "system": "http://www.whocc.no/atc",
+              "code": "A04AA01"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-11-15T23:27:26.121502+05:30",
+        "dosage": {
+          "route": {
+            "text": "IV"
+          },
+          "dose": {
+            "value": 2.0,
+            "unit": "mg"
+          }
+        },
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":1.0,\"raw\":\"mg\",\"source\":\"rules\",\"span\":[27,29]},\"dose_value\":{\"confidence\":1.0,\"raw\":\"2\",\"source\":\"rules\",\"span\":[25,26]},\"drug\":{\"confidence\":1.0,\"raw\":\"ondansetron\",\"source\":\"rules\",\"span\":[0,11]},\"entry_id\":\"37f2ffdd47674494af96eeef8a3b3573\",\"flags\":[{\"code\":\"time_not_stated\",\"field\":\"time\",\"message\":\"No time stated; using capture time.\",\"severity\":\"low\"},{\"code\":\"self_correction\",\"field\":\"dose_value\",\"message\":\"The speaker corrected the dose (4 -> 2); the later value is used.\",\"severity\":\"low\"},{\"code\":\"dose_below_range\",\"field\":\"dose_value\",\"message\":\"2 mg is below the published adult dose. Source: Altitude Illness p.342; Nausea-Vomiting p.89.\",\"severity\":\"medium\"}],\"review_status\":\"draft\",\"route\":{\"confidence\":1.0,\"raw\":\"IV\",\"source\":\"rules\",\"span\":[30,32]},\"time\":{\"confidence\":1.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time_source\":\"device_clock\",\"utterance_id\":\"a907569db5804f84970700157540a4b8\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "in-progress",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "medicationCodeableConcept": {
+          "text": "furosemide",
+          "coding": [
+            {
+              "system": "http://www.whocc.no/atc",
+              "code": "C03CA01"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-11-15T23:27:26.138202+05:30",
+        "dosage": {
+          "route": {
+            "text": "IV"
+          },
+          "dose": {
+            "value": 40.0,
+            "unit": "mg"
+          }
+        },
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":1.0,\"raw\":\"mg\",\"source\":\"rules\",\"span\":[18,20]},\"dose_value\":{\"confidence\":1.0,\"raw\":\"40\",\"source\":\"rules\",\"span\":[15,17]},\"drug\":{\"confidence\":0.94,\"raw\":\"furosemid\",\"source\":\"rules\",\"span\":[5,14]},\"entry_id\":\"485e340fb50a4ec7868edd3985133821\",\"flags\":[{\"code\":\"time_not_stated\",\"field\":\"time\",\"message\":\"No time stated; using capture time.\",\"severity\":\"low\"},{\"code\":\"sound_alike_drug\",\"field\":\"drug\",\"message\":\"Heard 'furosemid' \u2014 did you mean furosemide? Matched by sound only (similarity 0.95). Confirm only if it is this drug; otherwise reject and re-dictate.\",\"severity\":\"high\"}],\"review_status\":\"draft\",\"route\":{\"confidence\":1.0,\"raw\":\"IV\",\"source\":\"rules\",\"span\":[21,23]},\"time\":{\"confidence\":1.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time_source\":\"device_clock\",\"utterance_id\":\"0f2e6179417b4ac0b59a5085aa12c4f1\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "in-progress",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "medicationCodeableConcept": {
+          "text": "levetiracetam"
+        },
+        "effectiveDateTime": "2026-11-15T23:27:26.154947+05:30",
+        "dosage": {
+          "route": {
+            "text": "IV"
+          },
+          "dose": {
+            "value": 500.0,
+            "unit": "mg"
+          }
+        },
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":1.0,\"raw\":\"mg\",\"source\":\"rules\",\"span\":[23,25]},\"dose_value\":{\"confidence\":1.0,\"raw\":\"500\",\"source\":\"rules\",\"span\":[19,22]},\"drug\":{\"confidence\":1.0,\"raw\":\"levetiracetam\",\"source\":\"rules\",\"span\":[5,18]},\"entry_id\":\"130d9a0fcfed4f09a1fbdf5253e3084d\",\"flags\":[{\"code\":\"time_not_stated\",\"field\":\"time\",\"message\":\"No time stated; using capture time.\",\"severity\":\"low\"},{\"code\":\"drug_not_in_lexicon\",\"field\":\"drug\",\"message\":\"'levetiracetam' is not in the drug list: nothing about it could be checked. Confirm the name, the dose and the route.\",\"severity\":\"high\"}],\"review_status\":\"draft\",\"route\":{\"confidence\":1.0,\"raw\":\"IV\",\"source\":\"rules\",\"span\":[26,28]},\"time\":{\"confidence\":1.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time_source\":\"device_clock\",\"utterance_id\":\"bd0e4e73e5ac4170b8c0794e3e87d78b\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "MedicationAdministration",
+        "status": "in-progress",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "medicationCodeableConcept": {
+          "text": "atropine",
+          "coding": [
+            {
+              "system": "http://www.whocc.no/atc",
+              "code": "A03BA01"
+            }
+          ]
+        },
+        "effectiveDateTime": "2026-11-15T23:27:26.171893+05:30",
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"dose_unit\":{\"confidence\":0.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"dose_value\":{\"confidence\":0.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"drug\":{\"confidence\":1.0,\"raw\":\"atropine\",\"source\":\"rules\",\"span\":[0,8]},\"entry_id\":\"a870da7034234898a1b0717f27568bf5\",\"flags\":[{\"code\":\"time_not_stated\",\"field\":\"time\",\"message\":\"No time stated; using capture time.\",\"severity\":\"low\"},{\"code\":\"concentration_not_dose\",\"field\":\"dose_value\",\"message\":\"'0.6 mg per ml' is a concentration, not a dose: enter the dose given.\",\"severity\":\"high\"},{\"code\":\"field_missing\",\"field\":\"route\",\"message\":\"No route stated for atropine.\",\"severity\":\"medium\"}],\"review_status\":\"draft\",\"route\":{\"confidence\":0.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time\":{\"confidence\":1.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time_source\":\"device_clock\",\"utterance_id\":\"c65435ede03c4d2b8db9cc3c7141d7ef\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Procedure",
+        "status": "not-done",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "code": {
+          "text": "iv cannulation"
+        },
+        "performedDateTime": "2026-11-15T23:27:26.188352+05:30",
+        "extension": [
+          {
+            "url": "urn:jatayu:provenance",
+            "valueString": "{\"entry_id\":\"c45c742ec49e4612908bab082a26b044\",\"flags\":[{\"code\":\"time_not_stated\",\"field\":\"time\",\"message\":\"No time stated; using capture time.\",\"severity\":\"low\"},{\"code\":\"possible_not_given\",\"field\":\"procedure\",\"message\":\"Context suggests iv cannulation was not done (negation, or an attempt that failed).\",\"severity\":\"high\"}],\"procedure\":{\"confidence\":1.0,\"raw\":\"IV access\",\"source\":\"rules\",\"span\":[14,23]},\"review_status\":\"draft\",\"time\":{\"confidence\":1.0,\"raw\":null,\"source\":\"rules\",\"span\":null},\"time_source\":\"device_clock\",\"utterance_id\":\"d13faaefc5264bf4b770ea604c00f8a4\"}"
+          }
+        ],
+        "statusReason": {
+          "text": "Not given: the utterance states a negation, allergy, refusal or regular medication."
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "identifier": [
+          {
+            "system": "urn:jatayu:utterance",
+            "value": "06fbdc08b3994937b0d16d384e7ecb7f"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "sent": "2026-11-15T23:27:26.037905+05:30",
+        "payload": [
+          {
+            "contentString": "gave 0.3 mg adrenaline IM two minutes ago"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "identifier": [
+          {
+            "system": "urn:jatayu:utterance",
+            "value": "18cdf6635f894f058bb414d9121648d6"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "sent": "2026-11-15T23:27:26.055288+05:30",
+        "payload": [
+          {
+            "contentString": "aspirin 300 mg PO at 10 40"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "identifier": [
+          {
+            "system": "urn:jatayu:utterance",
+            "value": "02c2b605fc3341bb9af3747b20132ef9"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "sent": "2026-11-15T23:27:26.071723+05:30",
+        "payload": [
+          {
+            "contentString": "patient allergic to morphine"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "identifier": [
+          {
+            "system": "urn:jatayu:utterance",
+            "value": "a806423e55894fa4858cad998072163c"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "sent": "2026-11-15T23:27:26.088248+05:30",
+        "payload": [
+          {
+            "contentString": "blood glucose 3.2 mmol"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "identifier": [
+          {
+            "system": "urn:jatayu:utterance",
+            "value": "329f2815d32744b7a56ba72b644daf8f"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "sent": "2026-11-15T23:27:26.104471+05:30",
+        "payload": [
+          {
+            "contentString": "started CPR"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "identifier": [
+          {
+            "system": "urn:jatayu:utterance",
+            "value": "a907569db5804f84970700157540a4b8"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "sent": "2026-11-15T23:27:26.121502+05:30",
+        "payload": [
+          {
+            "contentString": "ondansetron 4, no sorry, 2 mg IV"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "identifier": [
+          {
+            "system": "urn:jatayu:utterance",
+            "value": "0f2e6179417b4ac0b59a5085aa12c4f1"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "sent": "2026-11-15T23:27:26.138202+05:30",
+        "payload": [
+          {
+            "contentString": "gave furosemid 40 mg IV"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "identifier": [
+          {
+            "system": "urn:jatayu:utterance",
+            "value": "bd0e4e73e5ac4170b8c0794e3e87d78b"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "sent": "2026-11-15T23:27:26.154947+05:30",
+        "payload": [
+          {
+            "contentString": "gave levetiracetam 500 mg IV"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "identifier": [
+          {
+            "system": "urn:jatayu:utterance",
+            "value": "c65435ede03c4d2b8db9cc3c7141d7ef"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "sent": "2026-11-15T23:27:26.171893+05:30",
+        "payload": [
+          {
+            "contentString": "atropine 0.6 mg per ml"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "identifier": [
+          {
+            "system": "urn:jatayu:utterance",
+            "value": "d13faaefc5264bf4b770ea604c00f8a4"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "urn:jatayu:incident-patient",
+            "value": "b0086b0484274f8793032c3a872a9214"
+          },
+          "display": "Unidentified patient"
+        },
+        "sent": "2026-11-15T23:27:26.188352+05:30",
+        "payload": [
+          {
+            "contentString": "unable to get IV access"
+          }
+        ]
+      }
+    }
+  ]
+}

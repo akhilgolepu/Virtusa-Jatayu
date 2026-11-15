@@ -1,0 +1,65 @@
+{
+  "commit": "1fa9301",
+  "results": {
+    "dev text": {
+      "inputs": 480,
+      "entries": 520,
+      "flags": 641,
+      "by_code": {
+        "time_not_stated": 276,
+        "field_missing": 180,
+        "self_correction": 60,
+        "possible_not_given": 47,
+        "possible_measurement": 40,
+        "dose_out_of_range": 15,
+        "weight_based_dose": 10,
+        "dose_below_range": 6,
+        "possible_mg_mcg_confusion": 4,
+        "unit_not_allowed": 3
+      }
+    },
+    "off-template": {
+      "inputs": 56,
+      "entries": 71,
+      "flags": 122,
+      "by_code": {
+        "time_not_stated": 61,
+        "field_missing": 25,
+        "possible_not_given": 9,
+        "dose_range_stated": 5,
+        "repeat_dose_inferred": 5,
+        "time_borrowed": 5,
+        "dose_below_range": 4,
+        "self_correction": 3,
+        "duplicate_dose": 2,
+        "repeat_too_soon": 1,
+        "dose_out_of_range": 1,
+        "no_reference_range": 1
+      }
+    },
+    "dev speech (saved transcripts)": {
+      "inputs": 480,
+      "entries": 406,
+      "flags": 905,
+      "by_code": {
+        "field_missing": 337,
+        "time_not_stated": 290,
+        "sound_alike_drug": 53,
+        "drug_not_in_lexicon": 42,
+        "self_correction": 40,
+        "possible_measurement": 34,
+        "possible_not_given": 32,
+        "dose_out_of_range": 16,
+        "ambiguous_dose": 13,
+        "time_borrowed": 11,
+        "route_not_allowed": 8,
+        "low_confidence": 6,
+        "dose_below_range": 6,
+        "dose_range_stated": 6,
+        "weight_based_dose": 5,
+        "unit_not_allowed": 5,
+        "possible_mg_mcg_confusion": 1
+      }
+    }
+  }
+}
