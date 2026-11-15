@@ -23,6 +23,9 @@ export function Capture() {
   const [state, setState] = useState<IncidentState | null>(null);
   const [lexicon, setLexicon] = useState<Lexicon | null>(null);
   const [extractor, setExtractor] = useState<Extractor>("rules"); // default: rules (DECISIONS 2026-11-03, round 5)
+  // Round 9: the server lists the extractors it offers. LLM-only is experimental: shown (labelled) only when the server
+  // was started with JATAYU_EXPERIMENTAL=1, never on the demo path.
+  const [offered, setOffered] = useState<{ extractors: Extractor[]; experimental: Extractor[] }>({ extractors: ["rules", "hybrid"], experimental: [] });
   const [label, setLabel] = useState("");
   const [text, setText] = useState("");
   const [recording, setRecording] = useState(false);
@@ -38,7 +41,10 @@ export function Capture() {
     try { setState(await api.incident(id)); } catch { setState(null); setCurrent(""); }
   }, [current]);
 
-  useEffect(() => { api.incidents().then(setIncidents).catch(() => {}); api.lexicon().then(setLexicon).catch(() => {}); }, []);
+  useEffect(() => {
+    api.incidents().then(setIncidents).catch(() => {}); api.lexicon().then(setLexicon).catch(() => {});
+    api.health().then((h) => setOffered({ extractors: h.extractors, experimental: h.experimental })).catch(() => {});
+  }, []);
   useEffect(() => { try { localStorage.setItem(KEY, current); } catch { /* ignore */ } refresh(current); }, [current]);
   useEffect(() => {
     if (!recording) return;
@@ -118,8 +124,11 @@ export function Capture() {
           <div class="row spread">
             <span class="label">{recording ? <><span class="live-dot" /> recording</> : busy ? "processing…" : "ready"}</span>
             <div class="seg" role="group" aria-label="Extractor">
-              {(["rules", "hybrid", "llm"] as Extractor[]).map((x) => (
-                <button key={x} aria-pressed={extractor === x} onClick={() => setExtractor(x)}>{x === "llm" ? "llm only" : x}</button>
+              {offered.extractors.map((x) => (
+                <button key={x} aria-pressed={extractor === x} onClick={() => setExtractor(x)}
+                        title={offered.experimental.includes(x) ? "experimental: not on the demo path; no round-8/9 safety fixes" : undefined}>
+                  {x === "llm" ? "llm only (experimental)" : x}
+                </button>
               ))}
             </div>
           </div>

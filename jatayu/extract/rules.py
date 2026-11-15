@@ -54,11 +54,39 @@ this those though three through thus till together told took toward towards unde
 went were what whatever when where whether which while whole whom whose will with within without would yeah your
 yours okay basically sort kind somewhat""".split())
 ADMIN_VERBS = {"gave", "given", "give", "administered", "pushed", "push", "started", "start", "put", "injected"}
+# Round 9. A drug matched only by sound (fuzzy or phonetic) with a similarity below this needs explicit acknowledgement
+# on the confirm screen ("did you mean X?"), the heard word shown next to the recorded drug. The similarity is the
+# heard word's SPELLING against the drug's nearest name or alias, so only a near-identical spelling ("furosmide") passes
+# without it. Stated, not tuned: 0.95 is the existing LOW_CONFIDENCE line (eval/drug_identity.py has the dev numbers).
+SOUND_ACK_BELOW = 0.95
+# Round 9 junk guard for the unknown-drug rule. A word this similar (rapidfuzz ratio, letters only) to a route or unit
+# term is a misheard route or unit, not a drug ("evipush" ~ "iv push", "intramascula"); misheard drugs on dev score <= 59.
+ROUTE_LIKE = 75
+
+
+def _common_words() -> frozenset[str]:
+    """Ordinary English words: the whole-word tokens of the recogniser's own vocabulary minus lexicon words
+    (jatayu/lexicon/common_words.txt, built by scripts/build_common_words.py)."""
+    from importlib import resources
+
+    text = resources.files("jatayu.lexicon").joinpath("common_words.txt").read_text("utf-8")
+    return frozenset(w for w in text.split() if not w.startswith("#") and w.isalpha())
+
+
+COMMON_ENGLISH = _common_words()
 # Ordinary words the recogniser produces that must never be re-read as a drug name by sound.
 COMMON_WORDS = {"minute", "minutes", "ago", "given", "gave", "patient", "right", "now", "just", "then", "and", "the",
                 "after", "before", "pushed", "push", "started", "start", "time", "times", "about", "around", "into",
                 "point", "sorry", "actually", "second", "seconds", "hour", "hours", "again", "another", "repeat",
                 "because", "still", "pain", "score", "nausea", "chest", "blood", "level", "reading", "allergic"}
+
+
+def sound_alike_flag(heard: str | None, recorded: str, score: float) -> Flag:
+    """High: the drug was matched only by sound. The heard word stays in the drug field's raw text and is shown next to
+    the recorded drug; confirming needs this flag ticked ("did you mean ...?")."""
+    return Flag(code="sound_alike_drug", field="drug", severity="high",
+                message=f"Heard '{heard}' — did you mean {recorded}? Matched by sound only (similarity {score:.2f}). "
+                        "Confirm only if it is this drug; otherwise reject and re-dictate.")
 
 
 def phonetic_key(word: str) -> str:
@@ -109,6 +137,7 @@ class Mention:
     j: int
     confidence: float
     known: bool = True  # False: a drug-like word that is not in the lexicon (canon = the word as spoken)
+    score: float | None = None  # matched by sound (fuzzy / phonetic): the uncapped similarity; None = exact lexicon word
 
 
 class RulesExtractor:
@@ -130,6 +159,12 @@ class RulesExtractor:
                              for t in toks} | COMMON_WORDS
         self._phonetic_index = [(phonetic_key(t), canon) for t, kind, canon in lexicon.phrases() if kind == "drug"
                                 and len(phonetic_key(t)) >= 4]
+        self._drug_spellings: dict[str, set[str]] = defaultdict(set)
+        for t, kind, canon in lexicon.phrases():
+            if kind == "drug":
+                self._drug_spellings[canon].add("".join(c for c in t.lower() if c.isalpha()))
+        self._route_unit_terms = sorted({t.replace(" ", "") for t, kind, _ in lexicon.phrases()
+                                         if kind in ("route", "unit") and sum(c.isalpha() for c in t) >= 4})
 
     # ---- matching -------------------------------------------------------------------------
     def _mentions(self, nt: NormalisedText, blocked: set[int]) -> list[Mention]:
@@ -150,7 +185,8 @@ class RulesExtractor:
             if hit is None and toks[i].kind == "word" and sum(c.isalpha() for c in toks[i].text) >= 5:
                 fz = self.lexicon.fuzzy_drug(toks[i].text, self.fuzzy_threshold)
                 if fz:
-                    hit = Mention("drug", fz[0], i, i + 1, min(fz[1], FUZZY_CONFIDENCE_CAP))
+                    hit = Mention("drug", fz[0], i, i + 1, min(fz[1], FUZZY_CONFIDENCE_CAP),
+                                  score=self._spelling(toks[i].text, fz[0]))
             if hit is None and toks[i].kind == "word" and toks[i].text not in self._known_words:
                 hit = self._phonetic(toks, i, blocked)
             if hit is None and self._unknown_drug(nt, i, blocked, after_dose=bool(out) and out[-1].kind == "unit"
@@ -172,14 +208,27 @@ class RulesExtractor:
                 or w in NOT_DRUG_WORDS or w in ENGLISH_WORDS or w in NEGATION_CUES | HOME_MED_CUES | MEASUREMENT_CUES
                 or w in CORRECTIONS or i + 1 >= len(toks) or i + 1 in blocked):
             return False
+        if self._route_like(w):  # round 9: a misheard route or unit ("evipush", "intramascula") is not a drug
+            return False
         nxt = toks[i + 1]
+
+        def follows_at(k: int) -> set[str]:
+            return {kind for ph, kind, _ in self._by_first.get(toks[k].text, ())
+                    if tuple(t.text for t in toks[k:k + len(ph)]) == ph} if k < len(toks) else set()
+
+        if w in COMMON_ENGLISH:  # round 9: an ordinary word only with the full dose pattern after it ("spring 300 mg")
+            return nxt.kind == "number" and i + 2 not in blocked and "unit" in follows_at(i + 2)
         if nxt.kind == "number":
             return True
-        follows = {kind for ph, kind, _ in self._by_first.get(nxt.text, ())
-                   if tuple(t.text for t in toks[i + 1:i + 1 + len(ph)]) == ph}
+        follows = follows_at(i + 1)
         # a route alone after a word is often a body site ("tibial IO"): only after an administration verb or a dose
         # ("gave X IV", "1 g X IV")
         return "unit" in follows or ("route" in follows and (after_dose or (i > 0 and toks[i - 1].text in ADMIN_VERBS)))
+
+    def _route_like(self, word: str) -> bool:
+        from rapidfuzz import fuzz, process
+
+        return process.extractOne(word, self._route_unit_terms, scorer=fuzz.ratio, score_cutoff=ROUTE_LIKE) is not None
 
     def _phonetic(self, toks, i: int, blocked: set[int]) -> Mention | None:
         """A drug name the recogniser split or misspelt ("adenol card" -> adenocard, "ketool" -> ketorol): 1-3
@@ -202,7 +251,18 @@ class RulesExtractor:
                     best = (score, canon, j)
         if best is None:
             return None
-        return Mention("drug", best[1], i, best[2], min(best[0] / 100.0, FUZZY_CONFIDENCE_CAP))
+        joined = "".join(t.text for t in toks[i:best[2]])
+        return Mention("drug", best[1], i, best[2], min(best[0] / 100.0, FUZZY_CONFIDENCE_CAP),
+                       score=self._spelling(joined, best[1]))
+
+    def _spelling(self, heard: str, canon: str) -> float:
+        """How alike the heard letters are to the recorded drug's nearest name or alias as WRITTEN (0-1). A phonetic
+        match can score 1.0 on sound while the words differ ("kettler" ~ ketalar); this is the number shown and
+        compared with SOUND_ACK_BELOW."""
+        from rapidfuzz import fuzz
+
+        h = "".join(c for c in heard.lower() if c.isalpha())
+        return max((fuzz.ratio(h, t) for t in self._drug_spellings.get(canon, ())), default=0.0) / 100.0
 
     # ---- segmentation ---------------------------------------------------------------------
     @staticmethod
@@ -398,7 +458,9 @@ class RulesExtractor:
         if ambiguous:
             flags.append(Flag(code="ambiguous_dose", field="dose_value", severity="high",
                               message=f"Several numbers near {anchor.canon} and none has a unit; check the dose."))
-        if anchor.known and anchor.confidence < LOW_CONFIDENCE:
+        if anchor.known and anchor.score is not None and anchor.score < SOUND_ACK_BELOW:
+            flags.append(sound_alike_flag(drug.raw, anchor.canon, anchor.score))
+        elif anchor.known and anchor.confidence < LOW_CONFIDENCE:
             flags.append(Flag(code="low_confidence", field="drug", severity="medium",
                               message=f"Drug name matched approximately ({anchor.confidence:.2f})."))
         flags.extend(self._context_flags(nt, anchor, s, e))

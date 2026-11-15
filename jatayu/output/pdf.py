@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import io
 from datetime import datetime
+from xml.sax.saxutils import escape
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
@@ -46,17 +47,24 @@ def _ledger(rows: list[list], widths: list[float]) -> Table:
     return table
 
 
+def _letters(s: str) -> str:
+    return "".join(c for c in s.lower() if c.isalpha())
+
+
 def _entry_row(n: int, res: dict) -> list:
     """One table row, read from a FHIR-lite resource of the validated bundle (the PDF has no other source)."""
     prov = provenance(res)
     if res["resourceType"] == "MedicationAdministration":
-        item = res["medicationCodeableConcept"]["text"]
+        item = escape(res["medicationCodeableConcept"]["text"])
+        heard = (prov.get("drug") or {}).get("raw")
+        if heard and _letters(heard) != _letters(res["medicationCodeableConcept"]["text"]):
+            item += f'<br/><font size="7" color="#6b6863">heard “{escape(heard)}”</font>'  # never hidden (round 9)
         d = res.get("dosage", {})
         dose = f"{d['dose']['value']:g} {d['dose'].get('unit', '?')}" if "dose" in d else "—"
         route = d.get("route", {}).get("text", "—")
         when = res["effectiveDateTime"]
     else:
-        item = res["code"]["text"] + "".join(f" ({n['text']})" for n in res.get("note", []))
+        item = escape(res["code"]["text"] + "".join(f" ({n['text']})" for n in res.get("note", [])))
         dose, route = "", ""
         when = res["performedDateTime"]
     flags = "<br/>".join(f'<font color="#da291c">&#9650;</font> {f["code"]}' if f["severity"] == "high" else f"&#9651; {f['code']}"

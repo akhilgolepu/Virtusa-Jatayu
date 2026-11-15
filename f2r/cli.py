@@ -78,7 +78,8 @@ def main(argv: list[str] | None = None) -> int:
     a = sub.add_parser("add", help="extract + validate a typed sentence and append it to the chain")
     a.add_argument("text")
     a.add_argument("--incident")
-    a.add_argument("--extractor", choices=["rules", "llm", "hybrid"], default=config.DEFAULT_EXTRACTOR)
+    a.add_argument("--extractor", choices=list(config.DEMO_EXTRACTORS + (config.EXPERIMENTAL_EXTRACTORS if config.EXPERIMENTAL else ())),
+                   default=config.DEFAULT_EXTRACTOR, help="llm (LLM-only) is experimental: only with JATAYU_EXPERIMENTAL=1")
     a.set_defaults(fn=cmd_add)
     sub.add_parser("verify", help="verify the hash chain").set_defaults(fn=cmd_verify)
     sub.add_parser("eval", help="run the evaluation harness (see python -m eval.run --help)",

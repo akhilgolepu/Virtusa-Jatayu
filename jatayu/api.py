@@ -79,7 +79,9 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
                            {"asr": lambda t: t.unload(), "llm": lambda r: r.close()}, keep_all=config.KEEP_MODELS)
     llm = lambda: manager.get("llm")  # noqa: E731
     rules = RulesExtractor(lexicon)
-    extractors = {"rules": rules, "llm": LlmExtractor(lexicon, llm), "hybrid": HybridExtractor(lexicon, llm, rules)}
+    extractors = {"rules": rules, "hybrid": HybridExtractor(lexicon, llm, rules)}
+    if config.EXPERIMENTAL:  # LLM-only: experimental, off the demo path (round 9)
+        extractors["llm"] = LlmExtractor(lexicon, llm)
     asr = ManagedTranscriber(transcriber, manager) if hasattr(transcriber, "unload") else transcriber
     pipeline = Pipeline(lexicon, extractors[config.DEFAULT_EXTRACTOR], audit, asr, audio_dir=audio_dir,
                         validator=lambda entries, history: validate_all(entries, lexicon, history))
@@ -98,7 +100,9 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
 
     @app.get("/api/health")
     def health():
-        return {"ok": True, "asr_device": transcriber.device, "offline": True, "device_id": device}
+        return {"ok": True, "asr_device": transcriber.device, "offline": True, "device_id": device,
+                "extractors": list(extractors), "default_extractor": config.DEFAULT_EXTRACTOR,
+                "experimental": [x for x in extractors if x in config.EXPERIMENTAL_EXTRACTORS]}
 
     @app.post("/api/incidents")
     def create_incident(body: IncidentIn):
@@ -119,6 +123,9 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
         _incident(incident_id)
         if audio is None and (text is None or not text.strip()):
             raise HTTPException(422, "give text or audio")
+        if extractor in config.EXPERIMENTAL_EXTRACTORS and extractor not in extractors:
+            raise HTTPException(403, f"{extractor!r} (LLM-only) is experimental and off in the demo; "
+                                     "set JATAYU_EXPERIMENTAL=1 to use it")
         if extractor not in extractors:
             raise HTTPException(422, f"unknown extractor {extractor!r}; choose from {sorted(extractors)}")
         history = incident_state(audit, incident_id).current_entries()

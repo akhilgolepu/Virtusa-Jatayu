@@ -51,11 +51,25 @@ def test_health(client):
 
 def test_extractor_choice(client):
     inc = _incident(client)
-    for name in ("rules", "llm", "hybrid"):
+    for name in ("rules", "hybrid"):
         r = client.post("/api/utterances", data={"incident_id": inc, "text": "aspirin 300 mg PO", "extractor": name})
         assert r.status_code == 200, (name, r.text)
         assert r.json()["entries"][0]["drug"]["value"] == "aspirin"
     assert client.post("/api/utterances", data={"incident_id": inc, "text": "x", "extractor": "magic"}).status_code == 422
+    # round 9: LLM-only is experimental and off the demo path
+    r = client.post("/api/utterances", data={"incident_id": inc, "text": "aspirin 300 mg PO", "extractor": "llm"})
+    assert r.status_code == 403 and "experimental" in r.text
+    h = client.get("/api/health").json()
+    assert h["extractors"] == ["rules", "hybrid"] and h["experimental"] == [] and h["default_extractor"] == "rules"
+
+
+def test_llm_only_needs_the_experimental_switch(tmp_path, monkeypatch):
+    from jatayu import config
+    monkeypatch.setattr(config, "EXPERIMENTAL", True)
+    c = TestClient(create_app(db_path=tmp_path / "t.sqlite", audio_dir=tmp_path / "audio"))
+    assert c.get("/api/health").json()["experimental"] == ["llm"]
+    r = c.post("/api/utterances", data={"incident_id": _incident(c), "text": "aspirin 300 mg PO", "extractor": "llm"})
+    assert r.status_code == 200 and r.json()["entries"][0]["drug"]["value"] == "aspirin"
 
 
 def test_default_extractor_is_rules_and_others_stay_selectable():
@@ -66,12 +80,13 @@ def test_default_extractor_is_rules_and_others_stay_selectable():
     from jatayu import config
     assert config.DEFAULT_EXTRACTOR == "rules"
     ui = Path(__file__).resolve().parents[1].joinpath("web/src/screens/Capture.tsx").read_text()
-    assert 'useState<Extractor>("rules")' in ui and re.search(r'\["rules", "hybrid", "llm"\]', ui)
+    assert 'useState<Extractor>("rules")' in ui and "experimental" in ui  # LLM-only only when the server offers it
 
 
 def test_llm_mode_without_model_is_503_and_hybrid_falls_back(tmp_path, monkeypatch):
     from jatayu import config
     monkeypatch.setattr(config, "LLM_MODEL_PATH", tmp_path / "missing.gguf")
+    monkeypatch.setattr(config, "EXPERIMENTAL", True)
     c = TestClient(create_app(db_path=tmp_path / "t.sqlite", audio_dir=tmp_path / "audio"))
     inc = _incident(c)
     assert c.post("/api/utterances", data={"incident_id": inc, "text": "aspirin 300 mg", "extractor": "llm"}).status_code == 503

@@ -23,7 +23,15 @@ DISCLAIMER = "Decision-support demo, not a clinical device."
 
 READBACK_VOICE = MODELS_DIR / "tts/en/en_US/lessac/medium/en_US-lessac-medium.onnx"
 
-DEFAULT_EXTRACTOR = os.environ.get("JATAYU_EXTRACTOR", "rules")  # rules (default, round 5) | hybrid | llm
+DEFAULT_EXTRACTOR = os.environ.get("JATAYU_EXTRACTOR", "rules")  # rules (default, round 5) | hybrid
+# LLM-only extraction is EXPERIMENTAL (round 9): it is off the demo path, has none of the round-8/9 safety fixes, and
+# is offered by the app only when JATAYU_EXPERIMENTAL=1. The evaluation harness can still score it on dev.
+DEMO_EXTRACTORS = ("rules", "hybrid")
+EXPERIMENTAL_EXTRACTORS = ("llm",)
+EXPERIMENTAL = os.environ.get("JATAYU_EXPERIMENTAL", "0") == "1"
+if DEFAULT_EXTRACTOR not in DEMO_EXTRACTORS + (EXPERIMENTAL_EXTRACTORS if EXPERIMENTAL else ()):
+    raise ValueError(f"JATAYU_EXTRACTOR={DEFAULT_EXTRACTOR!r}: the demo extractors are {DEMO_EXTRACTORS}; LLM-only is "
+                     "experimental (set JATAYU_EXPERIMENTAL=1 to allow it outside the demo)")
 
 LLM_MODEL_PATH = MODELS_DIR / "llm/Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
 LLM_BACKUP_PATH = MODELS_DIR / "llm/Llama-3.2-3B-Instruct-Q4_K_M.gguf"

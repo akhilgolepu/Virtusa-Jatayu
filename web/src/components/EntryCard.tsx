@@ -34,6 +34,11 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
 
   const title = e.kind === "medication" ? e.drug.value ?? "Unknown drug" : e.procedure.value ?? "Procedure";
   const drugInfo = e.kind === "medication" ? lexicon?.drugs.find((d) => d.name === e.drug.value) : undefined;
+  // Round 9: the word as heard is never hidden. It shows next to the recorded drug whenever the two differ; a drug
+  // matched only by sound (sound_alike_drug) also gets a "did you mean ...?" box and must be ticked to confirm.
+  const letters = (s: string | null | undefined) => (s ?? "").toLowerCase().replace(/[^a-z]/g, "");
+  const heard = e.kind === "medication" && e.drug.raw && letters(e.drug.raw) !== letters(e.drug.value) ? e.drug.raw : null;
+  const soundAlike = e.flags.find((f) => f.code === "sound_alike_drug");
 
   async function save() {
     setBusy("save"); setError("");
@@ -76,8 +81,15 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
       <div class="entry-head">
         <span class="entry-num">{String(n).padStart(2, "0")}</span>
         <h3>{title}</h3>
+        {heard && <span class="heard label" title="the word as the recogniser heard it">heard “{heard}”</span>}
         <span class="status" data-status={state.status}>{state.status}</span>
       </div>
+      {soundAlike && e.kind === "medication" && !settled && (
+        <p class="banner did-you-mean" data-tone="bad" role="note">
+          ▲ Heard <b>“{e.drug.raw}”</b> — did you mean <b>{e.drug.value}</b>? Matched by sound only. Confirm only if it is
+          this drug; otherwise reject and re-dictate.
+        </p>
+      )}
 
       {e.kind === "medication" && !editing && (
         <div class="fields">
@@ -142,6 +154,9 @@ export function EntryCard({ incident, state, n, lexicon, onChange }: {
         <div class="stack">
           <h3 id={`ack-${e.id}`}>Check before confirming</h3>
           <p class="muted">This entry has {highCodes.length} high-severity check{highCodes.length === 1 ? "" : "s"}. Confirm only if each one is understood.</p>
+          {e.kind === "medication" && (
+            <p class="heard-vs-recorded"><span class="label">Heard</span> “{e.drug.raw ?? "—"}” <span class="label">Recorded</span> <b>{e.drug.value ?? "—"}</b></p>
+          )}
           {highCodes.map((code) => (
             <label class="check" key={code}>
               <input type="checkbox" checked={ack.includes(code)}

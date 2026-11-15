@@ -46,7 +46,9 @@ MUTATIONS = {
     "edit_event_type": ("UPDATE audit_log SET event_type = 'confirm' WHERE seq = 2", 2),
     "edit_incident_id": ("UPDATE audit_log SET incident_id = 'other' WHERE seq = 3", 3),
     "delete_middle_row": ("DELETE FROM audit_log WHERE seq = 3", 4),
-    "edit_prev_hash": ("UPDATE audit_log SET prev_hash = replace(prev_hash, substr(prev_hash, 1, 1), 'f') WHERE seq = 4", 4),
+    # always a different first hex digit (the old replace(...,'f') was a no-op when the hash began with 'f': 1 run in 16)
+    "edit_prev_hash": ("UPDATE audit_log SET prev_hash = (CASE WHEN substr(prev_hash, 1, 1) = 'f' THEN '0' ELSE 'f' END)"
+                       " || substr(prev_hash, 2) WHERE seq = 4", 4),
     "edit_audio_hash": ("UPDATE audit_log SET audio_sha256 = 'deadbeef' WHERE seq = 5", 5),
 }
 

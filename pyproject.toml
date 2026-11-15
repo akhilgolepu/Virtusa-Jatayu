@@ -15,7 +15,7 @@ f2r = "f2r.cli:main"
 include = ["jatayu*", "datagen*", "f2r*", "eval*", "scripts*"]
 
 [tool.setuptools.package-data]
-jatayu = ["lexicon/*.yaml", "schemas/*.json", "web/*"]
+jatayu = ["lexicon/*.yaml", "lexicon/*.txt", "schemas/*.json", "web/*"]
 datagen = ["*.yaml"]
 
 [tool.pytest.ini_options]

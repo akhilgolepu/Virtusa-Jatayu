@@ -134,6 +134,9 @@ kbd { font: 400 var(--text-xs) var(--font-mono); padding: 1px 6px; border-radius
 .entry { display: grid; gap: var(--space-3); }
 .entry-head { display: flex; gap: var(--space-3); align-items: baseline; flex-wrap: wrap; }
 .entry-head h3 { flex: 1; min-width: 0; }
+.entry-head .heard { font-style: italic; }
+.did-you-mean b { font-weight: 600; }
+.heard-vs-recorded { display: flex; gap: var(--space-2); align-items: baseline; flex-wrap: wrap; }
 .entry-num { font: 400 var(--text-sm) var(--font-mono); color: var(--color-ink-3); }
 .status { font: 500 var(--text-xs) / 1 var(--font-body); text-transform: uppercase; letter-spacing: 0.06em;
   padding: var(--space-1) var(--space-2); border-radius: var(--radius-pill); border: 1px solid var(--color-rule-strong); color: var(--color-ink-2); }

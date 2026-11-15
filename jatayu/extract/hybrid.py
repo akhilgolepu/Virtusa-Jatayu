@@ -160,7 +160,7 @@ class HybridExtractor:
                 continue  # an entry without its drug/procedure (or one reusing it) is not an entry
             extra = self._rules_flags(anchor, rules_entries, fields.get("time"))
             match = by_id[item["drug"]].confidence if kind == "medication" else 1.0  # lexicon match, not LLM certainty
-            if match < 0.95:
+            if match < 0.95 and not any(f.code == "sound_alike_drug" for f in extra):
                 extra.append(Flag(code="low_confidence", field="drug", severity="medium",
                                   message=f"Drug name matched approximately ({match:.2f})."))
             entry = assemble(kind, context, fields, unsupported, capture_time, extra)
@@ -175,7 +175,7 @@ class HybridExtractor:
         for r in rules_entries:
             r_anchor = getattr(r, "drug", None) or getattr(r, "procedure", None)
             if r_anchor is not None and r_anchor.span == anchor.span:
-                out = [f for f in r.flags if f.code in CONTEXT_CODES | {"dose_range_stated"}]
+                out = [f for f in r.flags if f.code in CONTEXT_CODES | {"dose_range_stated", "sound_alike_drug"}]
                 own = None if any(f.code in ("time_borrowed", "time_not_stated") for f in r.flags) else r.time.span
                 if time is not None and time.span != own:
                     out.append(Flag(code="time_borrowed", field="time", severity="medium",

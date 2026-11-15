@@ -274,7 +274,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--split", choices=["dev", "test", "final_test", "offtemplate_dev"], required=True)
     ap.add_argument("--tag", required=True)
-    ap.add_argument("--extractor", choices=["rules", "llm", "hybrid"], default="hybrid")
+    ap.add_argument("--extractor", choices=["rules", "llm", "hybrid"], default="hybrid",
+                    help="llm = LLM-only, EXPERIMENTAL (scored on dev for comparison; not on the demo path)")
     ap.add_argument("--mode", choices=["text", "audio", "noisy"], default="text")
     ap.add_argument("--limit", type=int, default=0, help="first N utterances (by id in audio modes)")
     ap.add_argument("--root", type=Path, default=config.DATA_DIR)

@@ -1,6 +1,6 @@
 // Typed client for the Jatayu FastAPI backend (same origin; works offline).
 export type Span = [number, number];
-export type FieldT<T> = { value: T | null; span: Span | null; confidence: number; source: string };
+export type FieldT<T> = { value: T | null; span: Span | null; confidence: number; source: string; raw?: string | null };
 export type Flag = { code: string; field: string | null; severity: "high" | "medium" | "low"; message: string };
 export type Medication = {
   kind: "medication"; id: string; drug: FieldT<string>; dose_value: FieldT<number>; dose_unit: FieldT<string>;
@@ -43,7 +43,7 @@ const json = (method: string, body: unknown): RequestInit => ({
 });
 
 export const api = {
-  health: () => call<{ ok: boolean; asr_device: string }>("/api/health"),
+  health: () => call<{ ok: boolean; asr_device: string; extractors: Extractor[]; experimental: Extractor[]; default_extractor: Extractor }>("/api/health"),
   lexicon: () => call<Lexicon>("/api/lexicon"),
   incidents: () => call<Incident[]>("/api/incidents"),
   createIncident: (label: string | null) => call<Incident>("/api/incidents", json("POST", { label })),

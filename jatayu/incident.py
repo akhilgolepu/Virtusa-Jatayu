@@ -97,7 +97,8 @@ def incident_state(audit: AuditLog, incident_id: str) -> IncidentState:
 
 
 STRUCTURAL = {"field_missing", "time_not_stated", "low_confidence", "llm_unsupported", "ambiguous_dose",
-              "dose_range_stated", "time_borrowed", "low_asr_confidence", "self_correction", "concentration_not_dose"}
+              "dose_range_stated", "time_borrowed", "low_asr_confidence", "self_correction", "concentration_not_dose",
+              "sound_alike_drug"}
 _CHECKED = {"medication": ("drug", "dose_value", "dose_unit", "route", "time"), "procedure": ("procedure", "time", "detail")}
 
 
