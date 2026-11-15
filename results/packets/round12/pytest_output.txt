@@ -1,0 +1,26 @@
+# python -m pytest -q -rx at 52a0729 (full suite, model tests included; GPU present), last 25 lines
+=============================== warnings summary ===============================
+../.local/lib/python3.12/site-packages/_pytest/python.py:124
+  /home/akhil/.local/lib/python3.12/site-packages/_pytest/python.py:124: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: tests/test_offtemplate.py::test_offtemplate_rules, argvalues type: generator
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+XFAIL tests/test_offtemplate.py::test_offtemplate_rules[ot-m1-02] - 'mg per kg' is not modelled: the 1 is read as an absolute 1 mg (flagged dose_below_range, not per-kg)
+XFAIL tests/test_offtemplate.py::test_offtemplate_rules[ot-m1-05] - a dose said BEFORE the second drug with no separator is attached to the first drug (whose unit-less 10 mg chain swallows it)
+XFAIL tests/test_offtemplate.py::test_offtemplate_rules[ot-neg-06] - intent that was abandoned ('going to give ... but') has no negation cue word
+XFAIL tests/test_offtemplate.py::test_offtemplate_rules[ot-neg-07] - negation cues are only searched BEFORE the drug name
+XFAIL tests/test_offtemplate.py::test_offtemplate_rules[ot-cor-02] - route corrections are not handled (the first route is kept)
+XFAIL tests/test_offtemplate.py::test_offtemplate_rules[ot-cor-05] - route corrections are not handled ('scratch that' is not a correction cue either)
+XFAIL tests/test_offtemplate.py::test_offtemplate_rules[ot-hi-02] - 'muh se' (by mouth) is not a route synonym
+XFAIL tests/test_offtemplate.py::test_offtemplate_rules[ot-hi-03] - Hindi relative times ('do minute pehle') are not parsed
+XFAIL tests/test_offtemplate.py::test_offtemplate_rules[ot-hi-04] - Hindi number words ('ek') are not parsed
+XFAIL tests/test_offtemplate.py::test_offtemplate_rules[ot-hi-06] - 'nahi' and 'allergic' come AFTER the drug name
+XFAIL tests/test_offtemplate.py::test_offtemplate_rules[ot-fil-05] - 'at like 10 32': the filler between 'at' and the clock time stops the time parser
+XFAIL tests/test_offtemplate.py::test_offtemplate_rules[ot-tim-03] - 'chewed' is not a route synonym for PO
+XFAIL tests/test_required_fields_confirm.py::test_required_dose_without_unit_cannot_be_confirmed_by_a_tick_alone - NOT ENFORCED (round 12): a tick on field_missing confirms a dose with no unit; no unit entry or explicit 'unknown' is required
+XFAIL tests/test_required_fields_confirm.py::test_required_entry_with_no_drug_cannot_be_confirmed - NOT ENFORCED (round 12): an entry whose drug is empty is confirmed with no tick and no explicit drug or 'unknown'
+478 passed, 14 xfailed, 1 warning in 68.78s (0:01:08)
