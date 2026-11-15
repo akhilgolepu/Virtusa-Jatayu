@@ -30,6 +30,30 @@ RANGE_JOINERS = {"to", "-", "or"}  # "2 to 4 mg", "2-4 mg", "2 or 4 mg": a range
 REPEAT_CUES = {"another", "again", "repeat", "repeated"}  # "then another 2 mg": a second dose of the same drug
 
 
+MASS_UNITS = {"mg", "mcg", "g", "units", "mmol", "mEq"}
+VOLUME_UNITS = {"ml"}
+# Words that are never a drug name when a number follows them: vital signs, quantities, verbs, time words, Hinglish.
+NOT_DRUG_WORDS = {"pulse", "pressure", "rate", "heart", "resp", "respiratory", "temp", "temperature", "weight", "weighs",
+                  "kilos", "kilo", "kgs", "years", "year", "aged", "score", "glasgow", "dose", "doses", "dosage", "total",
+                  "bolus", "drip", "infusion", "over", "under", "about", "around", "approx", "approximately", "roughly",
+                  "nearly", "almost", "maybe", "number", "room", "saturating", "systolic", "diastolic", "respirations",
+                  "gave", "given", "give", "giving", "administered", "administer", "pushed", "push", "started", "start",
+                  "repeat", "repeated", "another", "second", "third", "first", "then", "with", "from", "into", "litres",
+                  "liters", "litre", "liter", "minutes", "minute", "hours", "hour", "seconds", "patient", "mareez",
+                  "maine", "diya", "lagaya", "chadhaya", "phir", "abhi", "pehle", "baad", "wala", "wali", "gauge", "size",
+                  "lead", "attempt", "attempts", "times", "only", "just", "also", "still", "again", "more", "less"}
+# Common English words (4+ letters) that are never a drug name, whatever follows them.
+ENGLISH_WORDS = set("""about above across actually after again against almost along already also although always among
+another anyone anything around away back because been before behind being below beside besides best better between
+both bring brought came cannot come could does doing done down during each either else enough even ever every first
+from front gets give given going gone good have having here hers herself himself into itself just keep kept know last
+later least left less like little look made make many maybe might more most much must near need never next none
+nothing once only onto other others ought over past perhaps please quite rather really right same second seem seemed
+shall should since some something still such sure take taken than that their them then there these they thing think
+this those though three through thus till together told took toward towards under until upon very want wanted well
+went were what whatever when where whether which while whole whom whose will with within without would yeah your
+yours okay basically sort kind somewhat""".split())
+ADMIN_VERBS = {"gave", "given", "give", "administered", "pushed", "push", "started", "start", "put", "injected"}
 # Ordinary words the recogniser produces that must never be re-read as a drug name by sound.
 COMMON_WORDS = {"minute", "minutes", "ago", "given", "gave", "patient", "right", "now", "just", "then", "and", "the",
                 "after", "before", "pushed", "push", "started", "start", "time", "times", "about", "around", "into",
@@ -84,6 +108,7 @@ class Mention:
     i: int
     j: int
     confidence: float
+    known: bool = True  # False: a drug-like word that is not in the lexicon (canon = the word as spoken)
 
 
 class RulesExtractor:
@@ -128,12 +153,33 @@ class RulesExtractor:
                     hit = Mention("drug", fz[0], i, i + 1, min(fz[1], FUZZY_CONFIDENCE_CAP))
             if hit is None and toks[i].kind == "word" and toks[i].text not in self._known_words:
                 hit = self._phonetic(toks, i, blocked)
+            if hit is None and self._unknown_drug(nt, i, blocked, after_dose=bool(out) and out[-1].kind == "unit"
+                                                  and out[-1].j == i):
+                hit = Mention("drug", toks[i].text, i, i + 1, 1.0, known=False)
             if hit:
                 out.append(hit)
                 i = hit.j
             else:
                 i += 1
         return out
+
+    def _unknown_drug(self, nt, i: int, blocked: set[int], after_dose: bool = False) -> bool:
+        """A drug-like word the lexicon does not know, directly followed by a dose, a unit or a route ("gave tramadol
+        50 mg IV"): it becomes an entry with the word as spoken and a drug_not_in_lexicon flag — never dropped."""
+        toks = nt.tokens
+        w = toks[i].text
+        if (i in blocked or toks[i].kind != "word" or not w.isalpha() or len(w) < 4 or w in self._known_words
+                or w in NOT_DRUG_WORDS or w in ENGLISH_WORDS or w in NEGATION_CUES | HOME_MED_CUES | MEASUREMENT_CUES
+                or w in CORRECTIONS or i + 1 >= len(toks) or i + 1 in blocked):
+            return False
+        nxt = toks[i + 1]
+        if nxt.kind == "number":
+            return True
+        follows = {kind for ph, kind, _ in self._by_first.get(nxt.text, ())
+                   if tuple(t.text for t in toks[i + 1:i + 1 + len(ph)]) == ph}
+        # a route alone after a word is often a body site ("tibial IO"): only after an administration verb or a dose
+        # ("gave X IV", "1 g X IV")
+        return "unit" in follows or ("route" in follows and (after_dose or (i > 0 and toks[i - 1].text in ADMIN_VERBS)))
 
     def _phonetic(self, toks, i: int, blocked: set[int]) -> Mention | None:
         """A drug name the recogniser split or misspelt ("adenol card" -> adenocard, "ketool" -> ketorol): 1-3
@@ -292,6 +338,9 @@ class RulesExtractor:
             flags.append(Flag(code="self_correction", field="dose_value", severity="low",
                               message=f"The speaker corrected the dose ({toks[before].text} -> {toks[after].text}); "
                                       "the later value is used."))
+        concentration = self._concentration(nt, s, e, unit_at)
+        if concentration is not None:
+            nums = []  # numbers in a concentration ("1 in 10000", "0.6 mg per ml") are not a dose
         with_unit = [k for k in nums if k + 1 in unit_at]
         ambiguous = False
         stated_range = next(((a, b) for a, b in zip(nums, nums[1:]) if 0 < b - a <= 3 and all(
@@ -312,7 +361,15 @@ class RulesExtractor:
             pick = None
 
         drug = self._f(nt, anchor.canon, anchor.i, anchor.j, anchor.confidence)
-        if pick is None:
+        if not anchor.known:
+            flags.append(Flag(code="drug_not_in_lexicon", field="drug", severity="high",
+                              message=f"'{drug.raw}' is not in the drug list: nothing about it could be checked. Confirm the "
+                                      "name, the dose and the route."))
+        if concentration is not None:
+            dose_value, dose_unit = Field.missing("rules"), Field.missing("rules")
+            flags.append(Flag(code="concentration_not_dose", field="dose_value", severity="high",
+                              message=f"'{concentration}' is a concentration, not a dose: enter the dose given."))
+        elif pick is None:
             dose_value, dose_unit = Field.missing("rules"), Field.missing("rules")
             flags.append(Flag(code="field_missing", field="dose_value", severity="high",
                               message=f"No dose stated for {anchor.canon}."))
@@ -341,7 +398,7 @@ class RulesExtractor:
         if ambiguous:
             flags.append(Flag(code="ambiguous_dose", field="dose_value", severity="high",
                               message=f"Several numbers near {anchor.canon} and none has a unit; check the dose."))
-        if anchor.confidence < LOW_CONFIDENCE:
+        if anchor.known and anchor.confidence < LOW_CONFIDENCE:
             flags.append(Flag(code="low_confidence", field="drug", severity="medium",
                               message=f"Drug name matched approximately ({anchor.confidence:.2f})."))
         flags.extend(self._context_flags(nt, anchor, s, e))
@@ -365,6 +422,22 @@ class RulesExtractor:
             out.append(Flag(code="possible_measurement", field="drug", severity="high",
                             message=f"'{anchor.canon}' looks like a measurement, not a dose given."))
         return out
+
+    @staticmethod
+    def _concentration(nt, s: int, e: int, unit_at: dict) -> str | None:
+        """The raw text of a concentration said in this clause, if any: a ratio ("1 in 10000", "1:1000") or an amount
+        per volume ("0.6 mg per ml", "50 mg/ml"). Recorded as a concentration, never as the dose."""
+        toks = nt.tokens
+        for k in range(s, e - 2):
+            a, mid, b = toks[k], toks[k + 1], toks[k + 2]
+            if a.kind == "number" and mid.text in ("in", ":") and b.kind == "number" and b.value >= 100 and a.value <= 10:
+                return nt.raw[slice(*nt.raw_span(k, k + 3))]
+            if k in unit_at and unit_at[k].canon in MASS_UNITS:
+                j = unit_at[k].j
+                if j + 1 < e and toks[j].text in ("per", "/") and j + 1 in unit_at and unit_at[j + 1].canon in VOLUME_UNITS:
+                    start = k - 1 if k > s and toks[k - 1].kind == "number" else k
+                    return nt.raw[slice(*nt.raw_span(start, unit_at[j + 1].j))]
+        return None
 
     def _procedure(self, nt, anchor, s, e, time_field, flags) -> ProcedureEntry:
         toks = nt.tokens

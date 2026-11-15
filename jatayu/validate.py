@@ -11,7 +11,7 @@ DUPLICATE_WINDOW_S = 120
 MAX_PLAUSIBLE_WEIGHT_KG = 200  # fallback only, when the lexicon has no cited weight range
 CONTEXT_CODES = {"possible_not_given", "possible_measurement"}
 VALIDATOR_CODES = {"no_reference_range", "dose_out_of_range", "dose_below_range", "possible_mg_mcg_confusion", "unit_not_allowed",
-                   "route_not_allowed", "duplicate_dose", "repeat_too_soon", "weight_based_dose"}
+                   "route_not_allowed", "duplicate_dose", "repeat_too_soon", "weight_based_dose", "drug_not_in_lexicon"}
 TO_MG = {"mcg": 0.001, "mg": 1.0, "g": 1000.0}  # exact equivalences, not errors
 
 
@@ -109,7 +109,8 @@ def _range_flags(e: MedicationEntry, lexicon: Lexicon) -> list[Flag]:
 
 def _history_flags(e: MedicationEntry, lexicon: Lexicon, history: Sequence[Entry]) -> list[Flag]:
     out = []
-    min_repeat = lexicon.min_repeat_s(e.drug.value, e.route.value) if e.route.value else None
+    known = lexicon.has_drug(e.drug.value)
+    min_repeat = lexicon.min_repeat_s(e.drug.value, e.route.value) if e.route.value and known else None
     for h in history:
         if not isinstance(h, MedicationEntry) or h.id == e.id or h.drug.value != e.drug.value:
             continue
@@ -136,6 +137,10 @@ def validate(entry: Entry, lexicon: Lexicon, history: Sequence[Entry] = ()) -> l
         return []  # a reading (blood glucose, sats), not a dose: nothing to range-check
     # possible_not_given entries ARE range-checked: if the medic acknowledges "it was given", the dose must
     # already have been judged.
+    if not lexicon.has_drug(entry.drug.value):  # nothing to check against: say so, loudly
+        return [Flag(code="drug_not_in_lexicon", field="drug", severity="high",
+                     message=f"'{entry.drug.raw or entry.drug.value}' is not in the drug list: nothing about it could be "
+                             "checked. Confirm the name, the dose and the route.")] + _history_flags(entry, lexicon, history)
     info = lexicon.drug(entry.drug.value)
     flags = []
     if entry.dose_unit.value is not None and entry.dose_unit.value not in info.units:

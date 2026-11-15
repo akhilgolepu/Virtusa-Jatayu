@@ -52,8 +52,9 @@ def _medication(e: MedicationEntry, lexicon: Lexicon, status: str = "in-progress
     res = {
         "resourceType": "MedicationAdministration",
         "status": status,
-        "medicationCodeableConcept": {"text": e.drug.value,
-                                      "coding": [{"system": ATC, "code": lexicon.drug(e.drug.value).atc}]},
+        # a drug not in the lexicon keeps its spoken name and has no code (it carries drug_not_in_lexicon)
+        "medicationCodeableConcept": {"text": e.drug.value, **({"coding": [{"system": ATC, "code": lexicon.drug(e.drug.value).atc}]}
+                                                               if lexicon.has_drug(e.drug.value) else {})},
         "effectiveDateTime": e.time.value.isoformat(),
     }
     dosage = {}

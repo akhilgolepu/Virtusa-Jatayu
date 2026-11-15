@@ -95,6 +95,9 @@ class Lexicon:
     def route_synonyms(self, code: str) -> list[str]:
         return list(self._routes[code])
 
+    def has_drug(self, name: str | None) -> bool:
+        return name in self._drugs
+
     def drug(self, name: str) -> DrugInfo:
         return self._drugs[name]
 

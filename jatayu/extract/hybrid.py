@@ -62,7 +62,7 @@ class HybridExtractor:
     def extract_with_warnings(self, raw: str, capture_time: datetime) -> tuple[list[Entry], list[str]]:
         cands = self.fallback.candidates(raw, capture_time)
         if not any(c.kind in ("drug", "procedure") for c in cands):
-            return [], []
+            return [], []  # (a drug not in the lexicon is a drug candidate too: it is never dropped here)
         rules_entries = self.fallback.extract(raw, capture_time)
         prompt = f"Transcript: {raw}\nCandidates:\n" + "\n".join(_describe(c) for c in cands)
         try:
@@ -71,7 +71,25 @@ class HybridExtractor:
         except Exception as exc:  # LlmError, missing model, CUDA trouble, malformed output: never lose the utterance
             log.warning("hybrid falling back to rules: %s", exc)
             return rules_entries, [f"llm unavailable: {exc}; used rules"]
-        return self._keep_omitted(self._prefer_corrections(linked, rules_entries), rules_entries)
+        return self._keep_omitted(self._concentrations(self._prefer_corrections(linked, rules_entries), rules_entries),
+                                  rules_entries)
+
+    @staticmethod
+    def _concentrations(linked: list[Entry], rules_entries: list[Entry]) -> list[Entry]:
+        """Where the rules layer read a concentration for the same drug span, no dose is recorded, whatever the LLM
+        linked: the responder enters it."""
+        out = []
+        for e in linked:
+            anchor = getattr(e, "drug", None)
+            r = next((r for r in rules_entries if getattr(r, "drug", None) is not None and anchor is not None
+                      and r.drug.span == anchor.span and any(f.code == "concentration_not_dose" for f in r.flags)), None)
+            if r is None:
+                out.append(e)
+                continue
+            keep = [f for f in e.flags if f.field not in ("dose_value", "dose_unit")]
+            out.append(e.model_copy(update={"dose_value": Field.missing("llm"), "dose_unit": Field.missing("llm"),
+                                            "flags": keep + [f for f in r.flags if f.code == "concentration_not_dose"]}))
+        return out
 
     @staticmethod
     def _prefer_corrections(linked: list[Entry], rules_entries: list[Entry]) -> list[Entry]:

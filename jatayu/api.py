@@ -169,6 +169,11 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
         stale = [eid for eid, seq in body.expected.items() if eid in state.entries and state.entries[eid].history[-1] != seq]
         if stale:  # the entry changed since the medic looked at it: confirm what they saw, or nothing
             raise HTTPException(409, {"stale": stale, "message": "entry changed since it was displayed; reload"})
+        needs_dose = [eid for eid in body.entry_ids
+                      if any(f.code == "concentration_not_dose" for f in state.entries[eid].entry.flags)]
+        if needs_dose:  # a concentration was said, not a dose: the responder must enter the dose (edit) first
+            raise HTTPException(409, {"needs_dose": needs_dose,
+                                      "message": "a concentration was recorded, not a dose: enter the dose given"})
         unack = [{"entry_id": eid, "code": f.code, "message": f.message}
                  for eid in body.entry_ids for f in state.entries[eid].entry.flags
                  if f.severity == "high" and f.code not in body.acknowledged]
