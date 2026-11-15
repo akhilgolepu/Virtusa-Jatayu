@@ -20,12 +20,15 @@ export TZ=Asia/Kolkata                   # WSL's clock is UTC; times are read re
 uvicorn jatayu.api:app --port 8000       # then open http://localhost:8000 in the Windows browser
 ```
 
-## Extractor: rules-first, LLM optional
+## NER: rules-first clinical NER, with optional LLM-assisted NER
 
-The extractor that turns a transcript into records is **rules-first**: lexicon phrases and patterns, with every value
-pointing at the transcript words it came from. A local LLM (Qwen3-4B via llama.cpp) is **optional**: `hybrid` lets it
-link the spans the rules layer found, `llm` lets it quote the transcript directly (quotes are checked). `rules` is the
-default (`JATAYU_EXTRACTOR`, the selector on the capture screen); the other two stay selectable as ablations.
+Entities are recognised by a **rules-first clinical NER (lexicon and patterns), with optional LLM-assisted NER**. The
+entity types are **drug, dose value, dose unit, route, time and procedure** (plus a procedure detail such as a tube size,
+which is extracted but not scored); each recognised drug or procedure also gets an administration status (given / not
+given / measurement). Every value points at the transcript words it came from. There is no trained NER model. In the
+optional modes a local LLM (Qwen3-4B via llama.cpp) either links the spans the rules found (`hybrid`) or quotes the
+transcript directly (`llm`; quotes are checked). `rules` is the default (`JATAYU_EXTRACTOR`, the selector on the capture
+screen); the other two stay selectable as ablations.
 
 Why — measured on the dev split, synthetic speech (Piper voices) and our own hand-written sentences, evaluator round 4
 (DECISIONS 2026-11-03). Labels: **[dev · synthetic]**, **[dev · hand-written]**.
@@ -39,7 +42,7 @@ Why — measured on the dev split, synthetic speech (Piper voices) and our own h
 The LLM added nothing measurable, and costs ~0.6-0.9 s per utterance and 3.35 GB of GPU memory.
 
 ```bash
-JATAYU_EXTRACTOR=hybrid uvicorn jatayu.api:app --port 8000   # to run with the LLM linker instead
+JATAYU_EXTRACTOR=hybrid uvicorn jatayu.api:app --port 8000   # to run with LLM-assisted NER (hybrid) instead
 ```
 
 ## What has been measured
@@ -58,9 +61,11 @@ pipeline has never been run on test). The full pipeline on test and final_test, 
 | End of a 10-second dictation to the confirm screen, p50 / p95 | 0.387 s / 0.422 s | dev · synthetic dictation |
 | Seeded dose errors caught / harder ones | 99.0% / 78.0% (circular by construction) | test · validator only |
 | Correct doses wrongly flagged | 0.3% test, 1.2% final_test, 1.9% dev | test / dev · validator only |
+| PDF note for a 10 / 50-entry incident, p50 | 19.8 ms / 87.4 ms | synthetic incidents |
+| Blind evaluator-authored sentences (32), entity F1 core / stretch, rules | 0.840 / 0.857 | blind · single author, sanity check only |
 | Full pipeline on test, final_test; real speech | — | sealed |
 
-How it works and the full table: `docs/architecture.md`.
+How it works, per-entity-type scores, the FHIR-lite/PDF example and the full table: `docs/architecture.md`.
 
 ## Recording real speech (dev and test)
 

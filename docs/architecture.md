@@ -34,7 +34,7 @@ appended to a hash-chained audit log.
                      ▼
  normalise: spoken numbers → digits, every token keeps its offset in the transcript  (jatayu/normalise/)
                      ▼
- EXTRACT — rules-first extractor, LLM optional  (jatayu/extract/)
+ NER — rules-first clinical NER (lexicon and patterns), with optional LLM-assisted NER  (jatayu/extract/)
    rules (default): lexicon phrases + patterns; fuzzy/phonetic drug match (always flagged);
                     context cues (not given / measurement), self-corrections, ranges, repeat doses
    hybrid (optional): the rules layer finds candidate spans, a local LLM (Qwen3-4B, llama.cpp) only LINKS them
@@ -65,8 +65,24 @@ appended to a hash-chained audit log.
   measurement reading → `possible_not_given` / `possible_measurement` (high); FHIR status `not-done`.
 - **Offline.** Models load from disk; the setup check re-runs the speech recogniser, the LLM and the read-back voice with
   every outbound socket blocked.
-- **Rules-first, LLM optional.** On dev the LLM linker added nothing measurable (table below), so `rules` is the default;
-  `hybrid` and `llm` stay selectable and are reported as ablations.
+- **Rules-first clinical NER (lexicon and patterns), with optional LLM-assisted NER.** On dev the LLM-assisted modes
+  added nothing measurable (tables below), so `rules` is the default; `hybrid` and `llm` stay selectable and are reported
+  as ablations. There is no trained NER model: entity recognition is the lexicon, the patterns and, optionally, the LLM.
+
+## 3a. Entity types (what the NER recognises)
+
+| Entity | What is recognised | Normalised to |
+|---|---|---|
+| drug | generic or brand name, ASR misspellings by sound (always flagged) | one of 36 generic names in the lexicon |
+| dose value | the number of the dose, spoken or written ("point three", ".5", "1,000"), the corrected value after "no, sorry" | a number |
+| dose unit | mg, mcg, g, ml, L/min, units, puffs, drops, mmol, mEq and their spellings | one of 10 unit codes |
+| route | IV, IM, IO, SC, PO, SL, IN, NEB, INH, ET, PR and their phrasings ("into the vein", "under the tongue") | one of 11 route codes |
+| time | clock times ("at 10 40") and relative times ("two minutes ago"); none said → the device clock, flagged | an absolute time |
+| procedure | 14 procedures (CPR, defibrillation, IV cannulation, 12-lead ECG, ...) | one of 14 procedure names |
+| procedure detail | e.g. "size 7.5" | text (extracted, **not scored**) |
+
+Each recognised entity also carries an **administration status** (given / not given / measurement), read from cue words
+around it, and the flags above. Scored entity types: drug, dose value, dose unit, route, time, procedure.
 
 ## 4. Knowledge
 
@@ -104,10 +120,77 @@ weight range. Sources and every choice: `DECISIONS.md`.
 | Seeded dose errors caught (×10, ÷10, mg↔mcg, route) | 99.0% (198/200; 95% CI 96.4-99.7) — circular by construction | test · validator only |
 | Harder seeded errors (×2, ×5, digit slip, mg→g) | 78.0% (156/200; 95% CI 71.8-83.2) | test · validator only |
 | Correct gold doses flagged by the validator | dev 1.9%, test 0.3%, final_test 1.2% | dev / test · validator only |
+| PDF note (bundle + schema check + chain verify + render): 10 / 50 entries, p50 | 19.8 ms / 87.4 ms (p95 28.6 / 111.3 ms) | synthetic incidents |
+| Blind off-template set, evaluator-authored (32 typed sentences), entity F1 core / stretch: rules · hybrid · LLM-only | 0.840 / 0.857 · 0.805 / 0.857 · 0.747 / 0.812 | blind · single author, sanity check, not a headline |
 | Full pipeline on test or final_test; any real recording | — | sealed / not yet recorded |
+
+## 6a. Per entity type, dev
+
+Precision / recall / F1 per entity type, from the existing dev runs (nothing re-run). "gold" = number of gold values.
+
+**Typed template sentences [dev · synthetic]** — 480 utterances (generator and NER share a lexicon: not a headline)
+
+| Entity (gold) | rules P / R / F1 | hybrid P / R / F1 | LLM-only P / R / F1 |
+|---|---|---|---|
+| drug (460) | 1.000 / 1.000 / 1.000 | 1.000 / 1.000 / 1.000 | 0.890 / 0.876 / 0.883 |
+| dose value (380) | 1.000 / 1.000 / 1.000 | 1.000 / 1.000 / 1.000 | 0.862 / 0.937 / 0.898 |
+| dose unit (380) | 1.000 / 1.000 / 1.000 | 1.000 / 1.000 / 1.000 | 0.903 / 0.953 / 0.927 |
+| route (360) | 1.000 / 1.000 / 1.000 | 1.000 / 1.000 / 1.000 | 0.895 / 0.967 / 0.929 |
+| time (244) | 1.000 / 1.000 / 1.000 | 1.000 / 0.873 / 0.932 | 0.931 / 0.832 / 0.879 |
+| procedure (60) | 1.000 / 1.000 / 1.000 | 1.000 / 1.000 / 1.000 | 1.000 / 0.383 / 0.554 |
+
+**Speech, same ASR transcripts [dev · synthetic]** — 480 Piper clips
+
+| Entity (gold) | rules P / R / F1 | hybrid P / R / F1 | LLM-only P / R / F1 |
+|---|---|---|---|
+| drug (460) | 0.970 / 0.691 / 0.807 | 0.970 / 0.691 / 0.807 | 0.805 / 0.530 / 0.640 |
+| dose value (380) | 0.871 / 0.553 / 0.676 | 0.864 / 0.550 / 0.672 | 0.698 / 0.445 / 0.543 |
+| dose unit (380) | 0.957 / 0.474 / 0.634 | 0.946 / 0.503 / 0.656 | 0.819 / 0.311 / 0.450 |
+| route (360) | 0.908 / 0.439 / 0.592 | 0.919 / 0.442 / 0.597 | 0.782 / 0.369 / 0.502 |
+| time (244) | 0.886 / 0.381 / 0.533 | 0.882 / 0.336 / 0.487 | 0.816 / 0.291 / 0.429 |
+| procedure (60) | 1.000 / 0.600 / 0.750 | 1.000 / 0.600 / 0.750 | 1.000 / 0.233 / 0.378 |
+
+**Off-template sentences [dev · hand-written]** — rules on the 56-sentence version of the set (round 5); hybrid and
+LLM-only on the 54-sentence version (round 4; two procedure-negation sentences were added in round 5)
+
+| Entity | rules P / R / F1 (gold) | hybrid P / R / F1 (gold) | LLM-only P / R / F1 (gold) |
+|---|---|---|---|
+| drug | 1.000 / 1.000 / 1.000 (65) | 1.000 / 1.000 / 1.000 (64) | 0.866 / 0.906 / 0.886 (64) |
+| dose value | 0.889 / 0.960 / 0.923 (50) | 0.868 / 0.939 / 0.902 (49) | 0.857 / 0.980 / 0.914 (49) |
+| dose unit | 0.982 / 0.964 / 0.973 (55) | 0.981 / 0.963 / 0.972 (54) | 0.885 / 1.000 / 0.939 (54) |
+| route | 0.961 / 0.925 / 0.942 (53) | 0.960 / 0.923 / 0.941 (52) | 0.814 / 0.923 / 0.865 (52) |
+| time | 0.600 / 0.750 / 0.667 (8) | 0.857 / 0.750 / 0.800 (8) | 0.714 / 0.625 / 0.667 (8) |
+| procedure | 1.000 / 1.000 / 1.000 (6) | 0.667 / 1.000 / 0.800 (2) | 1.000 / 1.000 / 1.000 (2) |
+
+Runs: `results/r5-dev-text-rules`, `r4-dev-text-hybrid-v2`, `r3-dev-text-llm`; `r5-dev-audio-rules`,
+`r4-dev-audio-hybrid-v2`, `r4-dev-audio-llm`; `r5-offtemplate-rules`, `r4-offtemplate-hybrid-v2`, `r4-offtemplate-llm`.
+
+Known gaps, plainly: **procedure is extracted and scored**, but LLM-only recognises few procedures (recall 0.383 typed,
+0.233 speech); the **procedure detail** (e.g. a tube size) is extracted but **not scored**; **time** is the weakest
+entity on speech (rules recall 0.381). Not fixed this round.
+
+## 6b. FHIR-lite record and the PDF
+
+- **How the JSON is checked.** Every bundle is validated against `jatayu/schemas/fhir_lite.schema.json` (JSON Schema
+  2020-12, with format checking) by `jatayu/output/fhir.py::validate_bundle`, every time one is built: per utterance in
+  the pipeline, and per incident at `/api/incidents/<id>/bundle`. A bundle that fails is never returned or logged.
+  Tests: `tests/test_fhir.py` (validity, omitted-not-null fields, provenance spans, rejects garbage),
+  `tests/test_fhir_safety.py`, `tests/test_demo_flow.py`.
+- **One JSON, one PDF.** Since round 7 the PDF's entries are rendered **from that same validated bundle** (one helper
+  builds it for both endpoints); the PDF adds the audit-log history and the chain verdict, which are not clinical
+  record. `tests/test_pdf.py::test_pdf_entries_come_from_the_fhir_bundle` alters a dose in the JSON and checks the PDF
+  shows the altered value. (Before round 7 both were built from the same audit-logged entries by two separate code
+  paths.)
+- **Not given = not-done.** An entry flagged not given (or a measurement) is `status: not-done` with a `statusReason`
+  in the JSON, and "NOT GIVEN" / "READING" in the PDF, even after the medic confirms it.
+- **Synthetic example:** `results/r7-fhir-pdf-example/` — `example.json` (the bundle) and `example.pdf` (rendered from
+  it): adrenaline (draft), aspirin (confirmed → `completed`), **morphine allergy (confirmed → `not-done`, "NOT GIVEN")**,
+  a blood glucose reading (`not-done`, "READING"), CPR (draft) and a self-corrected ondansetron dose (draft, 2 mg).
 
 ## 7. Known limits (each pinned by an expected-failure test or a DECISIONS row)
 
+- A drug that is not in the lexicon is not recognised at all, and nothing flags it (blind set: "diclofenac" was
+  dropped silently; the expected behaviour is a visible "drug not in lexicon" flag).
 - Speech is the weak link: the recogniser misses drug names (57% heard exactly) and is much weaker on the
   Indian-accented synthetic voices. Whether this holds for real speakers is unknown until real recordings exist.
 - Negation said after the drug ("naloxone was not given", "morphine nahi diya"); route corrections ("IM, sorry, IV");

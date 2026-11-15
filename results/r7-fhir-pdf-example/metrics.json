@@ -1,0 +1,56 @@
+{
+  "commit": "cb1de5e",
+  "checks": {
+    "schema_valid": true,
+    "every_bundle_entry_in_pdf": true,
+    "morphine_not_given_status": "not-done",
+    "morphine_confirmed_yet_not_done": true,
+    "pdf_says_not_given": true,
+    "glucose_reading_status": "not-done",
+    "no_completed_not_given": true
+  },
+  "rows": [
+    {
+      "item": "epinephrine",
+      "fhir_status": "in-progress",
+      "review_status": "draft",
+      "dose": "0.3 mg",
+      "in_pdf": true
+    },
+    {
+      "item": "aspirin",
+      "fhir_status": "completed",
+      "review_status": "confirmed",
+      "dose": "300 mg",
+      "in_pdf": true
+    },
+    {
+      "item": "morphine",
+      "fhir_status": "not-done",
+      "review_status": "confirmed",
+      "dose": "",
+      "in_pdf": true
+    },
+    {
+      "item": "dextrose",
+      "fhir_status": "not-done",
+      "review_status": "draft",
+      "dose": "3.2 mmol",
+      "in_pdf": true
+    },
+    {
+      "item": "cpr",
+      "fhir_status": "in-progress",
+      "review_status": "draft",
+      "dose": "",
+      "in_pdf": true
+    },
+    {
+      "item": "ondansetron",
+      "fhir_status": "in-progress",
+      "review_status": "draft",
+      "dose": "2 mg",
+      "in_pdf": true
+    }
+  ]
+}

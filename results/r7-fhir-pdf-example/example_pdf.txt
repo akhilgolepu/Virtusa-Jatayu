@@ -1,0 +1,100 @@
+Decision-support demo, not a clinical device.
+Jatayu · page 1
+INCIDENT NOTE
+Synthetic example — not a real patient
+Started 15 Nov 2026, 20:22 · 6 entries · 6 utterances
+Incident 834ddc8efa2a4d77ad90d1278309c080 · Device jatayu-ce6b623c989a
+ENTRIES
+ #
+TIME
+DRUG / PROCEDURE
+DOSE
+ROUTE
+STATUS
+FLAGS
+01
+20:20
+epinephrine
+0.3 mg
+IM
+DRAFT
+—
+02
+10:40
+aspirin
+300 mg
+PO
+CONFIRMED
+—
+03
+20:22
+morphine
+—
+—
+NOT GIVEN
+confirmed
+■ time_not_stated
+▲ field_missing
+■ field_missing
+▲ possible_not_given
+04
+20:22
+dextrose
+3.2 mmol
+—
+READING
+draft
+■ time_not_stated
+■ field_missing
+▲ possible_measurement
+05
+20:22
+cpr
+DRAFT
+■ time_not_stated
+06
+20:22
+ondansetron
+2 mg
+IV
+DRAFT
+■ time_not_stated
+■ self_correction
+■ dose_below_range
+RECORD HISTORY (APPEND-ONLY)
+ SEQ
+EVENT
+TIME
+ENTRY HASH
+1
+draft
+20:22
+24be9ce7faaad8bd29add1cd…
+2
+draft
+20:22
+ed73dc8ec88e9aecfe10208f…
+3
+draft
+20:22
+7c8b0dab191332fcaabb427d…
+4
+draft
+20:22
+8337a4d5a3ccf5f7180b4523…
+5
+draft
+20:22
+1791482f72fa76f4a359bb41…
+6
+draft
+20:22
+d27a6701543f3b431811c6ea…
+7
+confirm
+20:22
+02c231a4718f330add3ddbe4…
+AUDIT CHAIN
+Chain verified: 7 rows intact.
+Head hash 02c231a4718f330add3ddbe44dfb3fd40047f07aca0c6777a8e0cc6f012e9d82
+
