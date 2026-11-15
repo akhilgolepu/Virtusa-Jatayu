@@ -96,3 +96,5 @@
 {"timestamp": "2026-11-15T21:49:52.157423+05:30", "commit": "c391366", "dirty": false, "dirty_paths": [], "runner": "eval.ner_baseline", "split": "dev", "tag": "r8-ner-baseline", "model": "biomedical-ner-all", "aggregation": "first"}
 {"timestamp": "2026-11-15T21:50:43.203915+05:30", "commit": "3fdd963", "dirty": false, "dirty_paths": [], "runner": "scripts.fhir_r4_check", "split": "none (synthetic example)", "tag": "r8-fhir-r4-check"}
 {"timestamp": "2026-11-15T21:50:57.141031+05:30", "commit": "a1b2602", "dirty": false, "dirty_paths": [], "runner": "scripts.fhir_r4_check", "split": "none (synthetic example)", "tag": "r8-fhir-r4-check"}
+{"timestamp": "2026-11-15T21:53:02.670978+05:30", "commit": "bad026b", "dirty": false, "dirty_paths": [], "runner": "eval.flag_counts", "split": "dev", "tag": "r8-flag-counts-after"}
+{"timestamp": "2026-11-15T21:53:03.445547+05:30", "commit": "746c000-dirty", "dirty": true, "dirty_paths": ["eval/flag_counts.py"], "runner": "eval.flag_counts", "split": "dev", "tag": "r8-flag-counts-before"}
