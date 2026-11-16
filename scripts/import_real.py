@@ -59,11 +59,13 @@ def import_clips(split: str, speaker: str, refs: Path, root: Path) -> list[dict]
     return added
 
 
-def import_recordings(speaker: str, root: Path) -> dict[str, int]:
-    """Takes from the /record page -> data/real/<prompt split>/, with prompt id, condition and gold entries."""
-    from jatayu.corpus import CorpusStore
+def import_recordings(speaker: str, root: Path, part: int | None = None, parts: int = 3) -> dict[str, int]:
+    """Takes from the /record page -> data/real/<prompt split>/, with prompt id, condition and gold entries. With
+    `part`, only the takes of that speaker's share of the prompts (/record?part=N), so each speaker keeps their own id."""
+    from jatayu.corpus import CorpusStore, assign_parts
 
     store = CorpusStore(root / "recordings")
+    mine = assign_parts(store.prompts(), parts) if part is not None else None
     counts = {"dev": 0, "test": 0}
     for split in SPLITS:
         base = root / "real" / split
@@ -74,6 +76,8 @@ def import_recordings(speaker: str, root: Path) -> dict[str, int]:
         for take in store.rows():
             p = prompts.get(take["prompt_id"], {})
             if p.get("split") != split or take.get("status") == "rerecord":
+                continue
+            if mine is not None and mine.get(take["prompt_id"]) != part:
                 continue
             wav = (store.root / take["path"]).read_bytes()
             sha = hashlib.sha256(wav).hexdigest()
@@ -118,11 +122,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--refs", type=Path)
     ap.add_argument("--from-recordings", action="store_true", help="import the takes recorded on the /record page")
     ap.add_argument("--root", type=Path, default=config.DATA_DIR)
+    ap.add_argument("--part", type=int, help="with --from-recordings: only this speaker's share (/record?part=N)")
+    ap.add_argument("--parts", type=int, default=3)
     args = ap.parse_args(argv)
     if args.from_recordings:
         if not args.speaker.replace("-", "").replace("_", "").isalnum():
             raise ValueError("speaker id: letters, digits, - and _ only (no names)")
-        counts = import_recordings(args.speaker, args.root)
+        counts = import_recordings(args.speaker, args.root, args.part, args.parts)
         print(f"imported {counts['dev']} dev and {counts['test']} test take(s) (test is sealed)")
         return 0
     if not (args.split and args.refs):

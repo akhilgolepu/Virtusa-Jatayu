@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 type Prompt = { prompt_id: string; text: string; condition_hint: string; status: string; lang?: string };
 type Take = { take_id?: string; status?: string; wer?: number | null; asr_text?: string | null; gold_field_mismatch?: string[]; detail?: string };
 
-// Record-corpus page (Akhil reads the prompts aloud). Keys: Space record/stop · Enter next · R re-record · E edit.
+// Record-corpus page (speakers read the prompts aloud; ?part=N&parts=3 = one speaker's share, docs/recording_guide.md). Keys: Space record/stop · Enter next · R re-record · E edit.
 export function Record() {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [idx, setIdx] = useState(0);
@@ -13,8 +13,13 @@ export function Record() {
   const [gold, setGold] = useState("");
   const rec = useRef<MediaRecorder | null>(null);
 
+  // ?part=N&parts=3: one speaker's share of the prompts (docs/recording_guide.md); without it, every prompt.
+  const query = new URLSearchParams(location.search);
+  const part = query.get("part");
+  const parts = query.get("parts") ?? "3";
   useEffect(() => {
-    fetch("/api/corpus/prompts?status=all").then((r) => r.json()).then((all: Prompt[]) => {
+    fetch(`/api/corpus/prompts?status=all${part ? `&part=${encodeURIComponent(part)}&parts=${encodeURIComponent(parts)}` : ""}`)
+      .then((r) => r.json()).then((all: Prompt[]) => {
       setPrompts(all);
       setIdx(Math.max(0, all.findIndex((p) => p.status === "todo" || p.status === "rerecord")));
     });
@@ -70,7 +75,7 @@ export function Record() {
   if (!prompts.length) return <p class="muted">No prompts. Run <code>python -m datagen.prompts</code> and reload.</p>;
   return (
     <div class="stack" style={{ maxWidth: "52rem" }}>
-      <div class="row spread"><span class="label">{done} / {prompts.length} recorded · {p?.prompt_id}</span><span class="label">condition: {p?.condition_hint}</span></div>
+      <div class="row spread"><span class="label">{part ? `Part ${part} of ${parts} · ` : ""}{done} / {prompts.length} recorded · {p?.prompt_id}</span><span class="label">condition: {p?.condition_hint}</span></div>
       <div class="progress"><div style={{ width: `${(100 * done) / prompts.length}%` }} /></div>
       <p class="prompt">{p?.text}</p>
       <div class="row">

@@ -24,6 +24,17 @@ GOLD_FIELDS = ("drug", "procedure", "dose_value", "dose_unit", "route", "detail"
 CHECKED_FIELDS = ("drug", "procedure", "dose_value", "dose_unit", "route")  # must be heard as written
 
 
+def assign_parts(prompts: dict[str, dict], parts: int) -> dict[str, int]:
+    """prompt_id -> part (1..parts), so several speakers can share the recording. Deterministic and balanced: prompts
+    sorted by split, language, condition hint and id, then dealt round-robin, so every part gets the same mix of test
+    and dev sentences, Hinglish and conditions (sizes differ by at most one)."""
+    if parts < 1:
+        raise ValueError("parts must be >= 1")
+    order = sorted(prompts.values(), key=lambda p: (p.get("split", ""), p.get("lang", ""), p.get("condition_hint", ""),
+                                                     p["prompt_id"]))
+    return {p["prompt_id"]: i % parts + 1 for i, p in enumerate(order)}
+
+
 class Resolve(BaseModel):
     action: Literal["rerecord", "keep_edited"]
     gold_text: str | None = None
@@ -114,11 +125,15 @@ def create_corpus_router(recordings_dir: Path, transcriber, lexicon: Lexicon) ->
     router = APIRouter(prefix="/api/corpus")
 
     @router.get("/prompts")
-    def list_prompts(status: Literal["todo", "review", "all"] = "all"):
+    def list_prompts(status: Literal["todo", "review", "all"] = "all", part: int | None = None, parts: int = 3):
         current = store.prompt_status()
         want = {"todo": {"todo", "rerecord"}, "review": {"review"}}.get(status)
-        return [{**p, "status": current[pid]} for pid, p in store.prompts().items()
-                if want is None or current[pid] in want]
+        prompts = store.prompts()
+        if part is not None and not 1 <= part <= parts:
+            raise HTTPException(422, f"part must be between 1 and {parts}")
+        mine = assign_parts(prompts, parts) if part is not None else {}
+        return [{**p, "status": current[pid]} for pid, p in prompts.items()
+                if (want is None or current[pid] in want) and (part is None or mine[pid] == part)]
 
     @router.post("/recordings")
     def upload(prompt_id: str = Form(...), condition: str = Form("unspecified"), audio: UploadFile = File(...)):
