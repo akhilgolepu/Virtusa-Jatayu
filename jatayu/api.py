@@ -95,7 +95,7 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
             raise HTTPException(404, "unknown incident")
         return inc
 
-    app = FastAPI(title="Jatayu", description=config.DISCLAIMER)
+    app = FastAPI(title="Scribe108", description=config.DISCLAIMER)
     app.include_router(create_corpus_router(recordings_dir, transcriber, lexicon))
 
     @app.get("/api/health")
@@ -231,7 +231,7 @@ def create_app(db_path: Path = config.DB_PATH, transcriber: Transcriber | None =
         inc = _incident(incident_id)
         pdf = render_note({**inc, "device": device}, _bundle(incident_id), audit.rows(incident_id), audit.verify())
         return Response(pdf, media_type="application/pdf",
-                        headers={"Content-Disposition": f'inline; filename="jatayu-{incident_id[:8]}.pdf"'})
+                        headers={"Content-Disposition": f'inline; filename="scribe108-{incident_id[:8]}.pdf"'})
 
     @app.get("/api/incidents/{incident_id}/bundle")
     def incident_bundle(incident_id: str):

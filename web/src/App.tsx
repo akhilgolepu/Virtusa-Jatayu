@@ -40,7 +40,7 @@ export function App() {
     <>
       <header class="topbar">
         <div class="shell">
-          <a class="wordmark" {...link("/")}>Jatayu</a>
+          <a class="wordmark" {...link("/")}>Scribe108</a>
           <nav class="nav" aria-label="Main">
             {NAV.map(([href, label]) => (
               <a key={href} {...link(href)} aria-current={section === href ? "page" : undefined}>{label}</a>

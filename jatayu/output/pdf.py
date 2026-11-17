@@ -88,11 +88,11 @@ def render_note(incident: dict, bundle: dict, rows: list[AuditRow], verify: Veri
         canvas.setFont("Helvetica", 7)
         canvas.setFillColor(MUTED)
         canvas.drawString(18 * mm, 10 * mm, DISCLAIMER)
-        canvas.drawRightString(A4[0] - 18 * mm, 10 * mm, f"Jatayu · page {doc.page}")
+        canvas.drawRightString(A4[0] - 18 * mm, 10 * mm, f"Scribe108 · page {doc.page}")
         canvas.restoreState()
 
     doc = SimpleDocTemplate(buf, pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm, topMargin=16 * mm,
-                            bottomMargin=18 * mm, title=f"Jatayu note {incident['id'][:8]}", author="Jatayu")
+                            bottomMargin=18 * mm, title=f"Scribe108 note {incident['id'][:8]}", author="Scribe108")
     story: list = [_label("Incident note"), Paragraph(incident.get("label") or "Unlabelled incident", TITLE),
                    Paragraph(f"Started {datetime.fromisoformat(incident['started_at']).strftime('%d %b %Y, %H:%M')}"
                              f" · {len(clinical(bundle))} entries · {len(transcripts(bundle))} utterances", BODY),
